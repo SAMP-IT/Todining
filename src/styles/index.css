@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-cream text-ink font-sans antialiased;
+    min-height: 100dvh;
+  }
+
+  /* Decorative warm grain/atmosphere on the app background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(60rem 60rem at 110% -10%, rgba(217, 82, 31, 0.06), transparent 60%),
+      radial-gradient(40rem 40rem at -10% 110%, rgba(79, 138, 91, 0.05), transparent 60%);
+    pointer-events: none;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight text-ink;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ember-500/60 ring-offset-2 ring-offset-cream rounded;
+  }
+}
+
+@layer components {
+  .card-surface {
+    @apply rounded-2xl border border-ink/5 bg-white shadow-soft;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Safe-area padding for mobile bottom navs */
+  .pb-safe {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
+  }
+}
