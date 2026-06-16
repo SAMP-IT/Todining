@@ -1,0 +1,383 @@
+# SmartDine — "How To Use" Tutorial Storyboard
+
+A role-by-role instructional walkthrough explainer for SmartDine, the Smart Restaurant
+Management SaaS platform. Built in Remotion at **1920×1080, 30fps**.
+
+- **Brand:** warm modern-dining — ember/terracotta `#d9521f`, sage `#7c9473`, gold `#c89b3c`, cream `#f7f1e6`
+- **Type:** display **Fraunces**, body **Plus Jakarta Sans**
+- **Tagline:** *Scan. Order. Dine.*
+- **Structure:** intro → (chapter → steps) × 5 roles → outro
+- **Total runtime:** **150 seconds (2:30)**
+
+Per-role accents: Customer `#d9521f` · Owner `#c89b3c` · Manager `#b8643a` · Waiter `#7c9473` · Kitchen `#9c3110`.
+
+```json
+[
+  {
+    "id": "intro",
+    "kind": "intro",
+    "durationInSeconds": 5,
+    "heading": "How to use SmartDine",
+    "subhead": "One platform, five roles — here's how each one works.",
+    "narration": "Welcome to SmartDine. Let's walk through exactly how each role uses the platform, step by step.",
+    "screenshot": null,
+    "accent": "#d9521f"
+  },
+
+  {
+    "id": "chapter-customer",
+    "kind": "chapter",
+    "durationInSeconds": 3,
+    "role": "Customer",
+    "roleIcon": "Smartphone",
+    "heading": "1. The Customer",
+    "subhead": "Order from your phone — no app, no login.",
+    "narration": "First, the customer — everything happens on their phone, with no app and no login.",
+    "screenshot": null,
+    "accent": "#d9521f"
+  },
+  {
+    "id": "customer-step-1",
+    "kind": "step",
+    "durationInSeconds": 5,
+    "role": "Customer",
+    "stepNumber": 1,
+    "stepTotal": 6,
+    "heading": "Scan the table QR",
+    "subhead": "Your table is detected automatically.",
+    "narration": "First, scan the QR code on your table. SmartDine detects your table number automatically.",
+    "device": "phone",
+    "screenshot": "mobile-menu.png",
+    "accent": "#d9521f"
+  },
+  {
+    "id": "customer-step-2",
+    "kind": "step",
+    "durationInSeconds": 5,
+    "role": "Customer",
+    "stepNumber": 2,
+    "stepTotal": 6,
+    "heading": "Browse and add dishes",
+    "subhead": "Explore the digital menu by category.",
+    "narration": "Next, browse the digital menu and tap to add the dishes you'd like to your cart.",
+    "device": "phone",
+    "screenshot": "mobile-menu.png",
+    "accent": "#d9521f"
+  },
+  {
+    "id": "customer-step-3",
+    "kind": "step",
+    "durationInSeconds": 5,
+    "role": "Customer",
+    "stepNumber": 3,
+    "stepTotal": 6,
+    "heading": "Review cart, accept upsell",
+    "subhead": "A smart AI suggestion pairs with your order.",
+    "narration": "Open your cart to review it, then tap to accept the AI's smart pairing suggestion.",
+    "device": "phone",
+    "screenshot": "mobile-cart-upsell.png",
+    "accent": "#d9521f"
+  },
+  {
+    "id": "customer-step-4",
+    "kind": "step",
+    "durationInSeconds": 6,
+    "role": "Customer",
+    "stepNumber": 4,
+    "stepTotal": 6,
+    "heading": "Place order, track live",
+    "subhead": "Watch the status timeline update in real time.",
+    "narration": "Now place your order and watch the live status timeline move from preparing to ready to served.",
+    "device": "phone",
+    "screenshot": "mobile-track.png",
+    "accent": "#d9521f"
+  },
+  {
+    "id": "customer-step-5",
+    "kind": "step",
+    "durationInSeconds": 5,
+    "role": "Customer",
+    "stepNumber": 5,
+    "stepTotal": 6,
+    "heading": "Tap Help for service",
+    "subhead": "Call a waiter, request water or the bill.",
+    "narration": "Need something? Tap Help to call a waiter, ask for water, or request your bill.",
+    "device": "phone",
+    "screenshot": "mobile-help.png",
+    "accent": "#d9521f"
+  },
+  {
+    "id": "customer-step-6",
+    "kind": "step",
+    "durationInSeconds": 6,
+    "role": "Customer",
+    "stepNumber": 6,
+    "stepTotal": 6,
+    "heading": "Get the bill, rate us",
+    "subhead": "Itemized bill, then a quick star rating.",
+    "narration": "Finally, view your itemized bill and leave a star rating. You can also book a table anytime using the reservation form.",
+    "device": "phone",
+    "screenshot": "mobile-bill.png",
+    "accent": "#d9521f"
+  },
+
+  {
+    "id": "chapter-owner",
+    "kind": "chapter",
+    "durationInSeconds": 3,
+    "role": "Owner",
+    "roleIcon": "Crown",
+    "heading": "2. The Owner",
+    "subhead": "Full access — analytics and every restaurant.",
+    "narration": "Next, the Owner, who has full access to analytics and every restaurant on the account.",
+    "screenshot": null,
+    "accent": "#c89b3c"
+  },
+  {
+    "id": "owner-step-1",
+    "kind": "step",
+    "durationInSeconds": 5,
+    "role": "Owner",
+    "stepNumber": 1,
+    "stepTotal": 4,
+    "heading": "Sign in as Owner",
+    "subhead": "Use the one-tap Owner demo account.",
+    "narration": "First, on the login screen, tap the Owner demo account to sign in instantly.",
+    "device": "browser",
+    "screenshot": "login.png",
+    "accent": "#c89b3c"
+  },
+  {
+    "id": "owner-step-2",
+    "kind": "step",
+    "durationInSeconds": 6,
+    "role": "Owner",
+    "stepNumber": 2,
+    "stepTotal": 4,
+    "heading": "View revenue and analytics",
+    "subhead": "Top dishes, peak hours, ratings, trends.",
+    "narration": "You'll land on Analytics — review revenue by day, week, or month, plus top dishes, peak hours, and ratings.",
+    "device": "browser",
+    "screenshot": "admin-analytics.png",
+    "accent": "#c89b3c"
+  },
+  {
+    "id": "owner-step-3",
+    "kind": "step",
+    "durationInSeconds": 6,
+    "role": "Owner",
+    "stepNumber": 3,
+    "stepTotal": 4,
+    "heading": "Manage multiple restaurants",
+    "subhead": "Switch tenants — data stays fully isolated.",
+    "narration": "Next, open Restaurants to switch between locations. Each tenant's data stays completely isolated.",
+    "device": "browser",
+    "screenshot": "admin-restaurants.png",
+    "accent": "#c89b3c"
+  },
+  {
+    "id": "owner-step-4",
+    "kind": "step",
+    "durationInSeconds": 5,
+    "role": "Owner",
+    "stepNumber": 4,
+    "stepTotal": 4,
+    "heading": "Oversee menu and staff",
+    "subhead": "Edit dishes, prices, and team roles.",
+    "narration": "Finally, jump into Menu and Staff to update dishes, prices, and manage your team.",
+    "device": "browser",
+    "screenshot": "admin-menu.png",
+    "accent": "#c89b3c"
+  },
+
+  {
+    "id": "chapter-manager",
+    "kind": "chapter",
+    "durationInSeconds": 3,
+    "role": "Manager",
+    "roleIcon": "ShieldCheck",
+    "heading": "3. The Manager",
+    "subhead": "Runs day-to-day operations.",
+    "narration": "Now the Manager, who runs day-to-day operations on a single restaurant.",
+    "screenshot": null,
+    "accent": "#b8643a"
+  },
+  {
+    "id": "manager-step-1",
+    "kind": "step",
+    "durationInSeconds": 5,
+    "role": "Manager",
+    "stepNumber": 1,
+    "stepTotal": 5,
+    "heading": "Sign in as Manager",
+    "subhead": "Lands directly on live Orders.",
+    "narration": "First, sign in as Manager. You'll land straight on the live Orders board.",
+    "device": "browser",
+    "screenshot": "login.png",
+    "accent": "#b8643a"
+  },
+  {
+    "id": "manager-step-2",
+    "kind": "step",
+    "durationInSeconds": 6,
+    "role": "Manager",
+    "stepNumber": 2,
+    "stepTotal": 5,
+    "heading": "Manage and advance orders",
+    "subhead": "Move each order through its status.",
+    "narration": "Next, manage every live order and advance its status from pending all the way through to completed.",
+    "device": "browser",
+    "screenshot": "admin-orders.png",
+    "accent": "#b8643a"
+  },
+  {
+    "id": "manager-step-3",
+    "kind": "step",
+    "durationInSeconds": 6,
+    "role": "Manager",
+    "stepNumber": 3,
+    "stepTotal": 5,
+    "heading": "Watch tables, generate QRs",
+    "subhead": "Green, yellow, red — live at a glance.",
+    "narration": "Open Tables to see live status — green, yellow, or red — and generate a QR code for any table.",
+    "device": "browser",
+    "screenshot": "admin-tables.png",
+    "accent": "#b8643a"
+  },
+  {
+    "id": "manager-step-4",
+    "kind": "step",
+    "durationInSeconds": 5,
+    "role": "Manager",
+    "stepNumber": 4,
+    "stepTotal": 5,
+    "heading": "Approve reservations",
+    "subhead": "Confirm or reschedule incoming bookings.",
+    "narration": "In Reservations, approve or reschedule incoming bookings with a single tap.",
+    "device": "browser",
+    "screenshot": "admin-reservations.png",
+    "accent": "#b8643a"
+  },
+  {
+    "id": "manager-step-5",
+    "kind": "step",
+    "durationInSeconds": 5,
+    "role": "Manager",
+    "stepNumber": 5,
+    "stepTotal": 5,
+    "heading": "Watch inventory and billing",
+    "subhead": "Low-stock alerts and bill history.",
+    "narration": "Finally, keep an eye on inventory for low-stock alerts and review billing history. Managers don't see analytics or other restaurants.",
+    "device": "browser",
+    "screenshot": "admin-inventory.png",
+    "accent": "#b8643a"
+  },
+
+  {
+    "id": "chapter-waiter",
+    "kind": "chapter",
+    "durationInSeconds": 3,
+    "role": "Waiter",
+    "roleIcon": "ConciergeBell",
+    "heading": "4. The Waiter",
+    "subhead": "Serves food and answers guest requests.",
+    "narration": "Next, the Waiter, who serves ready dishes and responds to guests.",
+    "screenshot": null,
+    "accent": "#7c9473"
+  },
+  {
+    "id": "waiter-step-1",
+    "kind": "step",
+    "durationInSeconds": 5,
+    "role": "Waiter",
+    "stepNumber": 1,
+    "stepTotal": 3,
+    "heading": "Sign in as Waiter",
+    "subhead": "Opens the live waiter board.",
+    "narration": "First, sign in as Waiter to open your live board of orders and requests.",
+    "device": "browser",
+    "screenshot": "login.png",
+    "accent": "#7c9473"
+  },
+  {
+    "id": "waiter-step-2",
+    "kind": "step",
+    "durationInSeconds": 6,
+    "role": "Waiter",
+    "stepNumber": 2,
+    "stepTotal": 3,
+    "heading": "Serve ready orders",
+    "subhead": "Tap to mark each dish as served.",
+    "narration": "Next, see the orders marked ready to serve, deliver them, and tap to mark each one served.",
+    "device": "browser",
+    "screenshot": "waiter.png",
+    "accent": "#7c9473"
+  },
+  {
+    "id": "waiter-step-3",
+    "kind": "step",
+    "durationInSeconds": 6,
+    "role": "Waiter",
+    "stepNumber": 3,
+    "stepTotal": 3,
+    "heading": "Answer service requests",
+    "subhead": "Water, bill, assistance — track active tables.",
+    "narration": "Finally, respond to guest requests for water, the bill, or assistance, and track all your active tables.",
+    "device": "browser",
+    "screenshot": "waiter.png",
+    "accent": "#7c9473"
+  },
+
+  {
+    "id": "chapter-kitchen",
+    "kind": "chapter",
+    "durationInSeconds": 3,
+    "role": "Kitchen",
+    "roleIcon": "ChefHat",
+    "heading": "5. The Kitchen",
+    "subhead": "Cooks tickets as they arrive.",
+    "narration": "Finally, the Kitchen, where new order tickets arrive the instant a customer orders.",
+    "screenshot": null,
+    "accent": "#9c3110"
+  },
+  {
+    "id": "kitchen-step-1",
+    "kind": "step",
+    "durationInSeconds": 5,
+    "role": "Kitchen",
+    "stepNumber": 1,
+    "stepTotal": 2,
+    "heading": "Receive new tickets",
+    "subhead": "Orders appear instantly, in real time.",
+    "narration": "First, sign in as Kitchen — new order tickets pop onto your board instantly, in real time.",
+    "device": "browser",
+    "screenshot": "kitchen.png",
+    "accent": "#9c3110"
+  },
+  {
+    "id": "kitchen-step-2",
+    "kind": "step",
+    "durationInSeconds": 6,
+    "role": "Kitchen",
+    "stepNumber": 2,
+    "stepTotal": 2,
+    "heading": "Cook, then mark ready",
+    "subhead": "Start cooking, then flip to ready.",
+    "narration": "Then tap Start cooking on each ticket, and when it's done, tap Mark ready to alert the waiter.",
+    "device": "browser",
+    "screenshot": "kitchen.png",
+    "accent": "#9c3110"
+  },
+
+  {
+    "id": "outro",
+    "kind": "outro",
+    "durationInSeconds": 5,
+    "heading": "Scan. Order. Dine.",
+    "subhead": "Try the demo — one platform for your whole team.",
+    "narration": "That's SmartDine — five roles, one seamless platform. Scan, order, dine. Try the live demo today.",
+    "screenshot": null,
+    "accent": "#d9521f"
+  }
+]
+```
