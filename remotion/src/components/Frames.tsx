@@ -82,7 +82,7 @@ export const BrowserFrame: React.FC<{ src: string; width?: number; style?: React
             fontWeight: 600,
           }}
         >
-          smartdine.app
+          todining.app
         </div>
       </div>
       <div style={{ width: innerW, height: screenH, overflow: 'hidden' }}>

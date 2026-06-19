@@ -1,5 +1,5 @@
 -- ============================================================================
--- SmartDine — Row Level Security (multi-tenant isolation)
+-- ToDining — Row Level Security (multi-tenant isolation)
 -- Run AFTER schema.sql.
 --
 -- Model:

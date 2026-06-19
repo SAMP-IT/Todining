@@ -1,8 +1,8 @@
-# SmartDine — Remotion Explainer Storyboard
+# ToDining — Remotion Explainer Storyboard
 
-A ~90-second animated explainer for **SmartDine**, the Smart Restaurant Management SaaS Platform.
+A ~90-second animated explainer for **ToDining**, the Smart Restaurant Management SaaS Platform.
 Built in Remotion (React), 1920×1080, 30fps. The sequence runs: brand hook → the problem →
-the SmartDine solution & 30-second journey → the full customer mobile journey → the live
+the ToDining solution & 30-second journey → the full customer mobile journey → the live
 kitchen & waiter boards → the owner/admin suite → multi-restaurant SaaS → tech stack + CTA.
 
 Brand palette used for `accent`: ember/terracotta `#d9521f`, sage `#7c9473`, gold `#c89b3c`,
@@ -15,10 +15,10 @@ characters/second so each line comfortably fits its scene duration.
     "id": "intro-brand",
     "durationInSeconds": 4,
     "kind": "intro",
-    "heading": "SmartDine",
+    "heading": "ToDining",
     "subhead": "Scan. Order. Dine.",
     "captions": ["Modern dining OS"],
-    "narration": "Meet SmartDine — one smart platform that runs your entire restaurant.",
+    "narration": "Meet ToDining — one smart platform that runs your entire restaurant.",
     "screenshot": null,
     "accent": "#d9521f"
   },
@@ -40,7 +40,7 @@ characters/second so each line comfortably fits its scene duration.
     "heading": "One platform. Every role.",
     "subhead": "Customer, waiter, kitchen, manager and owner — in sync.",
     "captions": ["Real-time", "Mobile-first", "Multi-restaurant"],
-    "narration": "SmartDine connects every role on one real-time system, so an order placed at the table reaches the kitchen instantly.",
+    "narration": "ToDining connects every role on one real-time system, so an order placed at the table reaches the kitchen instantly.",
     "screenshot": "landing.png",
     "accent": "#d9521f"
   },
@@ -204,8 +204,8 @@ characters/second so each line comfortably fits its scene duration.
     "kind": "outro",
     "heading": "Scan. Order. Dine.",
     "subhead": "Powered by React, Supabase and Vercel.",
-    "captions": ["Go live today", "smartdine.app"],
-    "narration": "SmartDine — built on React and Supabase. Scan, order, dine. Start serving smarter today.",
+    "captions": ["Go live today", "todining.app"],
+    "narration": "ToDining — built on React and Supabase. Scan, order, dine. Start serving smarter today.",
     "screenshot": "landing.png",
     "accent": "#d9521f"
   }

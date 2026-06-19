@@ -1,17 +1,17 @@
-# SmartDine — Explainer Video (Remotion)
+# ToDining — Explainer Video (Remotion)
 
-A ~95-second animated explainer covering the entire SmartDine product — the customer
+A ~95-second animated explainer covering the entire ToDining product — the customer
 mobile-first ordering journey and the staff/admin web dashboards — built with
 [Remotion](https://remotion.dev).
 
 ## Output
-- **`out/smartdine-explainer.mp4`** — 1920×1080, 30fps, H.264, ~95s.
+- **`out/todining-explainer.mp4`** — 1920×1080, 30fps, H.264, ~95s.
 
 ## Run it
 ```bash
 npm install
 npm run studio    # open the Remotion preview/editor
-npm run render    # render to out/smartdine-explainer.mp4
+npm run render    # render to out/todining-explainer.mp4
 ```
 
 ## What's inside
@@ -19,7 +19,7 @@ npm run render    # render to out/smartdine-explainer.mp4
   with narration, captions, per-scene accent and the screenshot each scene shows.
 - `src/Explainer.tsx` — sequences the scenes over a persistent, accent-shifting background.
 - `src/components/` — device frames (phone + browser), animated headings/chips, subtitles, chrome.
-- `public/shots/` — real screenshots of every SmartDine screen (mobile + desktop) captured from the running app.
+- `public/shots/` — real screenshots of every ToDining screen (mobile + desktop) captured from the running app.
 
 ## Source material
 - `script.md` — full storyboard (Visual Storyteller agent).

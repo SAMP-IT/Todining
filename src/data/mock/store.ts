@@ -44,7 +44,7 @@ export interface Database {
   notifications: Notification[];
 }
 
-const STORAGE_KEY = 'smartdine_db_v1';
+const STORAGE_KEY = 'todining_db_v1';
 
 function load(): Database {
   if (typeof window !== 'undefined') {

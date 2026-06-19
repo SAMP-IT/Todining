@@ -16,7 +16,7 @@ export function Wordmark({ showLogo = true, className }: { showLogo?: boolean; c
     <span className={cn('inline-flex items-center gap-2', className)}>
       {showLogo && <Logo className="h-8 w-8" />}
       <span className="font-display text-xl font-semibold tracking-tight text-ink">
-        Smart<span className="text-ember-500">Dine</span>
+        To<span className="text-ember-500">Dining</span>
       </span>
     </span>
   );

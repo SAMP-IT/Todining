@@ -10,7 +10,7 @@ interface AuthValue {
 
 const AuthContext = createContext<AuthValue | null>(null);
 
-const AUTH_KEY = 'smartdine_auth_staff';
+const AUTH_KEY = 'todining_auth_staff';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<Staff | null>(() => {

@@ -44,7 +44,7 @@ export function LandingPage() {
           Run your whole restaurant from <span className="text-ember-500">one simple</span> platform.
         </h1>
         <p className="mt-5 max-w-xl text-lg text-ink-soft">
-          SmartDine turns a QR code into a full ordering, kitchen, reservation, billing and
+          ToDining turns a QR code into a full ordering, kitchen, reservation, billing and
           analytics system — clean enough that guests of all ages just get it.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
@@ -116,7 +116,7 @@ export function LandingPage() {
 
       <footer className="border-t border-ink/8 py-8 text-center text-sm text-ink-muted">
         <Wordmark className="justify-center" />
-        <p className="mt-3">Scan · Order · Dine — © {new Date().getFullYear()} SmartDine</p>
+        <p className="mt-3">Scan · Order · Dine — © {new Date().getFullYear()} ToDining</p>
       </footer>
     </div>
   );

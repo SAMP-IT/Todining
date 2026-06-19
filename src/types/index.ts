@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// SmartDine domain models — single source of truth for the entire app.
+// ToDining domain models — single source of truth for the entire app.
 // Mirrors the 14 database modules from the product spec (+ service_requests,
 // upsell_rules). Every tenant-scoped entity carries `restaurantId`.
 // ─────────────────────────────────────────────────────────────────────────────

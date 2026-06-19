@@ -1,4 +1,4 @@
-# SmartDine — Implementation Plan
+# ToDining — Implementation Plan
 
 > Smart Restaurant Management SaaS Platform. Built from `Smart Restaurant Management SaaS Platform.doc`.
 > Stack: **React 18 + TypeScript + Vite + Tailwind CSS**. Mobile-first, multi-tenant SaaS.
@@ -6,7 +6,7 @@
 ## 0. Decisions (locked)
 - **Data layer:** Frontend-first against a typed service abstraction backed by an in-memory store + realtime event bus. Full Supabase SQL schema (tables + RLS multi-tenant policies) is delivered so going live = config change, not rewrite.
 - **Integrations:** AI Upselling = rule-based engine; WhatsApp = notification service that previews/logs the exact message. Both behind interfaces ready for OpenAI / Meta WhatsApp / Twilio.
-- **Brand:** "SmartDine". Modern SaaS aesthetic, clean, minimal-clicks, mobile-first.
+- **Brand:** "ToDining". Modern SaaS aesthetic, clean, minimal-clicks, mobile-first.
 
 ## 1. Architecture
 - **Routing:** `react-router-dom` v6 with role-guarded routes.

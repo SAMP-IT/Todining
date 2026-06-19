@@ -18,7 +18,7 @@ const CartContext = createContext<CartValue | null>(null);
 
 /** Cart is scoped per table session and persisted so a refresh keeps the order. */
 export function CartProvider({ scopeKey, children }: { scopeKey: string; children: ReactNode }) {
-  const storageKey = `smartdine_cart_${scopeKey}`;
+  const storageKey = `todining_cart_${scopeKey}`;
   const [items, setItems] = useState<CartItem[]>(() => {
     if (typeof window === 'undefined') return [];
     try {

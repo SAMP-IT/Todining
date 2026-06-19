@@ -1,11 +1,11 @@
 {
-  "name": "smartdine-video",
+  "name": "todining-video",
   "version": "1.0.0",
   "private": true,
-  "description": "SmartDine explainer video (Remotion)",
+  "description": "ToDining explainer video (Remotion)",
   "scripts": {
     "studio": "remotion studio",
-    "render": "remotion render src/index.ts SmartDineExplainer out/smartdine-explainer.mp4 --concurrency=2"
+    "render": "remotion render src/index.ts ToDiningExplainer out/todining-explainer.mp4 --concurrency=2"
   },
   "dependencies": {
     "@remotion/google-fonts": "4.0.475",

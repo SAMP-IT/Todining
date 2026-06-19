@@ -50,7 +50,7 @@ export const reservationService = {
       notificationService.send(res.restaurantId, {
         type: 'reservation_confirmed',
         recipient: res.name,
-        message: `Hello ${res.name.split(' ')[0]}, your table reservation has been confirmed.\n${formatReservationSlot(res.date, res.time)} · ${res.guests} guests.\n— ${restaurant?.name ?? 'SmartDine'}`,
+        message: `Hello ${res.name.split(' ')[0]}, your table reservation has been confirmed.\n${formatReservationSlot(res.date, res.time)} · ${res.guests} guests.\n— ${restaurant?.name ?? 'ToDining'}`,
       });
     }
     return res;

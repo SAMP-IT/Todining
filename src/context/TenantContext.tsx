@@ -12,7 +12,7 @@ interface TenantValue {
 
 const TenantContext = createContext<TenantValue | null>(null);
 
-const LAST_KEY = 'smartdine_last_restaurant';
+const LAST_KEY = 'todining_last_restaurant';
 
 export function TenantProvider({ children }: { children: ReactNode }) {
   const all = restaurantService.list();

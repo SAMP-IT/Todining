@@ -17,9 +17,9 @@ export interface Scene {
 // Storyboard authored by the Visual Storyteller agent (remotion/script.md),
 // lightly enriched with chapter kickers for on-screen chapter cues.
 export const SCENES: Scene[] = [
-  { id: 'intro-brand', durationInSeconds: 4, kind: 'intro', heading: 'SmartDine', subhead: 'Scan. Order. Dine.', captions: ['Modern dining OS'], narration: 'Meet SmartDine — one smart platform that runs your entire restaurant.', screenshot: null, accent: '#d9521f' },
+  { id: 'intro-brand', durationInSeconds: 4, kind: 'intro', heading: 'ToDining', subhead: 'Scan. Order. Dine.', captions: ['Modern dining OS'], narration: 'Meet ToDining — one smart platform that runs your entire restaurant.', screenshot: null, accent: '#d9521f' },
   { id: 'the-problem', durationInSeconds: 5, kind: 'statement', heading: 'Dining is broken', subhead: 'Long waits, lost orders, frazzled staff, paper bills.', captions: ['Waiting to order', 'Missed tickets', 'Slow checkout'], narration: "Diners wait too long, kitchens lose tickets, and staff drown in chaos. There's a better way.", screenshot: null, accent: '#7c9473' },
-  { id: 'solution-overview', durationInSeconds: 6, kind: 'statement', heading: 'One platform. Every role.', subhead: 'Customer, waiter, kitchen, manager and owner — in sync.', captions: ['Real-time', 'Mobile-first', 'Multi-restaurant'], narration: 'SmartDine connects every role on one real-time system, so an order placed at the table reaches the kitchen instantly.', screenshot: 'landing.png', accent: '#d9521f' },
+  { id: 'solution-overview', durationInSeconds: 6, kind: 'statement', heading: 'One platform. Every role.', subhead: 'Customer, waiter, kitchen, manager and owner — in sync.', captions: ['Real-time', 'Mobile-first', 'Multi-restaurant'], narration: 'ToDining connects every role on one real-time system, so an order placed at the table reaches the kitchen instantly.', screenshot: 'landing.png', accent: '#d9521f' },
 
   { id: 'customer-qr-menu', durationInSeconds: 6, kind: 'phone', chapter: 'For Guests', heading: 'Scan to order', subhead: 'QR opens the menu, the table is detected — no login.', captions: ['Scan QR', 'Table auto-detected', 'No app needed'], narration: "Guests scan the table QR and the menu opens instantly — no app, no login, the table's already known.", screenshot: 'mobile-menu.png', accent: '#d9521f' },
   { id: 'customer-menu-browse', durationInSeconds: 5, kind: 'phone', chapter: 'For Guests', heading: 'A menu that sells', subhead: 'Photos, categories and live availability.', captions: ['Starters to combos', 'Real photos', 'Live availability'], narration: 'A beautiful digital menu with photos, clear categories and live availability for every dish.', screenshot: 'mobile-menu.png', accent: '#c89b3c' },
@@ -39,7 +39,7 @@ export const SCENES: Scene[] = [
 
   { id: 'multi-restaurant', durationInSeconds: 5, kind: 'dashboard', chapter: 'Scale', heading: 'Built for many', subhead: 'Every restaurant gets isolated menus, orders and data.', captions: ['One login', 'Isolated data', 'Scale to chains'], narration: 'Run one venue or a whole chain — each restaurant gets fully isolated menus, orders, staff and data.', screenshot: 'admin-restaurants.png', accent: '#c89b3c' },
 
-  { id: 'outro-cta', durationInSeconds: 5, kind: 'outro', heading: 'Scan. Order. Dine.', subhead: 'Powered by React, Supabase and Vercel.', captions: ['Start free today', 'smartdine.app'], narration: 'SmartDine — built on React and Supabase. Scan, order, dine. Start serving smarter today.', screenshot: null, accent: '#d9521f' },
+  { id: 'outro-cta', durationInSeconds: 5, kind: 'outro', heading: 'Scan. Order. Dine.', subhead: 'Powered by React, Supabase and Vercel.', captions: ['Start free today', 'todining.app'], narration: 'ToDining — built on React and Supabase. Scan, order, dine. Start serving smarter today.', screenshot: null, accent: '#d9521f' },
 ];
 
 export const FPS = 30;

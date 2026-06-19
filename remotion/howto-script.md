@@ -1,6 +1,6 @@
-# SmartDine — "How To Use" Tutorial Storyboard
+# ToDining — "How To Use" Tutorial Storyboard
 
-A role-by-role instructional walkthrough explainer for SmartDine, the Smart Restaurant
+A role-by-role instructional walkthrough explainer for ToDining, the Smart Restaurant
 Management SaaS platform. Built in Remotion at **1920×1080, 30fps**.
 
 - **Brand:** warm modern-dining — ember/terracotta `#d9521f`, sage `#7c9473`, gold `#c89b3c`, cream `#f7f1e6`
@@ -17,9 +17,9 @@ Per-role accents: Customer `#d9521f` · Owner `#c89b3c` · Manager `#b8643a` · 
     "id": "intro",
     "kind": "intro",
     "durationInSeconds": 5,
-    "heading": "How to use SmartDine",
+    "heading": "How to use ToDining",
     "subhead": "One platform, five roles — here's how each one works.",
-    "narration": "Welcome to SmartDine. Let's walk through exactly how each role uses the platform, step by step.",
+    "narration": "Welcome to ToDining. Let's walk through exactly how each role uses the platform, step by step.",
     "screenshot": null,
     "accent": "#d9521f"
   },
@@ -45,7 +45,7 @@ Per-role accents: Customer `#d9521f` · Owner `#c89b3c` · Manager `#b8643a` · 
     "stepTotal": 6,
     "heading": "Scan the table QR",
     "subhead": "Your table is detected automatically.",
-    "narration": "First, scan the QR code on your table. SmartDine detects your table number automatically.",
+    "narration": "First, scan the QR code on your table. ToDining detects your table number automatically.",
     "device": "phone",
     "screenshot": "mobile-menu.png",
     "accent": "#d9521f"
@@ -375,7 +375,7 @@ Per-role accents: Customer `#d9521f` · Owner `#c89b3c` · Manager `#b8643a` · 
     "durationInSeconds": 5,
     "heading": "Scan. Order. Dine.",
     "subhead": "Try the demo — one platform for your whole team.",
-    "narration": "That's SmartDine — five roles, one seamless platform. Scan, order, dine. Try the live demo today.",
+    "narration": "That's ToDining — five roles, one seamless platform. Scan, order, dine. Try the live demo today.",
     "screenshot": null,
     "accent": "#d9521f"
   }

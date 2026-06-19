@@ -9,7 +9,7 @@ export const RemotionRoot: React.FC = () => {
   return (
     <>
       <Composition
-        id="SmartDineExplainer"
+        id="ToDiningExplainer"
         component={Explainer}
         durationInFrames={totalDurationInFrames}
         fps={FPS}
@@ -17,7 +17,7 @@ export const RemotionRoot: React.FC = () => {
         height={HEIGHT}
       />
       <Composition
-        id="SmartDineHowTo"
+        id="ToDiningHowTo"
         component={HowTo}
         durationInFrames={totalHowToFrames}
         fps={FPS}

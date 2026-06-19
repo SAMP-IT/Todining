@@ -1,4 +1,4 @@
-# SmartDine — Video Microcopy
+# ToDining — Video Microcopy
 
 ## 1. Tagline
 **Primary:** Scan. Order. Dine.
@@ -38,4 +38,4 @@ The all-in-one platform that runs your restaurant from QR scan to settled bill.
 5. **Closing:** Dining, Done Smarter.
 
 ## 5. Call to Action
-Start your free SmartDine trial today.
+Start your free ToDining trial today.

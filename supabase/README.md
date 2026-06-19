@@ -1,4 +1,4 @@
-# SmartDine — Supabase backend
+# ToDining — Supabase backend
 
 The app currently runs on a swappable in-memory data layer (`src/data/mock` +
 `src/data/services`). This folder contains everything needed to move to a real

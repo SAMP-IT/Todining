@@ -1,5 +1,5 @@
 -- ============================================================================
--- SmartDine — PostgreSQL schema for Supabase
+-- ToDining — PostgreSQL schema for Supabase
 -- Multi-tenant: every domain table carries restaurant_id. Isolation is enforced
 -- by Row Level Security (see policies.sql). Run schema.sql first, then policies.sql.
 -- ============================================================================
