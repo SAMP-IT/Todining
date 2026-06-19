@@ -13,6 +13,10 @@ export const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> },
   { path: '/login', element: <LoginPage /> },
 
+  // Public entry point for the Admin Panel. RoleGuard on /admin redirects
+  // unauthenticated/non-admin users appropriately.
+  { path: '/admin-panel', element: <Navigate to="/admin" replace /> },
+
   // Customer (QR) — no auth.
   {
     path: '/r/:slug/t/:tableId',
@@ -56,8 +60,9 @@ export const router = createBrowserRouter([
       </RoleGuard>
     ),
     children: [
-      { index: true, element: <Navigate to="/admin/orders" replace /> },
+      { index: true, lazy: () => import('@/pages/admin/DashboardPage').then((m) => ({ Component: m.DashboardPage })) },
       { path: 'analytics', lazy: () => import('@/pages/admin/AnalyticsPage').then((m) => ({ Component: m.AnalyticsPage })) },
+      { path: 'categories', lazy: () => import('@/pages/admin/CategoriesPage').then((m) => ({ Component: m.CategoriesPage })) },
       { path: 'orders', lazy: () => import('@/pages/admin/OrdersPage').then((m) => ({ Component: m.OrdersPage })) },
       { path: 'tables', lazy: () => import('@/pages/admin/TablesPage').then((m) => ({ Component: m.TablesPage })) },
       { path: 'menu', lazy: () => import('@/pages/admin/MenuManagePage').then((m) => ({ Component: m.MenuManagePage })) },

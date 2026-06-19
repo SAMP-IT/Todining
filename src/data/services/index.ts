@@ -3,6 +3,7 @@
 // these implementations for ones with identical signatures.
 export { restaurantService } from './restaurantService';
 export { menuService } from './menuService';
+export { categoryService } from './categoryService';
 export { orderService } from './orderService';
 export { tableService } from './tableService';
 export { serviceRequestService, SERVICE_REQUEST_LABELS } from './serviceRequestService';

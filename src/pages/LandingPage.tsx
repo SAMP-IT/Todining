@@ -4,7 +4,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { Wordmark } from '@/components/layout/Brand';
-import { restaurantService } from '@/data/services';
+import { restaurantService, tableService } from '@/data/services';
 
 const FEATURES = [
   { icon: QrCode, title: 'QR table ordering', desc: 'Scan, browse, order. No app, no login, under 30 seconds.' },
@@ -16,8 +16,12 @@ const FEATURES = [
 ];
 
 export function LandingPage() {
-  const demo = restaurantService.getBySlug('spice-garden');
-  const demoTable = demo ? `/r/${demo.slug}/t/tbl_rest_spice_1` : '/login';
+  // Resolve the demo destination from live data instead of hard-coding ids:
+  // fall back to the first restaurant, and always open a table that actually
+  // exists so "Try demo" never dead-ends on the 404 page.
+  const demo = restaurantService.getBySlug('spice-garden') ?? restaurantService.list()[0];
+  const demoTableId = demo ? tableService.list(demo.id)[0]?.id : undefined;
+  const demoTable = demo && demoTableId ? `/r/${demo.slug}/t/${demoTableId}` : '/login';
 
   return (
     <div className="min-h-[100dvh]">
@@ -25,6 +29,9 @@ export function LandingPage() {
       <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
         <Wordmark />
         <div className="flex items-center gap-2">
+          <Link to="/admin-panel">
+            <Button variant="ghost" size="sm">Admin Panel</Button>
+          </Link>
           <Link to="/login">
             <Button variant="ghost" size="sm">Staff login</Button>
           </Link>

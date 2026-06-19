@@ -32,11 +32,13 @@ export const ROLE_CONFIG: Record<Role, RoleConfig> = {
 };
 
 /** Admin nav items gated by role (owner sees everything incl. revenue/analytics). */
-export const ADMIN_NAV: { to: string; label: string; icon: string; ownerOnly?: boolean }[] = [
+export const ADMIN_NAV: { to: string; label: string; icon: string; ownerOnly?: boolean; end?: boolean }[] = [
+  { to: '/admin', label: 'Dashboard', icon: 'LayoutDashboard', end: true },
   { to: '/admin/analytics', label: 'Analytics', icon: 'BarChart3', ownerOnly: true },
   { to: '/admin/orders', label: 'Orders', icon: 'ReceiptText' },
   { to: '/admin/tables', label: 'Tables & QR', icon: 'LayoutGrid' },
   { to: '/admin/menu', label: 'Menu', icon: 'UtensilsCrossed' },
+  { to: '/admin/categories', label: 'Categories', icon: 'FolderTree' },
   { to: '/admin/reservations', label: 'Reservations', icon: 'CalendarCheck' },
   { to: '/admin/inventory', label: 'Inventory', icon: 'Boxes' },
   { to: '/admin/billing', label: 'Billing', icon: 'IndianRupee' },

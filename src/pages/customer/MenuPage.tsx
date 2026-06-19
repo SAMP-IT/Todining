@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import type { CustomerSession } from '@/features/customer/useCustomerSession';
 import { menuService } from '@/data/services';
+import { useLiveQuery } from '@/hooks/useLiveQuery';
 import { MenuItemCard } from '@/features/menu/MenuItemCard';
 import { CategoryNav } from '@/features/menu/CategoryNav';
 import { CartBar } from '@/features/cart/CartBar';
@@ -11,8 +12,16 @@ export function MenuPage() {
   const { restaurant } = useOutletContext<CustomerSession>();
   const symbol = restaurant.settings.currencySymbol;
 
-  const categories = menuService.categories(restaurant.id);
-  const items = menuService.items(restaurant.id);
+  // Live-bound to the menu: only *available* items are shown, and the view
+  // re-reads whenever the owner adds, edits, removes or toggles a dish — so an
+  // item deleted or marked unavailable in the admin disappears here immediately.
+  const { categories, items } = useLiveQuery(
+    () => ({
+      categories: menuService.categories(restaurant.id),
+      items: menuService.availableItems(restaurant.id),
+    }),
+    { restaurantId: restaurant.id, types: ['data:changed'] },
+  );
 
   // Only show categories that actually have items.
   const sections = useMemo(

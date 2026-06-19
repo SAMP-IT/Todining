@@ -18,7 +18,9 @@ export function useRealtime(
   useEffect(() => {
     const typeList = types ? (types.split(',') as RealtimeEvent['type'][]) : undefined;
     return realtimeBus.subscribe((event) => {
-      if (restaurantId && event.restaurantId !== restaurantId) return;
+      // '*' is a broadcast (cross-tab sync / full reset) — it must reach every
+      // subscriber regardless of the restaurant filter.
+      if (restaurantId && event.restaurantId !== restaurantId && event.restaurantId !== '*') return;
       if (typeList && !typeList.includes(event.type)) return;
       handlerRef.current(event);
     });

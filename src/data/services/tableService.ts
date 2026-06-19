@@ -43,6 +43,29 @@ export const tableService = {
     return created;
   },
 
+  /**
+   * Resolve a table by id, creating it if this device doesn't have it yet.
+   * QR deep-links can reference a table that was added on another device or
+   * survived a data reset; because the mock store is per-browser localStorage,
+   * the table would otherwise be unresolvable and the QR menu would 404.
+   * Idempotent and emit-free so it's safe to call during render.
+   */
+  ensure(restaurantId: string, tableId: string): RestaurantTable {
+    const existing = this.get(tableId);
+    if (existing) return existing;
+    return mutate((db) => {
+      const nums = db.tables.filter((t) => t.restaurantId === restaurantId).map((t) => t.number);
+      // Reuse a trailing number from the id (e.g. tbl_rest_spice_7 → 7) when present.
+      const parsed = Number(/(\d+)$/.exec(tableId)?.[1]);
+      const number = Number.isInteger(parsed) && parsed > 0 ? parsed : (nums.length ? Math.max(...nums) : 0) + 1;
+      const table: RestaurantTable = { id: tableId, restaurantId, number, seats: 4, status: 'available' };
+      db.tables.push(table);
+      const slug = restaurantService.getById(restaurantId)?.slug ?? restaurantId;
+      db.qrCodes.push({ id: makeId('qr'), restaurantId, tableId, token: tableId, url: `/r/${slug}/t/${tableId}` });
+      return table;
+    });
+  },
+
   remove(id: string): void {
     const t = this.get(id);
     mutate((db) => {

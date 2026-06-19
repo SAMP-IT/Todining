@@ -14,6 +14,9 @@ import { cn } from '@/lib/cn';
 export function RestaurantsPage() {
   const { restaurant: active, restaurantId, allRestaurants, setRestaurantById } = useTenant();
   const [editing, setEditing] = useState<Restaurant | null>(null);
+  const [name, setName] = useState('');
+  const [tagline, setTagline] = useState('');
+  const [logoColor, setLogoColor] = useState('#d9521f');
   const [tax, setTax] = useState(0);
   const [service, setService] = useState(0);
   const [symbol, setSymbol] = useState('₹');
@@ -36,13 +39,19 @@ export function RestaurantsPage() {
 
   function openSettings(r: Restaurant) {
     setEditing(r);
+    setName(r.name);
+    setTagline(r.tagline ?? '');
+    setLogoColor(r.logoColor);
     setTax(Math.round(r.settings.taxRate * 100));
     setService(Math.round(r.settings.serviceChargeRate * 100));
     setSymbol(r.settings.currencySymbol);
   }
   function saveSettings() {
-    if (!editing) return;
+    if (!editing || !name.trim()) return;
     restaurantService.update(editing.id, {
+      name: name.trim(),
+      tagline: tagline.trim(),
+      logoColor,
       settings: { ...editing.settings, taxRate: tax / 100, serviceChargeRate: service / 100, currencySymbol: symbol },
     });
     toast.success('Restaurant settings updated.');
@@ -139,10 +148,20 @@ export function RestaurantsPage() {
           </>
         }
       >
-        <div className="grid grid-cols-3 gap-3">
-          <Input label="Tax %" type="number" min={0} max={100} value={tax} onChange={(e) => setTax(e.target.valueAsNumber || 0)} />
-          <Input label="Service %" type="number" min={0} max={100} value={service} onChange={(e) => setService(e.target.valueAsNumber || 0)} />
-          <Input label="Currency" value={symbol} onChange={(e) => setSymbol(e.target.value)} />
+        <div className="space-y-3">
+          <Input label="Restaurant name" value={name} onChange={(e) => setName(e.target.value)} />
+          <Input label="Tagline" value={tagline} onChange={(e) => setTagline(e.target.value)} placeholder="e.g. Authentic Indian kitchen" />
+          <div className="flex items-end gap-3">
+            <Input label="Brand colour" type="color" value={logoColor} onChange={(e) => setLogoColor(e.target.value)} className="h-11 w-20 p-1" />
+            <span className="grid h-11 w-11 place-items-center rounded-xl text-base font-bold text-white" style={{ background: logoColor }}>
+              {(name || editing?.name || '?').charAt(0)}
+            </span>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <Input label="Tax %" type="number" min={0} max={100} value={tax} onChange={(e) => setTax(e.target.valueAsNumber || 0)} />
+            <Input label="Service %" type="number" min={0} max={100} value={service} onChange={(e) => setService(e.target.valueAsNumber || 0)} />
+            <Input label="Currency" value={symbol} onChange={(e) => setSymbol(e.target.value)} />
+          </div>
         </div>
       </Modal>
     </div>

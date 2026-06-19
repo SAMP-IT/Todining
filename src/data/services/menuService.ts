@@ -23,21 +23,26 @@ export const menuService = {
   },
 
   create(restaurantId: string, input: Omit<MenuItem, 'id' | 'restaurantId'>): MenuItem {
+    console.info('[ToDining][menu] Creating menu item…', { restaurantId, input });
     const created = mutate((db) => {
       const item: MenuItem = { ...input, id: makeId('mi'), restaurantId };
       db.menuItems.push(item);
       return item;
     });
+    console.info('[ToDining][menu] Create applied to cache, write-through queued:', created.id);
     realtimeBus.emit({ type: 'data:changed', restaurantId, payload: { entity: 'menu' } });
     return created;
   },
 
   update(id: string, patch: Partial<MenuItem>): MenuItem | undefined {
+    console.info('[ToDining][menu] Updating menu item…', { id, patch });
     const updated = mutate((db) => {
       const item = db.menuItems.find((m) => m.id === id);
       if (item) Object.assign(item, patch);
       return item;
     });
+    if (!updated) console.warn('[ToDining][menu] Update: no item found for id', id);
+    else console.info('[ToDining][menu] Update applied to cache, write-through queued:', id);
     if (updated) realtimeBus.emit({ type: 'data:changed', restaurantId: updated.restaurantId, payload: { entity: 'menu' } });
     return updated;
   },
@@ -48,10 +53,12 @@ export const menuService = {
   },
 
   remove(id: string): void {
+    console.info('[ToDining][menu] Deleting menu item…', id);
     const item = this.getItem(id);
     mutate((db) => {
       db.menuItems = db.menuItems.filter((m) => m.id !== id);
     });
+    console.info('[ToDining][menu] Delete applied to cache, write-through queued:', id);
     if (item) realtimeBus.emit({ type: 'data:changed', restaurantId: item.restaurantId, payload: { entity: 'menu' } });
   },
 };

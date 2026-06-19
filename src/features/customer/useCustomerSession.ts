@@ -19,8 +19,14 @@ export function useCustomerSession(): CustomerSession | null {
 
   const session = useMemo(() => {
     const restaurant = slug ? restaurantService.getBySlug(slug) : undefined;
-    const table = tableId ? tableService.get(tableId) : undefined;
-    if (!restaurant || !table || table.restaurantId !== restaurant.id) return null;
+    if (!restaurant || !tableId) return null;
+    const existing = tableService.get(tableId);
+    // A table that belongs to a different restaurant is a genuinely bad link.
+    if (existing && existing.restaurantId !== restaurant.id) return null;
+    // The restaurant is valid, so the menu is available — make sure the table
+    // exists (auto-provisioning it if this device hasn't seen it) instead of
+    // dead-ending on the 404 page when a QR is scanned on a fresh device.
+    const table = existing ?? tableService.ensure(restaurant.id, tableId);
     return { restaurant, table };
   }, [slug, tableId]);
 

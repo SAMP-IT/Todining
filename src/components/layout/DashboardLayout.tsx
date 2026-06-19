@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
-  BarChart3, Boxes, Building2, CalendarCheck, IndianRupee, LayoutGrid, LogOut, Menu as MenuIcon,
-  MessageCircle, ReceiptText, Star, UtensilsCrossed, Users, X,
+  BarChart3, Boxes, Building2, CalendarCheck, FolderTree, IndianRupee, LayoutDashboard, LayoutGrid,
+  LogOut, Menu as MenuIcon, MessageCircle, ReceiptText, Star, UtensilsCrossed, Users, X,
 } from 'lucide-react';
 import { Wordmark } from './Brand';
 import { RestaurantSwitcher } from './RestaurantSwitcher';
@@ -12,7 +12,7 @@ import { cn } from '@/lib/cn';
 
 const ICONS: Record<string, typeof BarChart3> = {
   BarChart3, ReceiptText, LayoutGrid, UtensilsCrossed, CalendarCheck, Boxes,
-  IndianRupee, Star, MessageCircle, Users, Building2,
+  IndianRupee, Star, MessageCircle, Users, Building2, LayoutDashboard, FolderTree,
 };
 
 function NavItems({ onNavigate }: { onNavigate?: () => void }) {
@@ -26,6 +26,7 @@ function NavItems({ onNavigate }: { onNavigate?: () => void }) {
           <NavLink
             key={item.to}
             to={item.to}
+            end={item.end}
             onClick={onNavigate}
             className={({ isActive }) =>
               cn(
