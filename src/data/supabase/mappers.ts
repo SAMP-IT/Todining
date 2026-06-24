@@ -31,13 +31,18 @@ const restaurants: TableSpec<Restaurant> = {
   table: 'restaurants',
   toRow: (r) => ({
     id: r.id, name: r.name, slug: r.slug, tagline: r.tagline ?? null,
-    logo_color: r.logoColor,
+    description: r.description ?? null, logo_color: r.logoColor, logo_url: r.logoUrl ?? null,
+    parent_id: r.parentId ?? null, created_by: r.createdBy ?? null,
+    created_at: r.createdAt ?? null, updated_at: r.updatedAt ?? null,
     tax_rate: r.settings.taxRate, service_charge_rate: r.settings.serviceChargeRate,
     currency: r.settings.currency, currency_symbol: r.settings.currencySymbol,
   }),
   fromRow: (row) => ({
     id: row.id, name: row.name, slug: row.slug, tagline: row.tagline ?? undefined,
-    logoColor: row.logo_color ?? '#d9521f',
+    description: row.description ?? undefined,
+    logoColor: row.logo_color ?? '#d9521f', logoUrl: row.logo_url ?? undefined,
+    parentId: row.parent_id ?? null, createdBy: row.created_by ?? undefined,
+    createdAt: row.created_at ?? undefined, updatedAt: row.updated_at ?? undefined,
     settings: {
       taxRate: num(row.tax_rate), serviceChargeRate: num(row.service_charge_rate),
       currency: row.currency, currencySymbol: row.currency_symbol,
@@ -50,10 +55,12 @@ const staff: TableSpec<Staff> = {
   table: 'staff',
   toRow: (s) => ({
     id: s.id, restaurant_id: s.restaurantId, name: s.name, email: s.email,
+    username: s.username ?? null, password_hash: s.passwordHash ?? null,
     role: s.role, avatar_color: s.avatarColor ?? null, active: s.active,
   }),
   fromRow: (row) => ({
     id: row.id, restaurantId: row.restaurant_id, name: row.name, email: row.email,
+    username: row.username ?? undefined, passwordHash: row.password_hash ?? undefined,
     role: row.role, avatarColor: row.avatar_color ?? undefined, active: row.active,
   }),
 };

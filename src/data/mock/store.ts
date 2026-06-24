@@ -236,8 +236,22 @@ async function pushAll(source: Database): Promise<void> {
 function reportWriteError(err: unknown): void {
   const message = err instanceof Error ? err.message : String(err);
   console.error('[ToDining] Supabase write failed:', message);
+  // A missing column / schema mismatch is the usual culprit — make it unmistakable.
+  const schemaHint = /column .* does not exist|schema cache|PGRST204|42703/i.test(message)
+    ? ' (database schema is out of date — run supabase/migrations/0001_multi_tenant.sql)'
+    : '';
   // Surfaced lazily so the store has no hard dependency on the toast lib timing.
-  void import('sonner').then(({ toast }) => toast.error(`Couldn't save changes: ${message}`));
+  void import('sonner').then(({ toast }) =>
+    toast.error(`Couldn't save changes${schemaHint}: ${message}`));
+  // The cache still holds the optimistic rows the database rejected. Re-hydrate
+  // from Supabase so the in-memory state — and therefore every screen, including
+  // the workspace manager — matches what was actually persisted, instead of
+  // showing phantom data that silently disappears on the next reload.
+  if (isSupabaseEnabled && supabase) {
+    void hydrateAll()
+      .then(() => realtimeBus.emit({ type: 'data:changed', restaurantId: '*', payload: { entity: 'all' } }))
+      .catch((e) => console.error('[ToDining] Re-hydrate after write failure also failed:', e));
+  }
 }
 
 // ── Realtime (Postgres changes → refresh cache → notify UI) ─────────────────────
