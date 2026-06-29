@@ -1,7 +1,8 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useReducer } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTenant } from '@/context/TenantContext';
 import { restaurantService, tableService } from '@/data/services';
+import { useRealtime } from '@/hooks/useRealtime';
 import type { Restaurant, RestaurantTable } from '@/types';
 
 export interface CustomerSession {
@@ -17,6 +18,21 @@ export function useCustomerSession(): CustomerSession | null {
   const { slug, tableId } = useParams<{ slug: string; tableId: string }>();
   const { setRestaurantBySlug } = useTenant();
 
+  // Re-resolve the restaurant/table when the admin renames or re-themes the
+  // restaurant (or on a full cross-tab reset) so the customer header, tagline
+  // and currency stay in sync with the admin without a page reload.
+  const [version, bump] = useReducer((n: number) => n + 1, 0);
+  useRealtime(
+    (event) => {
+      if (event.type !== 'data:changed') return;
+      // Match both the same-tab semantic entity ('restaurant'/'table') and the
+      // cross-tab Supabase dbKey ('restaurants'/'tables'), plus a full reset.
+      const e = event.payload.entity;
+      if (['restaurant', 'restaurants', 'table', 'tables', 'all'].includes(e)) bump();
+    },
+    { types: ['data:changed'] },
+  );
+
   const session = useMemo(() => {
     const restaurant = slug ? restaurantService.getBySlug(slug) : undefined;
     if (!restaurant || !tableId) return null;
@@ -28,7 +44,8 @@ export function useCustomerSession(): CustomerSession | null {
     // dead-ending on the 404 page when a QR is scanned on a fresh device.
     const table = existing ?? tableService.ensure(restaurant.id, tableId);
     return { restaurant, table };
-  }, [slug, tableId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug, tableId, version]);
 
   useEffect(() => {
     if (slug) setRestaurantBySlug(slug);

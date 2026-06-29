@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { LandingPage } from '@/pages/LandingPage';
 import { LoginPage } from '@/pages/LoginPage';
+import { AdminPanelEntry } from '@/pages/AdminPanelEntry';
 import { NotFoundPage } from '@/pages/NotFoundPage';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { StaffLayout } from '@/components/layout/StaffLayout';
@@ -10,12 +11,17 @@ import { RoleGuard } from '@/components/layout/RoleGuard';
 // the customer ordering path never ships recharts/jsPDF/admin code. Landing +
 // Login stay eager for instant first paint.
 export const router = createBrowserRouter([
-  { path: '/', element: <LandingPage /> },
+  // Opening the app lands on the Hotel Workspace Manager (Admin Panel), not a
+  // hotel's public site. The public website now lives at /site (a hotel card's
+  // "View site" and every "back to website" link point there).
+  { path: '/', element: <Navigate to="/admin-panel" replace /> },
+  { path: '/site', element: <LandingPage /> },
   { path: '/login', element: <LoginPage /> },
 
-  // Public entry point for the Admin Panel. RoleGuard on /admin redirects
-  // unauthenticated/non-admin users appropriately.
-  { path: '/admin-panel', element: <Navigate to="/admin" replace /> },
+  // Public entry point for the Admin Panel — a card-based landing page. Clicking
+  // the card navigates to /admin, which renders the full dashboard (RoleGuard +
+  // all admin routes unchanged).
+  { path: '/admin-panel', element: <AdminPanelEntry /> },
 
   // Customer (QR) — no auth.
   {
@@ -51,11 +57,12 @@ export const router = createBrowserRouter([
     children: [{ index: true, lazy: () => import('@/pages/staff/WaiterPage').then((m) => ({ Component: m.WaiterPage })) }],
   },
 
-  // Admin
+  // Admin — open access: reachable directly from /admin-panel without a login.
+  // (`open` lets anonymous visitors in; a logged-in non-admin is still redirected.)
   {
     path: '/admin',
     element: (
-      <RoleGuard roles={['manager', 'owner']}>
+      <RoleGuard roles={['manager', 'owner']} open>
         <DashboardLayout />
       </RoleGuard>
     ),

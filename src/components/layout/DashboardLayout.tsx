@@ -17,7 +17,10 @@ const ICONS: Record<string, typeof BarChart3> = {
 
 function NavItems({ onNavigate }: { onNavigate?: () => void }) {
   const { user } = useAuth();
-  const items = ADMIN_NAV.filter((i) => !i.ownerOnly || user?.role === 'owner');
+  // Anonymous visitors (Admin Panel opened without login) are treated as an
+  // owner so the full menu — including owner-only Analytics & Restaurants — shows.
+  const role = user?.role ?? 'owner';
+  const items = ADMIN_NAV.filter((i) => !i.ownerOnly || role === 'owner');
   return (
     <nav className="flex flex-col gap-1">
       {items.map((item) => {
@@ -47,7 +50,18 @@ function NavItems({ onNavigate }: { onNavigate?: () => void }) {
 function UserChip() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  if (!user) return null;
+  // No session (Admin Panel opened without login): offer a sign-in affordance so
+  // staff can still authenticate from inside the panel.
+  if (!user) {
+    return (
+      <Link
+        to="/login"
+        className="flex items-center justify-center gap-2 rounded-xl border border-ink/8 bg-white p-2.5 text-sm font-semibold text-ink-soft hover:bg-ink/5"
+      >
+        Staff sign in
+      </Link>
+    );
+  }
   return (
     <div className="flex items-center gap-3 rounded-xl border border-ink/8 bg-white p-2.5">
       <span
@@ -81,7 +95,7 @@ export function DashboardLayout() {
     <div className="min-h-[100dvh] lg:grid lg:grid-cols-[16rem_1fr]">
       {/* Desktop sidebar */}
       <aside className="hidden border-r border-ink/8 bg-cream/60 p-4 lg:flex lg:flex-col">
-        <Link to="/" className="px-2 py-2">
+        <Link to="/site" className="px-2 py-2">
           <Wordmark />
         </Link>
         <div className="mt-4 px-1">

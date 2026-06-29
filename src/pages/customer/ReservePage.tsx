@@ -23,7 +23,7 @@ export function ReservePage() {
 
   return (
     <div className="mx-auto min-h-[100dvh] max-w-lg px-5 py-8">
-      <Link to="/" className="inline-block">
+      <Link to="/site" className="inline-block">
         <Wordmark />
       </Link>
 
@@ -38,7 +38,7 @@ export function ReservePage() {
             <strong className="text-ink">{formatReservationSlot(done.date, done.time)}</strong> for {done.guests} guests at {restaurant.name}.
             You'll get a WhatsApp confirmation once it's approved.
           </p>
-          <Link to="/" className="mt-6">
+          <Link to="/site" className="mt-6">
             <Button variant="outline">Back to home</Button>
           </Link>
         </div>

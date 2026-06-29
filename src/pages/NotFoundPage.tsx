@@ -11,7 +11,7 @@ export function NotFoundPage() {
       <p className="max-w-sm text-sm text-ink-muted">
         The page you're looking for may have been moved, or the QR link is invalid.
       </p>
-      <Link to="/">
+      <Link to="/site">
         <Button>Back to home</Button>
       </Link>
     </div>

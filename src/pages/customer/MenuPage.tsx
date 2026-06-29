@@ -16,10 +16,19 @@ export function MenuPage() {
   // re-reads whenever the owner adds, edits, removes or toggles a dish — so an
   // item deleted or marked unavailable in the admin disappears here immediately.
   const { categories, items } = useLiveQuery(
-    () => ({
-      categories: menuService.categories(restaurant.id),
-      items: menuService.availableItems(restaurant.id),
-    }),
+    () => {
+      const cats = menuService.categories(restaurant.id);
+      const avail = menuService.availableItems(restaurant.id);
+      // [DEBUG-MENU] temporary — trace the slug-resolved restaurantId + its items.
+      console.debug('[DEBUG-MENU] Customer MenuPage query', {
+        slugRestaurantId: restaurant.id, name: restaurant.name,
+        parentId: restaurant.parentId ?? null, kind: restaurant.parentId ? 'BRANCH' : 'HOTEL',
+        availableCount: avail.length,
+        itemRestaurantIds: [...new Set(avail.map((i) => i.restaurantId))],
+        names: avail.map((i) => i.name),
+      });
+      return { categories: cats, items: avail };
+    },
     { restaurantId: restaurant.id, types: ['data:changed'] },
   );
 

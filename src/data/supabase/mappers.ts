@@ -34,6 +34,8 @@ const restaurants: TableSpec<Restaurant> = {
     description: r.description ?? null, logo_color: r.logoColor, logo_url: r.logoUrl ?? null,
     parent_id: r.parentId ?? null, created_by: r.createdBy ?? null,
     created_at: r.createdAt ?? null, updated_at: r.updatedAt ?? null,
+    code: r.code ?? null, address: r.address ?? null, phone: r.phone ?? null,
+    email: r.email ?? null, manager: r.manager ?? null, status: r.status ?? 'active',
     tax_rate: r.settings.taxRate, service_charge_rate: r.settings.serviceChargeRate,
     currency: r.settings.currency, currency_symbol: r.settings.currencySymbol,
   }),
@@ -43,6 +45,9 @@ const restaurants: TableSpec<Restaurant> = {
     logoColor: row.logo_color ?? '#d9521f', logoUrl: row.logo_url ?? undefined,
     parentId: row.parent_id ?? null, createdBy: row.created_by ?? undefined,
     createdAt: row.created_at ?? undefined, updatedAt: row.updated_at ?? undefined,
+    code: row.code ?? undefined, address: row.address ?? undefined, phone: row.phone ?? undefined,
+    email: row.email ?? undefined, manager: row.manager ?? undefined,
+    status: (row.status ?? 'active') as 'active' | 'inactive',
     settings: {
       taxRate: num(row.tax_rate), serviceChargeRate: num(row.service_charge_rate),
       currency: row.currency, currencySymbol: row.currency_symbol,

@@ -15,7 +15,7 @@ export function StaffLayout({ title }: { title: string }) {
     <div className="min-h-[100dvh]">
       <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-ink/8 bg-cream/90 px-4 py-3 backdrop-blur sm:px-6">
         <div className="flex items-center gap-3">
-          <Link to="/">
+          <Link to="/site">
             <Wordmark />
           </Link>
           <Badge tone="ember">{title}</Badge>

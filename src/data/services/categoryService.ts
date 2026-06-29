@@ -13,9 +13,15 @@ export const categoryService = {
       .sort((a, b) => a.sort - b.sort);
   },
 
-  /** Number of menu items currently in a category (used to guard deletes). */
+  /** Number of menu items currently in a category (used to guard deletes).
+   *  Scoped to the category's own restaurant so the count can never be skewed by
+   *  another tenant's menu items — tenant isolation holds even for this guard. */
   itemCount(categoryId: string): number {
-    return getDb().menuItems.filter((m) => m.categoryId === categoryId).length;
+    const cat = getDb().categories.find((c) => c.id === categoryId);
+    if (!cat) return 0;
+    return getDb().menuItems.filter(
+      (m) => m.categoryId === categoryId && m.restaurantId === cat.restaurantId,
+    ).length;
   },
 
   create(restaurantId: string, name: string): MenuCategory {

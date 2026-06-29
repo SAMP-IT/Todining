@@ -15,6 +15,11 @@ export interface Staff {
   restaurantId: ID;
   name: string;
   email: string;
+  /** Optional alternate login handle (hotel owners created via the workspace form). */
+  username?: string;
+  /** One-way hash of the login password (see src/lib/password.ts). Demo-grade —
+   *  production must move auth to Supabase Auth. Absent for seeded demo staff. */
+  passwordHash?: string;
   role: Role;
   avatarColor?: string;
   active: boolean;
@@ -33,7 +38,27 @@ export interface Restaurant {
   name: string;
   slug: string;
   tagline?: string;
+  /** Longer free-text blurb shown on the workspace card. */
+  description?: string;
   logoColor: string;
+  /** Optional uploaded/hosted logo image. Falls back to the colored initial. */
+  logoUrl?: string;
+  /** Branch support: a branch points at its parent hotel via parentId.
+   *  null/undefined === a top-level hotel (whose own data is its "Main Branch"). */
+  parentId?: ID | null;
+  /** Branch-identity fields (captured by the Create Branch form; null on hotels
+   *  unless filled). A branch is a Restaurant — these just describe it. */
+  code?: string;
+  address?: string;
+  phone?: string;
+  email?: string;
+  manager?: string;
+  /** Branch operational state. Defaults to 'active'. */
+  status?: 'active' | 'inactive';
+  /** Tenant audit columns (Step 9). */
+  createdBy?: ID;
+  createdAt?: ISODate;
+  updatedAt?: ISODate;
   settings: RestaurantSettings;
 }
 

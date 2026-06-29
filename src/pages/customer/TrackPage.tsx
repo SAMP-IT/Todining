@@ -20,8 +20,14 @@ export function TrackPage() {
   const [feedbackSent, setFeedbackSent] = useState(false);
   useRealtime(() => setTick((t) => t + 1), { restaurantId: restaurant.id, types: ['order:updated', 'data:changed'] });
 
-  const order = orderId ? orderService.get(orderId) : undefined;
-  const existingBill = orderId ? billingService.getByOrder(orderId) : undefined;
+  // Resolve the order by id, but only honour it when it belongs to THIS
+  // workspace (the slug's restaurant). Orders are keyed by globally-unique id,
+  // so a crafted /r/<slugA>/t/<tableA>/order/<orderId-from-another-tenant> URL
+  // must NOT render another restaurant's order inside this one. Tenant isolation
+  // is enforced at the read, not assumed from the URL.
+  const found = orderId ? orderService.get(orderId) : undefined;
+  const order = found && found.restaurantId === restaurant.id ? found : undefined;
+  const existingBill = order ? billingService.getByOrder(order.id) : undefined;
   const alreadyReviewed = useMemo(
     () => (orderId ? feedbackService.list(restaurant.id).some((f) => f.orderId === orderId) : false),
     [orderId, restaurant.id, feedbackSent],

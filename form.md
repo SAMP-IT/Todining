@@ -1,0 +1,111 @@
+- generic [ref=e2]:
+  - generic [ref=e8]:
+    - complementary [ref=e9]:
+      - link "ToDining" [ref=e10] [cursor=pointer]:
+        - /url: /site
+        - generic [ref=e11]:
+          - img [ref=e13]
+          - generic [ref=e16]: ToDining
+      - button "QA Verify Branch" [ref=e19] [cursor=pointer]:
+        - generic [ref=e21]: QA Verify Branch
+        - img [ref=e22]
+      - navigation [ref=e26]:
+        - link "Dashboard" [ref=e27] [cursor=pointer]:
+          - /url: /admin
+          - img [ref=e28]
+          - text: Dashboard
+        - link "Analytics" [ref=e33] [cursor=pointer]:
+          - /url: /admin/analytics
+          - img [ref=e34]
+          - text: Analytics
+        - link "Orders" [ref=e36] [cursor=pointer]:
+          - /url: /admin/orders
+          - img [ref=e37]
+          - text: Orders
+        - link "Tables & QR" [ref=e39] [cursor=pointer]:
+          - /url: /admin/tables
+          - img [ref=e40]
+          - text: Tables & QR
+        - link "Menu" [ref=e45] [cursor=pointer]:
+          - /url: /admin/menu
+          - img [ref=e46]
+          - text: Menu
+        - link "Categories" [ref=e51] [cursor=pointer]:
+          - /url: /admin/categories
+          - img [ref=e52]
+          - text: Categories
+        - link "Reservations" [ref=e57] [cursor=pointer]:
+          - /url: /admin/reservations
+          - img [ref=e58]
+          - text: Reservations
+        - link "Inventory" [ref=e61] [cursor=pointer]:
+          - /url: /admin/inventory
+          - img [ref=e62]
+          - text: Inventory
+        - link "Billing" [ref=e72] [cursor=pointer]:
+          - /url: /admin/billing
+          - img [ref=e73]
+          - text: Billing
+        - link "Feedback" [ref=e76] [cursor=pointer]:
+          - /url: /admin/feedback
+          - img [ref=e77]
+          - text: Feedback
+        - link "Notifications" [ref=e79] [cursor=pointer]:
+          - /url: /admin/notifications
+          - img [ref=e80]
+          - text: Notifications
+        - link "Staff" [ref=e82] [cursor=pointer]:
+          - /url: /admin/staff
+          - img [ref=e83]
+          - text: Staff
+        - link "Restaurants" [ref=e88] [cursor=pointer]:
+          - /url: /admin/restaurants
+          - img [ref=e89]
+          - text: Restaurants
+      - link "Staff sign in" [ref=e93] [cursor=pointer]:
+        - /url: /login
+    - main [ref=e94]:
+      - generic [ref=e95]:
+        - generic [ref=e96]:
+          - generic [ref=e97]:
+            - heading "Menu" [level=1] [ref=e98]
+            - paragraph [ref=e99]: Add, edit, price and toggle availability of dishes.
+          - button "Add item" [active] [ref=e101] [cursor=pointer]:
+            - img [ref=e102]
+            - text: Add item
+        - generic [ref=e104]:
+          - heading "Starters" [level=2] [ref=e105]
+          - generic [ref=e107]:
+            - generic "BRANCH ONLY DISH ZZZ" [ref=e109]:
+              - img [ref=e110]
+            - generic [ref=e115]:
+              - generic [ref=e116]
+              - paragraph
+              - generic [ref=e119]
+        - dialog [ref=e134]:
+          - generic [ref=e135]:
+            - heading "Add menu item" [level=3] [ref=e137]
+            - button "Close" [ref=e138] [cursor=pointer]:
+              - img [ref=e139]
+          - generic [ref=e143]:
+            - generic [ref=e144]:
+              - generic "Preview" [ref=e146]
+              - generic [ref=e152]
+            - generic [ref=e157]:
+              - generic [ref=e158]: Name
+              - textbox "Name" [ref=e159]:
+                - /placeholder: e.g. Butter Chicken
+            - generic [ref=e160]:
+              - generic [ref=e161]: Description
+              - textbox "Description" [ref=e162]:
+                - /placeholder: Short, appetising description
+            - generic [ref=e163]:
+              - generic [ref=e164]
+              - generic [ref=e167]
+            - generic [ref=e170]:
+              - checkbox "Available for ordering" [checked] [ref=e171]
+              - text: Available for ordering
+            - generic [ref=e172]:
+              - button "Cancel" [ref=e173] [cursor=pointer]
+              - button "Add item" [ref=e174] [cursor=pointer]
+  - region "Notifications alt+T"
