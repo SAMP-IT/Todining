@@ -7,7 +7,7 @@ export function BillSummary({ bill, restaurantName, symbol }: { bill: Bill; rest
     <div className="rounded-2xl border border-ink/8 bg-white p-5">
       <div className="text-center">
         <h3 className="font-display text-xl font-semibold">{restaurantName}</h3>
-        <p className="text-xs text-ink-muted">Tax Invoice · #{bill.id.slice(-6).toUpperCase()}</p>
+        <p className="text-xs text-ink-muted">Tax Invoice · {bill.invoiceNumber ?? `#${bill.id.slice(-6).toUpperCase()}`}</p>
         <p className="text-xs text-ink-muted">Table {bill.tableNumber} · {formatDateTime(bill.createdAt)}</p>
       </div>
 

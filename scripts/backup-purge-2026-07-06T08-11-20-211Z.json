@@ -1,0 +1,1466 @@
+{
+  "restaurants": [
+    {
+      "id": "rest_spice",
+      "name": "Spice Garden",
+      "slug": "spice-garden",
+      "tagline": "Authentic Indian kitchen",
+      "logo_color": "#d9521f",
+      "tax_rate": 0.05,
+      "service_charge_rate": 0.1,
+      "currency": "INR",
+      "currency_symbol": "₹",
+      "created_at": "2026-06-19T08:50:34.163287+00:00",
+      "description": null,
+      "logo_url": null,
+      "parent_id": null,
+      "created_by": null,
+      "updated_at": "2026-06-24T17:31:13.703591+00:00",
+      "code": null,
+      "address": null,
+      "phone": null,
+      "email": null,
+      "manager": null,
+      "status": "active"
+    },
+    {
+      "id": "rest_mqul89chrt",
+      "name": "QA Verify Branch",
+      "slug": "qa-verify-branch",
+      "tagline": null,
+      "logo_color": "#d9521f",
+      "tax_rate": 0.05,
+      "service_charge_rate": 0.1,
+      "currency": "INR",
+      "currency_symbol": "₹",
+      "created_at": "2026-06-26T07:06:33.424+00:00",
+      "description": null,
+      "logo_url": null,
+      "parent_id": "rest_mqsdcm6ort",
+      "created_by": null,
+      "updated_at": "2026-06-26T07:06:33.424+00:00",
+      "code": "QA-E2E-01",
+      "address": "12 Verification Street, Test City",
+      "phone": "+91 90000 12345",
+      "email": "qa-branch@velans.test",
+      "manager": "QA Manager",
+      "status": "active"
+    },
+    {
+      "id": "rest_mquns209rt",
+      "name": "FlowTest Hotel",
+      "slug": "flowtest-hotel",
+      "tagline": null,
+      "logo_color": "#d9521f",
+      "tax_rate": 0.05,
+      "service_charge_rate": 0.1,
+      "currency": "INR",
+      "currency_symbol": "₹",
+      "created_at": "2026-06-26T08:17:56.265+00:00",
+      "description": null,
+      "logo_url": null,
+      "parent_id": null,
+      "created_by": "stf_mquns209ru",
+      "updated_at": "2026-06-26T08:17:56.265+00:00",
+      "code": null,
+      "address": null,
+      "phone": null,
+      "email": null,
+      "manager": null,
+      "status": "active"
+    },
+    {
+      "id": "rest_mqunszh8s8",
+      "name": "FlowBranch One",
+      "slug": "flowbranch-one",
+      "tagline": null,
+      "logo_color": "#d9521f",
+      "tax_rate": 0.05,
+      "service_charge_rate": 0.1,
+      "currency": "INR",
+      "currency_symbol": "₹",
+      "created_at": "2026-06-26T08:18:39.644+00:00",
+      "description": null,
+      "logo_url": null,
+      "parent_id": "rest_mquns209rt",
+      "created_by": null,
+      "updated_at": "2026-06-26T08:18:39.644+00:00",
+      "code": null,
+      "address": null,
+      "phone": null,
+      "email": null,
+      "manager": null,
+      "status": "active"
+    },
+    {
+      "id": "rest_mr23w61rrt",
+      "name": "C3",
+      "slug": "c3",
+      "tagline": null,
+      "logo_color": "#d9521f",
+      "tax_rate": 0.05,
+      "service_charge_rate": 0.1,
+      "currency": "INR",
+      "currency_symbol": "₹",
+      "created_at": "2026-07-01T13:23:25.215+00:00",
+      "description": "dgzdf dzzgdxgxfg",
+      "logo_url": null,
+      "parent_id": null,
+      "created_by": "stf_mr23w61rru",
+      "updated_at": "2026-07-01T13:23:25.215+00:00",
+      "code": null,
+      "address": null,
+      "phone": null,
+      "email": null,
+      "manager": null,
+      "status": "active"
+    },
+    {
+      "id": "rest_mr23xwlts8",
+      "name": "Eswari Nagar",
+      "slug": "eswari-nagar",
+      "tagline": null,
+      "logo_color": "#d9521f",
+      "tax_rate": 0.05,
+      "service_charge_rate": 0.1,
+      "currency": "INR",
+      "currency_symbol": "₹",
+      "created_at": "2026-07-01T13:24:46.289+00:00",
+      "description": "gxdg dg",
+      "logo_url": null,
+      "parent_id": "rest_mr23w61rrt",
+      "created_by": null,
+      "updated_at": "2026-07-01T13:24:46.289+00:00",
+      "code": null,
+      "address": "sdsadfaf fsf  fzfzz",
+      "phone": "235454",
+      "email": "asfdfhfh",
+      "manager": "zfsdfzdfzd",
+      "status": "active"
+    }
+  ],
+  "feedback": [
+    {
+      "id": "fb_1",
+      "restaurant_id": "rest_spice",
+      "order_id": "ord_4",
+      "table_number": 2,
+      "food_rating": 5,
+      "service_rating": 4,
+      "experience_rating": 5,
+      "comment": "Butter chicken was incredible!",
+      "created_at": "2026-06-19T06:10:34.219+00:00"
+    },
+    {
+      "id": "fb_2",
+      "restaurant_id": "rest_spice",
+      "order_id": "ord_6",
+      "table_number": 5,
+      "food_rating": 4,
+      "service_rating": 5,
+      "experience_rating": 4,
+      "comment": "Lovely ambience.",
+      "created_at": "2026-06-18T09:30:34.219+00:00"
+    }
+  ],
+  "bills": [
+    {
+      "id": "bill_1",
+      "restaurant_id": "rest_spice",
+      "order_id": "ord_4",
+      "table_number": 2,
+      "subtotal": 340,
+      "tax": 17,
+      "service_charge": 34,
+      "grand_total": 391,
+      "created_at": "2026-06-19T05:55:34.219+00:00"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "ntf_1",
+      "restaurant_id": "rest_spice",
+      "channel": "whatsapp",
+      "type": "reservation_confirmed",
+      "recipient": "Arun Nair",
+      "message": "Hello Arun, your table reservation has been confirmed. Date: Today · Time: 7:00 PM. — Spice Garden",
+      "status": "sent",
+      "created_at": "2026-06-19T06:52:34.219+00:00"
+    },
+    {
+      "id": "ntf_mqq7wm9yrt",
+      "restaurant_id": "rest_spice",
+      "channel": "whatsapp",
+      "type": "reservation_confirmed",
+      "recipient": "Karthik R",
+      "message": "Hello Karthik, your table reservation has been confirmed.\n21 Jun · 1:00 PM · 6 guests.\n— Spice Garden",
+      "status": "sent",
+      "created_at": "2026-06-23T05:42:30.598+00:00"
+    },
+    {
+      "id": "ntf_mqq7zcn3ru",
+      "restaurant_id": "rest_spice",
+      "channel": "whatsapp",
+      "type": "reservation_confirmed",
+      "recipient": "Priya Das",
+      "message": "Hello Priya, your table reservation has been confirmed.\n20 Jun · 8:30 PM · 2 guests.\n— Spice Garden",
+      "status": "sent",
+      "created_at": "2026-06-23T05:44:38.079+00:00"
+    }
+  ],
+  "reservations": [
+    {
+      "id": "res_1",
+      "restaurant_id": "rest_spice",
+      "name": "Arun Nair",
+      "mobile": "+91 98765 43210",
+      "email": "arun@mail.test",
+      "date": "2026-06-19",
+      "time": "19:00:00",
+      "guests": 4,
+      "notes": "Window seat please",
+      "status": "confirmed",
+      "created_at": "2026-06-19T06:50:34.219+00:00"
+    },
+    {
+      "id": "res_3",
+      "restaurant_id": "rest_spice",
+      "name": "Karthik R",
+      "mobile": "+91 91234 56789",
+      "email": "k@mail.test",
+      "date": "2026-06-21",
+      "time": "13:00:00",
+      "guests": 6,
+      "notes": "Birthday",
+      "status": "confirmed",
+      "created_at": "2026-06-19T08:35:34.219+00:00"
+    },
+    {
+      "id": "res_2",
+      "restaurant_id": "rest_spice",
+      "name": "Priya Das",
+      "mobile": "+91 90000 11111",
+      "email": "priya@mail.test",
+      "date": "2026-06-20",
+      "time": "20:30:00",
+      "guests": 2,
+      "notes": null,
+      "status": "confirmed",
+      "created_at": "2026-06-19T08:10:34.219+00:00"
+    }
+  ],
+  "service_requests": [
+    {
+      "id": "svc_1",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_3",
+      "table_number": 3,
+      "type": "water",
+      "status": "open",
+      "created_at": "2026-06-19T08:48:34.219+00:00"
+    }
+  ],
+  "orders": [
+    {
+      "id": "ord_4",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_2",
+      "table_number": 2,
+      "status": "completed",
+      "subtotal": 340,
+      "tax": 17,
+      "service_charge": 34,
+      "total": 391,
+      "created_at": "2026-06-19T05:50:34.219+00:00",
+      "updated_at": "2026-07-01T13:05:46.050142+00:00"
+    },
+    {
+      "id": "ord_5",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_4",
+      "table_number": 4,
+      "status": "completed",
+      "subtotal": 720,
+      "tax": 36,
+      "service_charge": 72,
+      "total": 828,
+      "created_at": "2026-06-19T03:30:34.219+00:00",
+      "updated_at": "2026-07-01T13:05:46.050142+00:00"
+    },
+    {
+      "id": "ord_6",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_5",
+      "table_number": 5,
+      "status": "completed",
+      "subtotal": 410,
+      "tax": 21,
+      "service_charge": 41,
+      "total": 472,
+      "created_at": "2026-06-18T08:50:34.219+00:00",
+      "updated_at": "2026-07-01T13:05:46.050142+00:00"
+    },
+    {
+      "id": "ord_2",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_1",
+      "table_number": 1,
+      "status": "completed",
+      "subtotal": 720,
+      "tax": 36,
+      "service_charge": 72,
+      "total": 828,
+      "created_at": "2026-06-19T08:47:34.219+00:00",
+      "updated_at": "2026-07-01T13:05:46.050142+00:00"
+    },
+    {
+      "id": "ord_1",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_3",
+      "table_number": 3,
+      "status": "completed",
+      "subtotal": 538,
+      "tax": 27,
+      "service_charge": 54,
+      "total": 619,
+      "created_at": "2026-06-19T08:42:34.219+00:00",
+      "updated_at": "2026-07-01T13:05:46.050142+00:00"
+    },
+    {
+      "id": "ord_3",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_6",
+      "table_number": 6,
+      "status": "completed",
+      "subtotal": 530,
+      "tax": 27,
+      "service_charge": 53,
+      "total": 610,
+      "created_at": "2026-06-19T08:36:34.219+00:00",
+      "updated_at": "2026-07-01T13:05:46.050142+00:00"
+    },
+    {
+      "id": "ord_mqz5rda0ru",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_mqktlvzhru",
+      "table_number": 9,
+      "status": "completed",
+      "subtotal": 220,
+      "tax": 11,
+      "service_charge": 22,
+      "total": 253,
+      "created_at": "2026-06-29T11:52:22.007+00:00",
+      "updated_at": "2026-07-01T13:05:46.050142+00:00"
+    }
+  ],
+  "customers": [
+    {
+      "id": "cus_1",
+      "restaurant_id": "rest_spice",
+      "name": "Arun Nair",
+      "mobile": "+91 98765 43210",
+      "email": "arun@mail.test"
+    }
+  ],
+  "upsell_rules": [
+    {
+      "id": "up_1",
+      "restaurant_id": "rest_spice",
+      "trigger_item_id": "mi_butter_chicken",
+      "suggested_item_id": "mi_naan",
+      "message": "Add Garlic Naan for ₹60?"
+    },
+    {
+      "id": "up_2",
+      "restaurant_id": "rest_spice",
+      "trigger_item_id": "mi_biryani",
+      "suggested_item_id": "mi_coke_a",
+      "message": "Add a Coke for ₹49?"
+    },
+    {
+      "id": "up_3",
+      "restaurant_id": "rest_spice",
+      "trigger_item_id": "mi_wings",
+      "suggested_item_id": "mi_lassi",
+      "message": "Cool it down with a Sweet Lassi for ₹80?"
+    }
+  ],
+  "inventory_items": [
+    {
+      "id": "inv_a_soft",
+      "restaurant_id": "rest_spice",
+      "name": "Soft Drinks",
+      "unit": "cans",
+      "stock_qty": 40,
+      "low_threshold": 12
+    },
+    {
+      "id": "inv_a_chicken",
+      "restaurant_id": "rest_spice",
+      "name": "Chicken",
+      "unit": "kg",
+      "stock_qty": 13,
+      "low_threshold": 5
+    },
+    {
+      "id": "inv_a_rice",
+      "restaurant_id": "rest_spice",
+      "name": "Basmati Rice",
+      "unit": "kg",
+      "stock_qty": 31,
+      "low_threshold": 8
+    },
+    {
+      "id": "inv_a_milk",
+      "restaurant_id": "rest_spice",
+      "name": "Milk",
+      "unit": "L",
+      "stock_qty": 20,
+      "low_threshold": 6
+    },
+    {
+      "id": "inv_a_flour",
+      "restaurant_id": "rest_spice",
+      "name": "Flour",
+      "unit": "kg",
+      "stock_qty": 6,
+      "low_threshold": 5
+    }
+  ],
+  "qr_codes": [
+    {
+      "id": "qr_tbl_rest_spice_1",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_1",
+      "token": "tbl_rest_spice_1",
+      "url": "/r/spice-garden/t/tbl_rest_spice_1"
+    },
+    {
+      "id": "qr_tbl_rest_spice_2",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_2",
+      "token": "tbl_rest_spice_2",
+      "url": "/r/spice-garden/t/tbl_rest_spice_2"
+    },
+    {
+      "id": "qr_tbl_rest_spice_3",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_3",
+      "token": "tbl_rest_spice_3",
+      "url": "/r/spice-garden/t/tbl_rest_spice_3"
+    },
+    {
+      "id": "qr_tbl_rest_spice_4",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_4",
+      "token": "tbl_rest_spice_4",
+      "url": "/r/spice-garden/t/tbl_rest_spice_4"
+    },
+    {
+      "id": "qr_tbl_rest_spice_5",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_5",
+      "token": "tbl_rest_spice_5",
+      "url": "/r/spice-garden/t/tbl_rest_spice_5"
+    },
+    {
+      "id": "qr_tbl_rest_spice_6",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_6",
+      "token": "tbl_rest_spice_6",
+      "url": "/r/spice-garden/t/tbl_rest_spice_6"
+    },
+    {
+      "id": "qr_tbl_rest_spice_7",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_7",
+      "token": "tbl_rest_spice_7",
+      "url": "/r/spice-garden/t/tbl_rest_spice_7"
+    },
+    {
+      "id": "qr_tbl_rest_spice_8",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_rest_spice_8",
+      "token": "tbl_rest_spice_8",
+      "url": "/r/spice-garden/t/tbl_rest_spice_8"
+    },
+    {
+      "id": "qr_mqktlvzhrv",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_mqktlvzhru",
+      "token": "tbl_mqktlvzhru",
+      "url": "/r/spice-garden/t/tbl_mqktlvzhru"
+    },
+    {
+      "id": "qr_mqktlwjyrx",
+      "restaurant_id": "rest_spice",
+      "table_id": "tbl_mqktlwjyrw",
+      "token": "tbl_mqktlwjyrw",
+      "url": "/r/spice-garden/t/tbl_mqktlwjyrw"
+    },
+    {
+      "id": "qr_mqul89cis0",
+      "restaurant_id": "rest_mqul89chrt",
+      "table_id": "tbl_mqul89cirz",
+      "token": "tbl_mqul89cirz",
+      "url": "/r/qa-verify-branch/t/tbl_mqul89cirz"
+    },
+    {
+      "id": "qr_mqul89cis2",
+      "restaurant_id": "rest_mqul89chrt",
+      "table_id": "tbl_mqul89cis1",
+      "token": "tbl_mqul89cis1",
+      "url": "/r/qa-verify-branch/t/tbl_mqul89cis1"
+    },
+    {
+      "id": "qr_mqul89cis4",
+      "restaurant_id": "rest_mqul89chrt",
+      "table_id": "tbl_mqul89cis3",
+      "token": "tbl_mqul89cis3",
+      "url": "/r/qa-verify-branch/t/tbl_mqul89cis3"
+    },
+    {
+      "id": "qr_mqul89cis6",
+      "restaurant_id": "rest_mqul89chrt",
+      "table_id": "tbl_mqul89cis5",
+      "token": "tbl_mqul89cis5",
+      "url": "/r/qa-verify-branch/t/tbl_mqul89cis5"
+    },
+    {
+      "id": "qr_mquns20as1",
+      "restaurant_id": "rest_mquns209rt",
+      "table_id": "tbl_mquns20as0",
+      "token": "tbl_mquns20as0",
+      "url": "/r/flowtest-hotel/t/tbl_mquns20as0"
+    },
+    {
+      "id": "qr_mquns20as3",
+      "restaurant_id": "rest_mquns209rt",
+      "table_id": "tbl_mquns20as2",
+      "token": "tbl_mquns20as2",
+      "url": "/r/flowtest-hotel/t/tbl_mquns20as2"
+    },
+    {
+      "id": "qr_mquns20as5",
+      "restaurant_id": "rest_mquns209rt",
+      "table_id": "tbl_mquns20as4",
+      "token": "tbl_mquns20as4",
+      "url": "/r/flowtest-hotel/t/tbl_mquns20as4"
+    },
+    {
+      "id": "qr_mquns20as7",
+      "restaurant_id": "rest_mquns209rt",
+      "table_id": "tbl_mquns20as6",
+      "token": "tbl_mquns20as6",
+      "url": "/r/flowtest-hotel/t/tbl_mquns20as6"
+    },
+    {
+      "id": "qr_mqunszh9sf",
+      "restaurant_id": "rest_mqunszh8s8",
+      "table_id": "tbl_mqunszh9se",
+      "token": "tbl_mqunszh9se",
+      "url": "/r/flowbranch-one/t/tbl_mqunszh9se"
+    },
+    {
+      "id": "qr_mqunszh9sh",
+      "restaurant_id": "rest_mqunszh8s8",
+      "table_id": "tbl_mqunszh9sg",
+      "token": "tbl_mqunszh9sg",
+      "url": "/r/flowbranch-one/t/tbl_mqunszh9sg"
+    },
+    {
+      "id": "qr_mqunszh9sj",
+      "restaurant_id": "rest_mqunszh8s8",
+      "table_id": "tbl_mqunszh9si",
+      "token": "tbl_mqunszh9si",
+      "url": "/r/flowbranch-one/t/tbl_mqunszh9si"
+    },
+    {
+      "id": "qr_mqunszh9sl",
+      "restaurant_id": "rest_mqunszh8s8",
+      "table_id": "tbl_mqunszh9sk",
+      "token": "tbl_mqunszh9sk",
+      "url": "/r/flowbranch-one/t/tbl_mqunszh9sk"
+    },
+    {
+      "id": "qr_mr23w61ts1",
+      "restaurant_id": "rest_mr23w61rrt",
+      "table_id": "tbl_mr23w61ts0",
+      "token": "tbl_mr23w61ts0",
+      "url": "/r/c3/t/tbl_mr23w61ts0"
+    },
+    {
+      "id": "qr_mr23w61ts3",
+      "restaurant_id": "rest_mr23w61rrt",
+      "table_id": "tbl_mr23w61ts2",
+      "token": "tbl_mr23w61ts2",
+      "url": "/r/c3/t/tbl_mr23w61ts2"
+    },
+    {
+      "id": "qr_mr23w61ts5",
+      "restaurant_id": "rest_mr23w61rrt",
+      "table_id": "tbl_mr23w61ts4",
+      "token": "tbl_mr23w61ts4",
+      "url": "/r/c3/t/tbl_mr23w61ts4"
+    },
+    {
+      "id": "qr_mr23w61ts7",
+      "restaurant_id": "rest_mr23w61rrt",
+      "table_id": "tbl_mr23w61ts6",
+      "token": "tbl_mr23w61ts6",
+      "url": "/r/c3/t/tbl_mr23w61ts6"
+    },
+    {
+      "id": "qr_mr23xwlusf",
+      "restaurant_id": "rest_mr23xwlts8",
+      "table_id": "tbl_mr23xwluse",
+      "token": "tbl_mr23xwluse",
+      "url": "/r/eswari-nagar/t/tbl_mr23xwluse"
+    },
+    {
+      "id": "qr_mr23xwlush",
+      "restaurant_id": "rest_mr23xwlts8",
+      "table_id": "tbl_mr23xwlusg",
+      "token": "tbl_mr23xwlusg",
+      "url": "/r/eswari-nagar/t/tbl_mr23xwlusg"
+    },
+    {
+      "id": "qr_mr23xwlusj",
+      "restaurant_id": "rest_mr23xwlts8",
+      "table_id": "tbl_mr23xwlusi",
+      "token": "tbl_mr23xwlusi",
+      "url": "/r/eswari-nagar/t/tbl_mr23xwlusi"
+    },
+    {
+      "id": "qr_mr23xwlusl",
+      "restaurant_id": "rest_mr23xwlts8",
+      "table_id": "tbl_mr23xwlusk",
+      "token": "tbl_mr23xwlusk",
+      "url": "/r/eswari-nagar/t/tbl_mr23xwlusk"
+    }
+  ],
+  "tables": [
+    {
+      "id": "tbl_rest_spice_1",
+      "restaurant_id": "rest_spice",
+      "number": 1,
+      "seats": 2,
+      "status": "available"
+    },
+    {
+      "id": "tbl_rest_spice_2",
+      "restaurant_id": "rest_spice",
+      "number": 2,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_rest_spice_4",
+      "restaurant_id": "rest_spice",
+      "number": 4,
+      "seats": 2,
+      "status": "available"
+    },
+    {
+      "id": "tbl_rest_spice_6",
+      "restaurant_id": "rest_spice",
+      "number": 6,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_rest_spice_7",
+      "restaurant_id": "rest_spice",
+      "number": 7,
+      "seats": 2,
+      "status": "available"
+    },
+    {
+      "id": "tbl_rest_spice_8",
+      "restaurant_id": "rest_spice",
+      "number": 8,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mqktlwjyrw",
+      "restaurant_id": "rest_spice",
+      "number": 10,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mqul89cirz",
+      "restaurant_id": "rest_mqul89chrt",
+      "number": 1,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mqul89cis1",
+      "restaurant_id": "rest_mqul89chrt",
+      "number": 2,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mqul89cis3",
+      "restaurant_id": "rest_mqul89chrt",
+      "number": 3,
+      "seats": 2,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mqul89cis5",
+      "restaurant_id": "rest_mqul89chrt",
+      "number": 4,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mquns20as0",
+      "restaurant_id": "rest_mquns209rt",
+      "number": 1,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mquns20as2",
+      "restaurant_id": "rest_mquns209rt",
+      "number": 2,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mquns20as4",
+      "restaurant_id": "rest_mquns209rt",
+      "number": 3,
+      "seats": 2,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mquns20as6",
+      "restaurant_id": "rest_mquns209rt",
+      "number": 4,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mqunszh9se",
+      "restaurant_id": "rest_mqunszh8s8",
+      "number": 1,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mqunszh9sg",
+      "restaurant_id": "rest_mqunszh8s8",
+      "number": 2,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mqunszh9si",
+      "restaurant_id": "rest_mqunszh8s8",
+      "number": 3,
+      "seats": 2,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mqunszh9sk",
+      "restaurant_id": "rest_mqunszh8s8",
+      "number": 4,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mr23w61ts0",
+      "restaurant_id": "rest_mr23w61rrt",
+      "number": 1,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mr23w61ts2",
+      "restaurant_id": "rest_mr23w61rrt",
+      "number": 2,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mr23w61ts4",
+      "restaurant_id": "rest_mr23w61rrt",
+      "number": 3,
+      "seats": 2,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mr23w61ts6",
+      "restaurant_id": "rest_mr23w61rrt",
+      "number": 4,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mr23xwluse",
+      "restaurant_id": "rest_mr23xwlts8",
+      "number": 1,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mr23xwlusg",
+      "restaurant_id": "rest_mr23xwlts8",
+      "number": 2,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mr23xwlusi",
+      "restaurant_id": "rest_mr23xwlts8",
+      "number": 3,
+      "seats": 2,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mr23xwlusk",
+      "restaurant_id": "rest_mr23xwlts8",
+      "number": 4,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_rest_spice_3",
+      "restaurant_id": "rest_spice",
+      "number": 3,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_rest_spice_5",
+      "restaurant_id": "rest_spice",
+      "number": 5,
+      "seats": 4,
+      "status": "available"
+    },
+    {
+      "id": "tbl_mqktlvzhru",
+      "restaurant_id": "rest_spice",
+      "number": 9,
+      "seats": 4,
+      "status": "available"
+    }
+  ],
+  "menu_items": [
+    {
+      "id": "mi_wings",
+      "restaurant_id": "rest_spice",
+      "category_id": "cat_rest_spice_0",
+      "name": "Chilli Chicken",
+      "description": "Wok-tossed chicken, garlic & green chilli",
+      "price": 220,
+      "image_url": "https://images.unsplash.com/photo-1527477396000-e27163b481c2?auto=format&fit=crop&w=500&q=70",
+      "is_available": true,
+      "tags": [
+        "spicy"
+      ],
+      "created_at": "2026-06-19T08:50:34.569004+00:00"
+    },
+    {
+      "id": "mi_butter_chicken",
+      "restaurant_id": "rest_spice",
+      "category_id": "cat_rest_spice_1",
+      "name": "Butter Chicken",
+      "description": "Creamy tomato gravy, tandoori chicken",
+      "price": 320,
+      "image_url": "https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?auto=format&fit=crop&w=500&q=70",
+      "is_available": true,
+      "tags": [],
+      "created_at": "2026-06-19T08:50:34.569004+00:00"
+    },
+    {
+      "id": "mi_biryani",
+      "restaurant_id": "rest_spice",
+      "category_id": "cat_rest_spice_1",
+      "name": "Hyderabadi Biryani",
+      "description": "Fragrant basmati, slow-cooked spices",
+      "price": 280,
+      "image_url": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=500&q=70",
+      "is_available": true,
+      "tags": [],
+      "created_at": "2026-06-19T08:50:34.569004+00:00"
+    },
+    {
+      "id": "mi_dal",
+      "restaurant_id": "rest_spice",
+      "category_id": "cat_rest_spice_1",
+      "name": "Dal Makhani",
+      "description": "Black lentils simmered overnight",
+      "price": 210,
+      "image_url": "https://images.unsplash.com/photo-1546833999-b9f581a1996d?auto=format&fit=crop&w=500&q=70",
+      "is_available": true,
+      "tags": [
+        "veg"
+      ],
+      "created_at": "2026-06-19T08:50:34.569004+00:00"
+    },
+    {
+      "id": "mi_naan",
+      "restaurant_id": "rest_spice",
+      "category_id": "cat_rest_spice_1",
+      "name": "Garlic Naan",
+      "description": "Tandoor flatbread, fresh garlic & butter",
+      "price": 60,
+      "image_url": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=500&q=70",
+      "is_available": false,
+      "tags": [
+        "veg"
+      ],
+      "created_at": "2026-06-19T08:50:34.569004+00:00"
+    },
+    {
+      "id": "mi_gulab",
+      "restaurant_id": "rest_spice",
+      "category_id": "cat_rest_spice_2",
+      "name": "Gulab Jamun (2 pcs)",
+      "description": "Warm milk dumplings in rose syrup",
+      "price": 90,
+      "image_url": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=500&q=70",
+      "is_available": true,
+      "tags": [
+        "veg"
+      ],
+      "created_at": "2026-06-19T08:50:34.569004+00:00"
+    },
+    {
+      "id": "mi_kulfi",
+      "restaurant_id": "rest_spice",
+      "category_id": "cat_rest_spice_2",
+      "name": "Pista Kulfi",
+      "description": "Slow-churned saffron-pistachio ice cream",
+      "price": 120,
+      "image_url": "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=500&q=70",
+      "is_available": true,
+      "tags": [],
+      "created_at": "2026-06-19T08:50:34.569004+00:00"
+    },
+    {
+      "id": "mi_lassi",
+      "restaurant_id": "rest_spice",
+      "category_id": "cat_rest_spice_3",
+      "name": "Sweet Lassi",
+      "description": "Whipped yoghurt, cardamom",
+      "price": 80,
+      "image_url": "https://images.unsplash.com/photo-1622597467836-f3285f2131b8?auto=format&fit=crop&w=500&q=70",
+      "is_available": true,
+      "tags": [],
+      "created_at": "2026-06-19T08:50:34.569004+00:00"
+    },
+    {
+      "id": "mi_masala_chai",
+      "restaurant_id": "rest_spice",
+      "category_id": "cat_rest_spice_3",
+      "name": "Masala Chai",
+      "description": "Spiced milk tea",
+      "price": 40,
+      "image_url": "https://images.unsplash.com/photo-1571934811356-5cc061b6821f?auto=format&fit=crop&w=500&q=70",
+      "is_available": true,
+      "tags": [],
+      "created_at": "2026-06-19T08:50:34.569004+00:00"
+    },
+    {
+      "id": "mi_coke_a",
+      "restaurant_id": "rest_spice",
+      "category_id": "cat_rest_spice_3",
+      "name": "Coke",
+      "description": "Chilled 300ml",
+      "price": 49,
+      "image_url": "https://images.unsplash.com/photo-1554866585-cd94860890b7?auto=format&fit=crop&w=500&q=70",
+      "is_available": true,
+      "tags": [],
+      "created_at": "2026-06-19T08:50:34.569004+00:00"
+    },
+    {
+      "id": "mi_combo_a",
+      "restaurant_id": "rest_spice",
+      "category_id": "cat_rest_spice_4",
+      "name": "Biryani Combo",
+      "description": "Biryani + Coke + Gulab Jamun",
+      "price": 360,
+      "image_url": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=500&q=70",
+      "is_available": true,
+      "tags": [],
+      "created_at": "2026-06-19T08:50:34.569004+00:00"
+    },
+    {
+      "id": "mi_samosa",
+      "restaurant_id": "rest_spice",
+      "category_id": "cat_rest_spice_0",
+      "name": "Veg Samosa (2 pcs)",
+      "description": "Crispy pastry with spiced potato & peas",
+      "price": 60,
+      "image_url": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=500&q=70",
+      "is_available": true,
+      "tags": [
+        "veg"
+      ],
+      "created_at": "2026-06-19T09:32:25.724703+00:00"
+    },
+    {
+      "id": "mi_mqktl3vbrt",
+      "restaurant_id": "rest_spice",
+      "category_id": "cat_rest_spice_0",
+      "name": "kari dosa",
+      "description": "nice spy",
+      "price": 180,
+      "image_url": "data:image/jpeg;base64,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",
+      "is_available": true,
+      "tags": [],
+      "created_at": "2026-06-19T11:02:48.462661+00:00"
+    },
+    {
+      "id": "mi_paneer",
+      "restaurant_id": "rest_spice",
+      "category_id": "cat_rest_spice_0",
+      "name": "Paneer Tikka",
+      "description": "Char-grilled cottage cheese, mint chutney",
+      "price": 240,
+      "image_url": "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?auto=format&fit=crop&w=500&q=70",
+      "is_available": true,
+      "tags": [
+        "veg"
+      ],
+      "created_at": "2026-06-19T08:50:34.569004+00:00"
+    },
+    {
+      "id": "mi_mqunomkzrt",
+      "restaurant_id": "rest_mqul89chrt",
+      "category_id": "cat_mqul89ciru",
+      "name": "IMMEDIATE AAA NORELOAD",
+      "description": "",
+      "price": 444,
+      "image_url": "",
+      "is_available": true,
+      "tags": [],
+      "created_at": "2026-06-26T08:15:16.830293+00:00"
+    },
+    {
+      "id": "mi_mqumdsc3rt",
+      "restaurant_id": "rest_mqul89chrt",
+      "category_id": "cat_mqul89ciru",
+      "name": "BRANCH ONLY DISH ZZZ",
+      "description": "",
+      "price": 333,
+      "image_url": "",
+      "is_available": true,
+      "tags": [],
+      "created_at": "2026-06-26T07:38:51.096918+00:00"
+    },
+    {
+      "id": "mi_mqup6hesrt",
+      "restaurant_id": "rest_mqul89chrt",
+      "category_id": "cat_mqul89ciru",
+      "name": "AVAIL PROOF BRANCH",
+      "description": "",
+      "price": 0,
+      "image_url": "",
+      "is_available": true,
+      "tags": [],
+      "created_at": "2026-06-26T08:57:09.202771+00:00"
+    },
+    {
+      "id": "mi_mquppnjxrt",
+      "restaurant_id": "rest_mqul89chrt",
+      "category_id": "cat_mqul89ciru",
+      "name": "TRYDEMO FRESH ITEM",
+      "description": "",
+      "price": 0,
+      "image_url": "",
+      "is_available": true,
+      "tags": [],
+      "created_at": "2026-06-26T09:12:03.377517+00:00"
+    },
+    {
+      "id": "mi_mquq5fcjru",
+      "restaurant_id": "rest_mqul89chrt",
+      "category_id": "cat_mqul89cirx",
+      "name": "bullet chicken",
+      "description": "fhdgjfthjdttj",
+      "price": 145,
+      "image_url": "",
+      "is_available": true,
+      "tags": [],
+      "created_at": "2026-06-26T09:24:19.423657+00:00"
+    }
+  ],
+  "menu_categories": [
+    {
+      "id": "cat_rest_spice_0",
+      "restaurant_id": "rest_spice",
+      "name": "Starters",
+      "sort": 0
+    },
+    {
+      "id": "cat_rest_spice_1",
+      "restaurant_id": "rest_spice",
+      "name": "Main Course",
+      "sort": 1
+    },
+    {
+      "id": "cat_rest_spice_2",
+      "restaurant_id": "rest_spice",
+      "name": "Desserts",
+      "sort": 2
+    },
+    {
+      "id": "cat_rest_spice_3",
+      "restaurant_id": "rest_spice",
+      "name": "Beverages",
+      "sort": 3
+    },
+    {
+      "id": "cat_rest_spice_4",
+      "restaurant_id": "rest_spice",
+      "name": "Combo Meals",
+      "sort": 4
+    },
+    {
+      "id": "cat_mqul89ciru",
+      "restaurant_id": "rest_mqul89chrt",
+      "name": "Starters",
+      "sort": 0
+    },
+    {
+      "id": "cat_mqul89cirv",
+      "restaurant_id": "rest_mqul89chrt",
+      "name": "Main Course",
+      "sort": 1
+    },
+    {
+      "id": "cat_mqul89cirw",
+      "restaurant_id": "rest_mqul89chrt",
+      "name": "Desserts",
+      "sort": 2
+    },
+    {
+      "id": "cat_mqul89cirx",
+      "restaurant_id": "rest_mqul89chrt",
+      "name": "Beverages",
+      "sort": 3
+    },
+    {
+      "id": "cat_mqul89ciry",
+      "restaurant_id": "rest_mqul89chrt",
+      "name": "Combo Meals",
+      "sort": 4
+    },
+    {
+      "id": "cat_mquns20arv",
+      "restaurant_id": "rest_mquns209rt",
+      "name": "Starters",
+      "sort": 0
+    },
+    {
+      "id": "cat_mquns20arw",
+      "restaurant_id": "rest_mquns209rt",
+      "name": "Main Course",
+      "sort": 1
+    },
+    {
+      "id": "cat_mquns20arx",
+      "restaurant_id": "rest_mquns209rt",
+      "name": "Desserts",
+      "sort": 2
+    },
+    {
+      "id": "cat_mquns20ary",
+      "restaurant_id": "rest_mquns209rt",
+      "name": "Beverages",
+      "sort": 3
+    },
+    {
+      "id": "cat_mquns20arz",
+      "restaurant_id": "rest_mquns209rt",
+      "name": "Combo Meals",
+      "sort": 4
+    },
+    {
+      "id": "cat_mqunszh9s9",
+      "restaurant_id": "rest_mqunszh8s8",
+      "name": "Starters",
+      "sort": 0
+    },
+    {
+      "id": "cat_mqunszh9sa",
+      "restaurant_id": "rest_mqunszh8s8",
+      "name": "Main Course",
+      "sort": 1
+    },
+    {
+      "id": "cat_mqunszh9sb",
+      "restaurant_id": "rest_mqunszh8s8",
+      "name": "Desserts",
+      "sort": 2
+    },
+    {
+      "id": "cat_mqunszh9sc",
+      "restaurant_id": "rest_mqunszh8s8",
+      "name": "Beverages",
+      "sort": 3
+    },
+    {
+      "id": "cat_mqunszh9sd",
+      "restaurant_id": "rest_mqunszh8s8",
+      "name": "Combo Meals",
+      "sort": 4
+    },
+    {
+      "id": "cat_mr23w61trv",
+      "restaurant_id": "rest_mr23w61rrt",
+      "name": "Starters",
+      "sort": 0
+    },
+    {
+      "id": "cat_mr23w61trw",
+      "restaurant_id": "rest_mr23w61rrt",
+      "name": "Main Course",
+      "sort": 1
+    },
+    {
+      "id": "cat_mr23w61trx",
+      "restaurant_id": "rest_mr23w61rrt",
+      "name": "Desserts",
+      "sort": 2
+    },
+    {
+      "id": "cat_mr23w61try",
+      "restaurant_id": "rest_mr23w61rrt",
+      "name": "Beverages",
+      "sort": 3
+    },
+    {
+      "id": "cat_mr23w61trz",
+      "restaurant_id": "rest_mr23w61rrt",
+      "name": "Combo Meals",
+      "sort": 4
+    },
+    {
+      "id": "cat_mr23xwlus9",
+      "restaurant_id": "rest_mr23xwlts8",
+      "name": "Starters",
+      "sort": 0
+    },
+    {
+      "id": "cat_mr23xwlusa",
+      "restaurant_id": "rest_mr23xwlts8",
+      "name": "Main Course",
+      "sort": 1
+    },
+    {
+      "id": "cat_mr23xwlusb",
+      "restaurant_id": "rest_mr23xwlts8",
+      "name": "Desserts",
+      "sort": 2
+    },
+    {
+      "id": "cat_mr23xwlusc",
+      "restaurant_id": "rest_mr23xwlts8",
+      "name": "Beverages",
+      "sort": 3
+    },
+    {
+      "id": "cat_mr23xwlusd",
+      "restaurant_id": "rest_mr23xwlts8",
+      "name": "Combo Meals",
+      "sort": 4
+    }
+  ],
+  "staff": [
+    {
+      "id": "stf_owner",
+      "restaurant_id": "rest_spice",
+      "name": "Anita Rao",
+      "email": "owner@spice.test",
+      "role": "owner",
+      "avatar_color": "#d9521f",
+      "active": true,
+      "created_at": "2026-06-19T08:50:34.323316+00:00",
+      "username": null,
+      "password_hash": null
+    },
+    {
+      "id": "stf_mgr",
+      "restaurant_id": "rest_spice",
+      "name": "Vikram",
+      "email": "manager@spice.test",
+      "role": "manager",
+      "avatar_color": "#c98a1f",
+      "active": true,
+      "created_at": "2026-06-19T08:50:34.323316+00:00",
+      "username": null,
+      "password_hash": null
+    },
+    {
+      "id": "stf_waiter",
+      "restaurant_id": "rest_spice",
+      "name": "Ravi Kumar",
+      "email": "waiter@spice.test",
+      "role": "waiter",
+      "avatar_color": "#4f8a5b",
+      "active": true,
+      "created_at": "2026-06-19T08:50:34.323316+00:00",
+      "username": null,
+      "password_hash": null
+    },
+    {
+      "id": "stf_mqqdcbcyru",
+      "restaurant_id": "rest_spice",
+      "name": "Rinku",
+      "email": "rinku@spice.test",
+      "role": "kitchen",
+      "avatar_color": null,
+      "active": true,
+      "created_at": "2026-06-23T08:14:41.020686+00:00",
+      "username": null,
+      "password_hash": null
+    },
+    {
+      "id": "stf_mquns209ru",
+      "restaurant_id": "rest_mquns209rt",
+      "name": "FlowTest Hotel Owner",
+      "email": "flow@test.com",
+      "role": "owner",
+      "avatar_color": "#d9521f",
+      "active": true,
+      "created_at": "2026-06-26T08:17:56.545517+00:00",
+      "username": null,
+      "password_hash": "1r3v39y"
+    },
+    {
+      "id": "stf_mr23w61rru",
+      "restaurant_id": "rest_mr23w61rrt",
+      "name": "C3 Owner",
+      "email": "asdfg@gmail",
+      "role": "owner",
+      "avatar_color": "#d9521f",
+      "active": true,
+      "created_at": "2026-07-01T13:23:25.855949+00:00",
+      "username": "asdfg",
+      "password_hash": "thujnb"
+    }
+  ],
+  "order_items": [
+    {
+      "id": "oi_ord_1_0",
+      "order_id": "ord_1",
+      "menu_item_id": "mi_butter_chicken",
+      "name": "Butter Chicken",
+      "qty": 1,
+      "unit_price": 320
+    },
+    {
+      "id": "oi_ord_1_1",
+      "order_id": "ord_1",
+      "menu_item_id": "mi_naan",
+      "name": "Garlic Naan",
+      "qty": 2,
+      "unit_price": 60
+    },
+    {
+      "id": "oi_ord_1_2",
+      "order_id": "ord_1",
+      "menu_item_id": "mi_coke_a",
+      "name": "Coke",
+      "qty": 2,
+      "unit_price": 49
+    },
+    {
+      "id": "oi_ord_2_0",
+      "order_id": "ord_2",
+      "menu_item_id": "mi_biryani",
+      "name": "Hyderabadi Biryani",
+      "qty": 2,
+      "unit_price": 280
+    },
+    {
+      "id": "oi_ord_2_1",
+      "order_id": "ord_2",
+      "menu_item_id": "mi_lassi",
+      "name": "Sweet Lassi",
+      "qty": 2,
+      "unit_price": 80
+    },
+    {
+      "id": "oi_ord_3_0",
+      "order_id": "ord_3",
+      "menu_item_id": "mi_paneer",
+      "name": "Paneer Tikka",
+      "qty": 1,
+      "unit_price": 240
+    },
+    {
+      "id": "oi_ord_3_1",
+      "order_id": "ord_3",
+      "menu_item_id": "mi_dal",
+      "name": "Dal Makhani",
+      "qty": 1,
+      "unit_price": 210
+    },
+    {
+      "id": "oi_ord_3_2",
+      "order_id": "ord_3",
+      "menu_item_id": "mi_masala_chai",
+      "name": "Masala Chai",
+      "qty": 2,
+      "unit_price": 40
+    },
+    {
+      "id": "oi_ord_4_0",
+      "order_id": "ord_4",
+      "menu_item_id": null,
+      "name": "Veg Samosa (2 pcs)",
+      "qty": 2,
+      "unit_price": 60
+    },
+    {
+      "id": "oi_ord_4_1",
+      "order_id": "ord_4",
+      "menu_item_id": "mi_wings",
+      "name": "Chilli Chicken",
+      "qty": 1,
+      "unit_price": 220
+    },
+    {
+      "id": "oi_ord_5_0",
+      "order_id": "ord_5",
+      "menu_item_id": "mi_combo_a",
+      "name": "Biryani Combo",
+      "qty": 2,
+      "unit_price": 360
+    },
+    {
+      "id": "oi_ord_6_0",
+      "order_id": "ord_6",
+      "menu_item_id": "mi_butter_chicken",
+      "name": "Butter Chicken",
+      "qty": 1,
+      "unit_price": 320
+    },
+    {
+      "id": "oi_ord_6_1",
+      "order_id": "ord_6",
+      "menu_item_id": "mi_gulab",
+      "name": "Gulab Jamun (2 pcs)",
+      "qty": 1,
+      "unit_price": 90
+    },
+    {
+      "id": "oi_x_mqz5rda0rt_0",
+      "order_id": "ord_mqz5rda0ru",
+      "menu_item_id": "mi_wings",
+      "name": "Chilli Chicken",
+      "qty": 1,
+      "unit_price": 220
+    }
+  ]
+}

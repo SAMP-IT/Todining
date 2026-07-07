@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ArrowRight, BarChart3, Bell, CalendarCheck, ChefHat, Home, LayoutGrid, MapPin, QrCode,
+  ArrowRight, BarChart3, Bell, CalendarCheck, ChefHat, LayoutGrid, QrCode,
   ScanLine, Sparkles, Star, Utensils,
 } from 'lucide-react';
-import { Badge, Button } from '@/components/ui';
+import { Button } from '@/components/ui';
 import { Wordmark } from '@/components/layout/Brand';
 import { useTenant } from '@/context/TenantContext';
 import { useLiveQuery } from '@/hooks/useLiveQuery';
@@ -22,11 +21,9 @@ const FEATURES = [
 export function LandingPage() {
   // The active workspace is chosen in the Admin Panel workspace manager and
   // persisted in TenantContext (localStorage), so it stays selected across the
-  // whole site. branchesOf/setRestaurantById drive the branch selection screen.
-  const { restaurantId, branchesOf, setRestaurantById } = useTenant();
-  // Whether the visitor has chosen a branch for the active hotel this session.
-  // A hotel with branches shows a "Select Branch" screen until one is picked.
-  const [branchPicked, setBranchPicked] = useState(false);
+  // whole site. The public site always reflects ONLY this active branch — no
+  // sibling-branch picker or cross-branch switching is surfaced here.
+  const { restaurantId } = useTenant();
 
   // Live snapshot of the active hotel. Re-reads on any data change, so an admin
   // edit — rename, re-theme, a new dish, a table freeing up — is reflected on the
@@ -48,14 +45,6 @@ export function LandingPage() {
       if (!restaurant) return null;
       const items = menuService.items(restaurant.id);
       const tables = tableService.list(restaurant.id);
-      // [DEBUG-MENU] temporary — trace the restaurantId the website queries with.
-      console.debug('[DEBUG-MENU] LandingPage menuQuery', {
-        activeRestaurantId: restaurant.id, name: restaurant.name,
-        parentId: restaurant.parentId ?? null, kind: restaurant.parentId ? 'BRANCH' : 'HOTEL',
-        itemCount: items.length,
-        itemRestaurantIds: [...new Set(items.map((i) => i.restaurantId))],
-        availableNames: items.filter((i) => i.isAvailable).map((i) => i.name),
-      });
       return {
         restaurant,
         featured: items.filter((i) => i.isAvailable).slice(0, 6),
@@ -74,95 +63,12 @@ export function LandingPage() {
         <div>
           <Wordmark className="justify-center" />
           <p className="mt-4 text-ink-soft">No hotel is set up yet.</p>
-          <Link to="/admin-panel" className="mt-4 inline-block">
-            <Button>Open the workspace manager</Button>
-          </Link>
         </div>
       </div>
     );
   }
 
-  // Branch selection: when the active workspace is a hotel that HAS branches,
-  // present a "Select Branch" screen (Main Branch + children). Picking one
-  // activates that branch and loads only its data. A hotel with no branches —
-  // or an already-active branch — skips straight to the site (unchanged UX).
-  const active = data.restaurant;
-  const childBranches = !active.parentId ? branchesOf(active.id) : [];
-  if (!active.parentId && childBranches.length > 0 && !branchPicked) {
-    const options = [{ r: active, isMain: true }, ...childBranches.map((r) => ({ r, isMain: false }))];
-    const hotelBrand = active.logoColor || '#d9521f';
-    return (
-      <div className="min-h-[100dvh]">
-        <header className="mx-auto flex max-w-3xl items-center justify-between px-5 py-5">
-          <Link to="/admin-panel" className="flex items-center gap-2.5" title="Workspace manager">
-            <span
-              className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-xl text-base font-bold text-white"
-              style={{ background: hotelBrand }}
-            >
-              {active.logoUrl ? <img src={active.logoUrl} alt="" className="h-full w-full object-cover" /> : active.name.charAt(0)}
-            </span>
-            <span className="font-display text-xl font-semibold tracking-tight text-ink">{active.name}</span>
-          </Link>
-          <Link to="/login">
-            <Button variant="ghost" size="sm">Staff login</Button>
-          </Link>
-        </header>
-
-        <main className="mx-auto max-w-3xl px-5 pb-16 pt-6 sm:pt-12">
-          <div className="text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white px-3 py-1 text-xs font-semibold text-ink-soft">
-              <MapPin className="h-3.5 w-3.5" style={{ color: hotelBrand }} /> Select a branch
-            </span>
-            <h1 className="mt-5 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
-              Welcome to <span style={{ color: hotelBrand }}>{active.name}</span>
-            </h1>
-            <p className="mt-3 text-ink-soft">Choose a branch to view its menu, tables and live data.</p>
-          </div>
-
-          <div className="mt-10 grid gap-3 sm:grid-cols-2">
-            {options.map(({ r, isMain }) => (
-              <button
-                key={r.id}
-                disabled={r.status === 'inactive'}
-                onClick={() => { setRestaurantById(r.id); setBranchPicked(true); }}
-                className="group flex flex-col rounded-2xl border border-ink/8 bg-white p-5 text-left shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-lift focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-soft"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl text-white" style={{ background: r.logoColor }}>
-                    {isMain ? <Home className="h-5 w-5" /> : r.name.charAt(0)}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <h2 className="truncate font-display text-base font-semibold leading-tight">
-                      {isMain ? 'Main Branch' : r.name}
-                    </h2>
-                    {!isMain && r.code ? <p className="truncate text-xs text-ink-muted">{r.code}</p> : null}
-                  </div>
-                  <Badge tone={r.status === 'inactive' ? 'neutral' : 'sage'}>
-                    {r.status === 'inactive' ? 'Inactive' : 'Active'}
-                  </Badge>
-                </div>
-                {(r.address || r.manager) && (
-                  <p className="mt-3 truncate text-xs text-ink-muted">
-                    {[r.address, r.manager && `Manager: ${r.manager}`].filter(Boolean).join(' · ')}
-                  </p>
-                )}
-                <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-ember-600">
-                  View branch <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                </span>
-              </button>
-            ))}
-          </div>
-        </main>
-      </div>
-    );
-  }
-
   const { restaurant: hotel, featured, menuCount, tableCount, availableTables, firstTableId } = data;
-  // "Switch branch" affordance: present when the active workspace belongs to a
-  // hotel that has branches (whether we're on the Main Branch or a child).
-  const parentHotelId = hotel.parentId ?? hotel.id;
-  const hasBranches = branchesOf(parentHotelId).length > 0;
-  const switchBranch = () => { setRestaurantById(parentHotelId); setBranchPicked(false); };
   const brand = hotel.logoColor || '#d9521f';
   const symbol = hotel.settings.currencySymbol;
   const menuLink = firstTableId ? `/r/${hotel.slug}/t/${firstTableId}` : '/login';
@@ -172,7 +78,7 @@ export function LandingPage() {
     <div className="min-h-[100dvh]">
       {/* Nav — branded to the active hotel */}
       <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
-        <Link to="/admin-panel" className="flex items-center gap-2.5" title="Switch hotel">
+        <Link to="/site" className="flex items-center gap-2.5" title={hotel.name}>
           <span
             className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-xl text-base font-bold text-white"
             style={{ background: brand }}
@@ -186,11 +92,6 @@ export function LandingPage() {
           <span className="font-display text-xl font-semibold tracking-tight text-ink">{hotel.name}</span>
         </Link>
         <div className="flex items-center gap-2">
-          {hasBranches && (
-            <Button variant="ghost" size="sm" onClick={switchBranch}>
-              <MapPin className="h-4 w-4" /> Branches
-            </Button>
-          )}
           <Link to="/login">
             <Button variant="ghost" size="sm">Staff login</Button>
           </Link>

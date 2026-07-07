@@ -47,7 +47,7 @@ export function BillingPage() {
             <tbody className="divide-y divide-ink/5">
               {bills.map((b) => (
                 <tr key={b.id} className="hover:bg-cream-deep/40">
-                  <td className="px-4 py-3 font-semibold">#{b.id.slice(-6).toUpperCase()}</td>
+                  <td className="px-4 py-3 font-semibold">{b.invoiceNumber ?? `#${b.id.slice(-6).toUpperCase()}`}</td>
                   <td className="px-4 py-3">T{b.tableNumber}</td>
                   <td className="hidden px-4 py-3 text-ink-muted sm:table-cell">{formatDateTime(b.createdAt)}</td>
                   <td className="px-4 py-3 font-semibold">{formatMoney(b.grandTotal, symbol)}</td>

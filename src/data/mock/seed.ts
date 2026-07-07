@@ -1,7 +1,15 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Seed data — two tenants so multi-restaurant isolation is demonstrable out of
-// the box: "Spice Garden" (Indian) and "Café Aroma" (cafe). Timestamps are
-// relative to load time so the analytics dashboard has realistic recent data.
+// Seed data — the two production hotels this workspace ships with:
+//   • "Velans"      (multi-cuisine fine dining) — owner login velans-main01
+//   • "Cafe Aroma"  (cafe)                      — owner login cafe-aroma2026
+//
+// These are the ONLY two hotels. Each is fully isolated by restaurantId, so an
+// owner who signs in only ever sees their own hotel's data. Owner accounts carry
+// a hashed password (credentialed login); Manager/Waiter/Kitchen are password-
+// less so they open their board directly (auth for those roles comes later).
+//
+// Timestamps are relative to load time so the analytics dashboard has realistic
+// recent data out of the box.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { Database } from './store';
@@ -11,7 +19,9 @@ import type {
   OrderStatus,
   Reservation,
   RestaurantTable,
+  Staff,
 } from '@/types';
+import { hashPassword } from '@/lib/password';
 
 const img = (id: string) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=500&q=70`;
 
@@ -24,37 +34,45 @@ function isoDaysFromNow(days: number): string {
 }
 
 export function createSeedData(): Database {
-  // ── Restaurants ──────────────────────────────────────────────────────────
-  const rA = 'rest_spice';
+  // ── Restaurants (the two hotels) ─────────────────────────────────────────
+  const rA = 'rest_velans';
   const rB = 'rest_aroma';
 
   const restaurants = [
     {
       id: rA,
-      name: 'Spice Garden',
-      slug: 'spice-garden',
-      tagline: 'Authentic Indian kitchen',
+      name: 'Velans',
+      slug: 'velans',
+      tagline: 'Multi-cuisine fine dining',
       logoColor: '#d9521f',
+      parentId: null,
       settings: { taxRate: 0.05, serviceChargeRate: 0.1, currency: 'INR', currencySymbol: '₹' },
     },
     {
       id: rB,
-      name: 'Café Aroma',
+      name: 'Cafe Aroma',
       slug: 'cafe-aroma',
       tagline: 'Coffee, bites & calm',
       logoColor: '#4f8a5b',
+      parentId: null,
       settings: { taxRate: 0.05, serviceChargeRate: 0.08, currency: 'INR', currencySymbol: '₹' },
     },
   ];
 
   // ── Staff ────────────────────────────────────────────────────────────────
-  const staff = [
-    { id: 'stf_owner', restaurantId: rA, name: 'Anita Rao', email: 'owner@spice.test', role: 'owner' as const, avatarColor: '#d9521f', active: true },
-    { id: 'stf_mgr', restaurantId: rA, name: 'Vikram Shah', email: 'manager@spice.test', role: 'manager' as const, avatarColor: '#c98a1f', active: true },
-    { id: 'stf_waiter', restaurantId: rA, name: 'Ravi Kumar', email: 'waiter@spice.test', role: 'waiter' as const, avatarColor: '#4f8a5b', active: true },
-    { id: 'stf_kitchen', restaurantId: rA, name: 'Chef Meera', email: 'kitchen@spice.test', role: 'kitchen' as const, avatarColor: '#9c3110', active: true },
-    { id: 'stf_owner_b', restaurantId: rB, name: 'Sara Iyer', email: 'owner@aroma.test', role: 'owner' as const, avatarColor: '#4f8a5b', active: true },
-    { id: 'stf_waiter_b', restaurantId: rB, name: 'Dev Menon', email: 'waiter@aroma.test', role: 'waiter' as const, avatarColor: '#3d6e48', active: true },
+  // Owners are credentialed (username + hashed password). The other three roles
+  // are password-less so their Login-page quick-cards open the board directly.
+  const staff: Staff[] = [
+    // Velans
+    { id: 'stf_owner', restaurantId: rA, name: 'Velan Raman', email: 'owner@velans.test', username: 'velans-main01', passwordHash: hashPassword('velans@2026'), role: 'owner', avatarColor: '#d9521f', active: true },
+    { id: 'stf_mgr', restaurantId: rA, name: 'Vikram Shah', email: 'manager@velans.test', role: 'manager', avatarColor: '#c98a1f', active: true },
+    { id: 'stf_waiter', restaurantId: rA, name: 'Ravi Kumar', email: 'waiter@velans.test', role: 'waiter', avatarColor: '#4f8a5b', active: true },
+    { id: 'stf_kitchen', restaurantId: rA, name: 'Chef Meera', email: 'kitchen@velans.test', role: 'kitchen', avatarColor: '#9c3110', active: true },
+    // Cafe Aroma
+    { id: 'stf_owner_b', restaurantId: rB, name: 'Sara Iyer', email: 'owner@aroma.test', username: 'cafe-aroma2026', passwordHash: hashPassword('cafe@2026'), role: 'owner', avatarColor: '#4f8a5b', active: true },
+    { id: 'stf_mgr_b', restaurantId: rB, name: 'Nikhil Rao', email: 'manager@aroma.test', role: 'manager', avatarColor: '#c98a1f', active: true },
+    { id: 'stf_waiter_b', restaurantId: rB, name: 'Dev Menon', email: 'waiter@aroma.test', role: 'waiter', avatarColor: '#3d6e48', active: true },
+    { id: 'stf_kitchen_b', restaurantId: rB, name: 'Chef Anu', email: 'kitchen@aroma.test', role: 'kitchen', avatarColor: '#9c3110', active: true },
   ];
 
   // ── Categories ───────────────────────────────────────────────────────────
@@ -66,7 +84,7 @@ export function createSeedData(): Database {
 
   // ── Menu items ───────────────────────────────────────────────────────────
   const menuItems: MenuItem[] = [
-    // Spice Garden
+    // Velans
     { id: 'mi_samosa', restaurantId: rA, categoryId: cat(rA, 'Starters'), name: 'Veg Samosa (2 pcs)', description: 'Crispy pastry with spiced potato & peas', price: 60, imageUrl: img('1601050690597-df0568f70950'), isAvailable: true, tags: ['veg'], recipe: [{ inventoryItemId: 'inv_a_flour', qty: 0.05 }] },
     { id: 'mi_wings', restaurantId: rA, categoryId: cat(rA, 'Starters'), name: 'Chilli Chicken', description: 'Wok-tossed chicken, garlic & green chilli', price: 220, imageUrl: img('1527477396000-e27163b481c2'), isAvailable: true, tags: ['spicy'], recipe: [{ inventoryItemId: 'inv_a_chicken', qty: 0.2 }] },
     { id: 'mi_paneer', restaurantId: rA, categoryId: cat(rA, 'Starters'), name: 'Paneer Tikka', description: 'Char-grilled cottage cheese, mint chutney', price: 240, imageUrl: img('1599487488170-d11ec9c172f0'), isAvailable: true, tags: ['veg'] },
@@ -81,7 +99,7 @@ export function createSeedData(): Database {
     { id: 'mi_coke_a', restaurantId: rA, categoryId: cat(rA, 'Beverages'), name: 'Coke', description: 'Chilled 300ml', price: 49, imageUrl: img('1554866585-cd94860890b7'), isAvailable: true, recipe: [{ inventoryItemId: 'inv_a_soft', qty: 1 }] },
     { id: 'mi_combo_a', restaurantId: rA, categoryId: cat(rA, 'Combo Meals'), name: 'Biryani Combo', description: 'Biryani + Coke + Gulab Jamun', price: 360, imageUrl: img('1563379091339-03b21ab4a4f8'), isAvailable: true },
 
-    // Café Aroma
+    // Cafe Aroma
     { id: 'mi_fries', restaurantId: rB, categoryId: cat(rB, 'Starters'), name: 'Peri Peri Fries', description: 'Crispy fries tossed in peri peri', price: 99, imageUrl: img('1573080496219-bb080dd4f877'), isAvailable: true, tags: ['veg'] },
     { id: 'mi_nachos', restaurantId: rB, categoryId: cat(rB, 'Starters'), name: 'Loaded Nachos', description: 'Cheese, salsa, jalapeños', price: 180, imageUrl: img('1513456852971-30c0b8199d4d'), isAvailable: true, tags: ['veg'] },
     { id: 'mi_burger', restaurantId: rB, categoryId: cat(rB, 'Main Course'), name: 'Classic Burger', description: 'Juicy patty, cheddar, house sauce', price: 199, imageUrl: img('1568901346375-23c9450c58cd'), isAvailable: true, recipe: [{ inventoryItemId: 'inv_b_buns', qty: 1 }] },
@@ -150,18 +168,19 @@ export function createSeedData(): Database {
     const tax = Math.round(subtotal * taxRate);
     const serviceCharge = Math.round(subtotal * scRate);
     return {
-      id, restaurantId: rid, tableId, tableNumber, items: orderItems, status,
+      id, restaurantId: rid, tableId, tableNumber, sessionId: `sess_${id}`,
+      items: orderItems, status,
       subtotal, tax, serviceCharge, total: subtotal + tax + serviceCharge,
       createdAt: isoMinutesAgo(minAgo), updatedAt: isoMinutesAgo(Math.max(0, minAgo - 5)),
     };
   }
   const orders: Order[] = [
-    buildOrder('ord_1', rA, 'tbl_rest_spice_3', 3, [['mi_butter_chicken', 1], ['mi_naan', 2], ['mi_coke_a', 2]], 'preparing', 8),
-    buildOrder('ord_2', rA, 'tbl_rest_spice_1', 1, [['mi_biryani', 2], ['mi_lassi', 2]], 'pending', 3),
-    buildOrder('ord_3', rA, 'tbl_rest_spice_6', 6, [['mi_paneer', 1], ['mi_dal', 1], ['mi_masala_chai', 2]], 'ready', 14),
-    buildOrder('ord_4', rA, 'tbl_rest_spice_2', 2, [['mi_samosa', 2], ['mi_wings', 1]], 'completed', 180),
-    buildOrder('ord_5', rA, 'tbl_rest_spice_4', 4, [['mi_combo_a', 2]], 'completed', 320),
-    buildOrder('ord_6', rA, 'tbl_rest_spice_5', 5, [['mi_butter_chicken', 1], ['mi_gulab', 1]], 'completed', 1440),
+    buildOrder('ord_1', rA, 'tbl_rest_velans_3', 3, [['mi_butter_chicken', 1], ['mi_naan', 2], ['mi_coke_a', 2]], 'preparing', 8),
+    buildOrder('ord_2', rA, 'tbl_rest_velans_1', 1, [['mi_biryani', 2], ['mi_lassi', 2]], 'pending', 3),
+    buildOrder('ord_3', rA, 'tbl_rest_velans_6', 6, [['mi_paneer', 1], ['mi_dal', 1], ['mi_masala_chai', 2]], 'ready', 14),
+    buildOrder('ord_4', rA, 'tbl_rest_velans_2', 2, [['mi_samosa', 2], ['mi_wings', 1]], 'completed', 180),
+    buildOrder('ord_5', rA, 'tbl_rest_velans_4', 4, [['mi_combo_a', 2]], 'completed', 320),
+    buildOrder('ord_6', rA, 'tbl_rest_velans_5', 5, [['mi_butter_chicken', 1], ['mi_gulab', 1]], 'completed', 1440),
     buildOrder('ord_7', rB, 'tbl_rest_aroma_2', 2, [['mi_burger', 2], ['mi_fries', 1], ['mi_coke_b', 2]], 'preparing', 6),
     buildOrder('ord_8', rB, 'tbl_rest_aroma_4', 4, [['mi_pizza', 1], ['mi_latte', 2]], 'served', 22),
   ];
@@ -176,7 +195,7 @@ export function createSeedData(): Database {
 
   // ── Service requests ──────────────────────────────────────────────────────
   const serviceRequests = [
-    { id: 'svc_1', restaurantId: rA, tableId: 'tbl_rest_spice_3', tableNumber: 3, type: 'water' as const, status: 'open' as const, createdAt: isoMinutesAgo(2) },
+    { id: 'svc_1', restaurantId: rA, tableId: 'tbl_rest_velans_3', tableNumber: 3, type: 'water' as const, status: 'open' as const, createdAt: isoMinutesAgo(2) },
   ];
 
   // ── Feedback ────────────────────────────────────────────────────────────
@@ -188,22 +207,24 @@ export function createSeedData(): Database {
 
   // ── Notifications ─────────────────────────────────────────────────────────
   const notifications = [
-    { id: 'ntf_1', restaurantId: rA, channel: 'whatsapp' as const, type: 'reservation_confirmed' as const, recipient: 'Arun Nair', message: 'Hello Arun, your table reservation has been confirmed. Date: Today · Time: 7:00 PM. — Spice Garden', status: 'sent' as const, createdAt: isoMinutesAgo(118) },
+    { id: 'ntf_1', restaurantId: rA, channel: 'whatsapp' as const, type: 'reservation_confirmed' as const, recipient: 'Arun Nair', message: 'Hello Arun, your table reservation has been confirmed. Date: Today · Time: 7:00 PM. — Velans', status: 'sent' as const, createdAt: isoMinutesAgo(118) },
   ];
 
   const customers = [
     { id: 'cus_1', restaurantId: rA, name: 'Arun Nair', mobile: '+91 98765 43210', email: 'arun@mail.test' },
   ];
 
+  const bill1CreatedAt = isoMinutesAgo(175);
   const bills = [
     {
-      id: 'bill_1', restaurantId: rA, orderId: 'ord_4', tableNumber: 2,
+      id: 'bill_1', restaurantId: rA, invoiceNumber: `INV-${bill1CreatedAt.slice(0, 4)}-0001`,
+      sessionId: 'sess_ord_4', orderId: 'ord_4', tableNumber: 2,
       items: orders.find((o) => o.id === 'ord_4')!.items,
       subtotal: orders.find((o) => o.id === 'ord_4')!.subtotal,
       tax: orders.find((o) => o.id === 'ord_4')!.tax,
       serviceCharge: orders.find((o) => o.id === 'ord_4')!.serviceCharge,
       grandTotal: orders.find((o) => o.id === 'ord_4')!.total,
-      createdAt: isoMinutesAgo(175),
+      createdAt: bill1CreatedAt,
     },
   ];
 

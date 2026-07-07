@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { ChefHat, ConciergeBell, Crown, ShieldCheck } from 'lucide-react';
+import { ChefHat, ConciergeBell, ShieldCheck } from 'lucide-react';
 import { Button, Card, Input } from '@/components/ui';
 import { Wordmark } from '@/components/layout/Brand';
 import { useAuth } from '@/context/AuthContext';
@@ -11,9 +11,11 @@ import { ROLE_CONFIG } from '@/lib/roles';
 import type { Role, Staff } from '@/types';
 import { staffService } from '@/data/services';
 
-// The four primary roles, in display order — restores the original fixed-card UI.
-const ROLES: { role: Role; icon: typeof Crown }[] = [
-  { role: 'owner', icon: Crown },
+// Quick-access team roles. Owner is intentionally NOT here — owners sign in with
+// their hotel-isolated username + password via the form above. Manager / Waiter /
+// Kitchen are password-less for now, so tapping a card opens that board directly.
+// (Per-role authentication for these three arrives in a later update.)
+const ROLES: { role: Role; icon: typeof ShieldCheck }[] = [
   { role: 'manager', icon: ShieldCheck },
   { role: 'waiter', icon: ConciergeBell },
   { role: 'kitchen', icon: ChefHat },
@@ -37,7 +39,9 @@ export function LoginPage() {
   const memberFor = (role: Role) => staff.find((s) => s.role === role);
 
   function signIn(value: string, pwd?: string) {
-    const user = login(value, pwd);
+    // Resolve the login within the workspace the user picked, so an owner email
+    // shared across hotels signs into the SELECTED hotel — not an arbitrary one.
+    const user = login(value, pwd, restaurantId);
     if (!user) {
       toast.error('Invalid login — check your email/username and password.');
       return;
@@ -105,7 +109,7 @@ export function LoginPage() {
             <span className="h-px flex-1 bg-ink/10" /> Sign in as a team member <span className="h-px flex-1 bg-ink/10" />
           </div>
 
-          <Card className="grid grid-cols-2 gap-2 p-2">
+          <Card className="grid grid-cols-3 gap-2 p-2">
             {ROLES.map(({ role, icon: Icon }) => {
               const member = memberFor(role);
               return (

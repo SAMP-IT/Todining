@@ -3,16 +3,17 @@ import { toast } from 'sonner';
 import { ArrowLeftRight, Building2, Check, Settings2, ShieldCheck } from 'lucide-react';
 import type { Restaurant } from '@/types';
 import { useTenant } from '@/context/TenantContext';
+import { useAuth } from '@/context/AuthContext';
 import { useLiveQuery } from '@/hooks/useLiveQuery';
 import {
   menuService, orderService, reservationService, restaurantService, staffService, tableService,
 } from '@/data/services';
 import { Badge, Button, Input, Modal, PageHeader } from '@/components/ui';
-import { resetDb } from '@/data/mock/store';
 import { cn } from '@/lib/cn';
 
 export function RestaurantsPage() {
   const { restaurant: active, restaurantId, allRestaurants, setRestaurantById } = useTenant();
+  const { user } = useAuth();
   const [editing, setEditing] = useState<Restaurant | null>(null);
   const [name, setName] = useState('');
   const [tagline, setTagline] = useState('');
@@ -21,10 +22,26 @@ export function RestaurantsPage() {
   const [service, setService] = useState(0);
   const [symbol, setSymbol] = useState('₹');
 
+  // Restaurants owned by the signed-in user. An owner only ever manages their own
+  // hotel(s) — never other tenants — so we resolve the hotel ids attached to every
+  // staff record matching their login identifier, then include those hotels plus
+  // any branches of them. Falls back to the active hotel if there is no signed-in
+  // user or no match, so the page never renders blank.
+  const ownedRestaurants = (() => {
+    const ownedHotelIds = new Set(
+      user ? staffService.findAllByIdentifier(user.email).map((s) => s.restaurantId) : [],
+    );
+    const mine = allRestaurants.filter(
+      (r) => ownedHotelIds.has(r.id) || (r.parentId != null && ownedHotelIds.has(r.parentId)),
+    );
+    if (mine.length > 0) return mine;
+    return active ? [active] : [];
+  })();
+
   // Re-read counts whenever data changes anywhere (proves per-tenant isolation).
   const restaurants = useLiveQuery(
     () =>
-      allRestaurants.map((r) => ({
+      ownedRestaurants.map((r) => ({
         restaurant: r,
         stats: {
           menu: menuService.items(r.id).length,
@@ -60,13 +77,13 @@ export function RestaurantsPage() {
 
   return (
     <div>
-      <PageHeader title="Restaurants" subtitle="Your SaaS tenants — each with isolated menu, orders, staff and data." />
+      <PageHeader title="Restaurants" subtitle="Your restaurant workspace — menu, orders, staff and data, all in one place." />
 
       <div className="mb-5 flex items-start gap-3 rounded-2xl border border-sage-500/30 bg-sage-50 p-4">
         <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-sage-600" />
         <div>
-          <p className="font-semibold text-sage-700">Data is fully isolated per restaurant</p>
-          <p className="text-sm text-sage-600">Switching tenant changes every dashboard. The counts below are scoped to each restaurant.</p>
+          <p className="font-semibold text-sage-700">This workspace is yours alone</p>
+          <p className="text-sm text-sage-600">Your menu, orders, bookings and staff are fully isolated to this restaurant. The counts below are scoped to it.</p>
         </div>
       </div>
 
@@ -123,17 +140,6 @@ export function RestaurantsPage() {
             <Building2 className="h-4 w-4" /> Currently managing <strong className="text-ink">{active.name}</strong>.
           </p>
         )}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-ink-muted"
-          onClick={() => {
-            resetDb();
-            toast.success('Demo data reset.');
-          }}
-        >
-          Reset demo data
-        </Button>
       </div>
 
       <Modal

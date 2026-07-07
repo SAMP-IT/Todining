@@ -17,6 +17,14 @@ export const staffService = {
     );
   },
 
+  /** Every staff record matching a login identifier, across all tenants. */
+  findAllByIdentifier(identifier: string): Staff[] {
+    const id = identifier.trim().toLowerCase();
+    return getDb().staff.filter(
+      (s) => s.email.toLowerCase() === id || (s.username && s.username.toLowerCase() === id),
+    );
+  },
+
   /** Back-compat: match by email across all tenants. */
   findByEmail(email: string): Staff | undefined {
     return getDb().staff.find((s) => s.email.toLowerCase() === email.trim().toLowerCase());
@@ -28,11 +36,18 @@ export const staffService = {
    *    require the correct password.
    *  - Accounts WITHOUT a password (seeded demo staff, role quick-cards) sign in
    *    by identifier alone, preserving the demo experience.
-   * Returns the staff member, or null on failure.
+   *
+   * `preferRestaurantId` disambiguates a login that exists in more than one
+   * workspace (e.g. the same owner email reused across hotels): the staff record
+   * in the currently-selected workspace wins, so signing in from a hotel you
+   * picked lands you on THAT hotel — never an arbitrary first match in array
+   * order. Returns the staff member, or null on failure.
    */
-  authenticate(identifier: string, password?: string): Staff | null {
-    const staff = this.findByIdentifier(identifier);
-    if (!staff || !staff.active) return null;
+  authenticate(identifier: string, password?: string, preferRestaurantId?: string | null): Staff | null {
+    const matches = this.findAllByIdentifier(identifier).filter((s) => s.active);
+    if (matches.length === 0) return null;
+    const staff =
+      (preferRestaurantId && matches.find((s) => s.restaurantId === preferRestaurantId)) || matches[0];
     if (staff.passwordHash) {
       return password && verifyPassword(password, staff.passwordHash) ? staff : null;
     }

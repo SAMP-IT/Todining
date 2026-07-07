@@ -1,15 +1,36 @@
 import { useState } from 'react';
 import { ReceiptText } from 'lucide-react';
+import { format, isToday, isYesterday, parseISO } from 'date-fns';
 import type { Order, OrderStatus } from '@/types';
 import { ORDER_STATUS_FLOW } from '@/types';
 import { useTenant } from '@/context/TenantContext';
 import { useLiveQuery } from '@/hooks/useLiveQuery';
-import { orderService } from '@/data/services';
+import { orderService, sessionService } from '@/data/services';
 import { EmptyState, Modal, OrderStatusBadge, PageHeader } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { formatMoney, formatTime } from '@/lib/format';
 
 const FILTERS: ('all' | OrderStatus)[] = ['all', ...ORDER_STATUS_FLOW];
+
+/** Human label for a day's order group: "Today", "Yesterday", or "Mon, 23 Jun 2026". */
+function dayLabel(iso: string): string {
+  const d = parseISO(iso);
+  if (isToday(d)) return 'Today';
+  if (isYesterday(d)) return 'Yesterday';
+  return format(d, 'EEE, d MMM yyyy');
+}
+
+/** Group orders (assumed newest-first) into day buckets, preserving order. */
+function groupByDay(orders: Order[]): { key: string; label: string; orders: Order[] }[] {
+  const groups: { key: string; label: string; orders: Order[] }[] = [];
+  for (const o of orders) {
+    const key = format(parseISO(o.createdAt), 'yyyy-MM-dd');
+    const last = groups[groups.length - 1];
+    if (last && last.key === key) last.orders.push(o);
+    else groups.push({ key, label: dayLabel(o.createdAt), orders: [o] });
+  }
+  return groups;
+}
 
 export function OrdersPage() {
   const { restaurant, restaurantId } = useTenant();
@@ -23,6 +44,7 @@ export function OrdersPage() {
   });
 
   const filtered = filter === 'all' ? orders : orders.filter((o) => o.status === filter);
+  const dayGroups = groupByDay(filtered);
   const selectedLive = selected ? orders.find((o) => o.id === selected.id) ?? selected : null;
 
   return (
@@ -47,31 +69,50 @@ export function OrdersPage() {
       {filtered.length === 0 ? (
         <EmptyState icon={<ReceiptText className="h-8 w-8" />} title="No orders here" description="Orders placed by guests will show up instantly." />
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-ink/5 bg-white shadow-soft">
-          <table className="w-full text-sm">
-            <thead className="bg-cream-deep/60 text-left text-xs uppercase tracking-wide text-ink-muted">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Order</th>
-                <th className="px-4 py-3 font-semibold">Table</th>
-                <th className="hidden px-4 py-3 font-semibold sm:table-cell">Items</th>
-                <th className="px-4 py-3 font-semibold">Total</th>
-                <th className="hidden px-4 py-3 font-semibold sm:table-cell">Time</th>
-                <th className="px-4 py-3 font-semibold">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-ink/5">
-              {filtered.map((o) => (
-                <tr key={o.id} className="cursor-pointer hover:bg-cream-deep/40" onClick={() => setSelected(o)}>
-                  <td className="px-4 py-3 font-semibold">#{o.id.slice(-5).toUpperCase()}</td>
-                  <td className="px-4 py-3">T{o.tableNumber}</td>
-                  <td className="hidden px-4 py-3 text-ink-soft sm:table-cell">{o.items.reduce((s, i) => s + i.qty, 0)} items</td>
-                  <td className="px-4 py-3 font-semibold">{formatMoney(o.total, symbol)}</td>
-                  <td className="hidden px-4 py-3 text-ink-muted sm:table-cell">{formatTime(o.createdAt)}</td>
-                  <td className="px-4 py-3"><OrderStatusBadge status={o.status} /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="space-y-6">
+          {dayGroups.map((group) => {
+            // Revenue = completed orders only, matching Dashboard/Analytics so
+            // the day total never counts pending/preparing orders as earnings.
+            const dayTotal = group.orders
+              .filter((o) => o.status === 'completed')
+              .reduce((s, o) => s + o.total, 0);
+            return (
+              <div key={group.key}>
+                <div className="mb-2 flex items-center justify-between px-1">
+                  <h2 className="text-sm font-semibold text-ink">
+                    {group.label} <span className="font-normal text-ink-muted">· {group.orders.length} order{group.orders.length === 1 ? '' : 's'}</span>
+                  </h2>
+                  <span className="text-sm font-semibold text-ink-soft">{formatMoney(dayTotal, symbol)}</span>
+                </div>
+                <div className="overflow-hidden rounded-2xl border border-ink/5 bg-white shadow-soft">
+                  <table className="w-full text-sm">
+                    <thead className="bg-cream-deep/60 text-left text-xs uppercase tracking-wide text-ink-muted">
+                      <tr>
+                        <th className="px-4 py-3 font-semibold">Order</th>
+                        <th className="px-4 py-3 font-semibold">Table</th>
+                        <th className="hidden px-4 py-3 font-semibold sm:table-cell">Items</th>
+                        <th className="px-4 py-3 font-semibold">Total</th>
+                        <th className="hidden px-4 py-3 font-semibold sm:table-cell">Time</th>
+                        <th className="px-4 py-3 font-semibold">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-ink/5">
+                      {group.orders.map((o) => (
+                        <tr key={o.id} className="cursor-pointer hover:bg-cream-deep/40" onClick={() => setSelected(o)}>
+                          <td className="px-4 py-3 font-semibold">#{o.id.slice(-5).toUpperCase()}</td>
+                          <td className="px-4 py-3">T{o.tableNumber}</td>
+                          <td className="hidden px-4 py-3 text-ink-soft sm:table-cell">{o.items.reduce((s, i) => s + i.qty, 0)} items</td>
+                          <td className="px-4 py-3 font-semibold">{formatMoney(o.total, symbol)}</td>
+                          <td className="hidden px-4 py-3 text-ink-muted sm:table-cell">{formatTime(o.createdAt)}</td>
+                          <td className="px-4 py-3"><OrderStatusBadge status={o.status} /></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -104,7 +145,15 @@ export function OrdersPage() {
                 {ORDER_STATUS_FLOW.map((s) => (
                   <button
                     key={s}
-                    onClick={() => orderService.setStatus(selectedLive.id, s)}
+                    onClick={() =>
+                      // "Completed" closes the whole dining session: it completes
+                      // every order on the table for that visit and generates the
+                      // single final bill (idempotent). Other statuses only move
+                      // this one order along the kitchen/serve flow.
+                      s === 'completed'
+                        ? sessionService.completeDining(selectedLive.restaurantId, selectedLive.sessionId)
+                        : orderService.setStatus(selectedLive.id, s)
+                    }
                     className={cn(
                       'rounded-xl px-3 py-1.5 text-sm font-semibold capitalize transition-colors',
                       selectedLive.status === s ? 'bg-ember-500 text-white' : 'bg-ink/5 text-ink-soft hover:bg-ink/10',

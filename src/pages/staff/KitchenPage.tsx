@@ -7,6 +7,7 @@ import { useLiveQuery } from '@/hooks/useLiveQuery';
 import { useRealtime } from '@/hooks/useRealtime';
 import { orderService } from '@/data/services';
 import { KitchenTicket } from '@/features/kitchen/KitchenTicket';
+import { KitchenFeedback } from '@/features/kitchen/KitchenFeedback';
 import { EmptyState } from '@/components/ui';
 
 const COLUMNS: { status: OrderStatus; title: string }[] = [
@@ -69,6 +70,8 @@ export function KitchenPage() {
           })}
         </div>
       )}
+
+      <KitchenFeedback />
     </div>
   );
 }

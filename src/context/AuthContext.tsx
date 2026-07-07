@@ -5,8 +5,9 @@ import { staffService } from '@/data/services';
 interface AuthValue {
   user: Staff | null;
   /** Sign in by email/username. Password is required for credentialed accounts
-   *  (hotel owners) and ignored for password-less demo staff. */
-  login: (identifier: string, password?: string) => Staff | null;
+   *  (hotel owners) and ignored for password-less demo staff. `preferRestaurantId`
+   *  resolves a login that exists in multiple workspaces to the active one. */
+  login: (identifier: string, password?: string, preferRestaurantId?: string | null) => Staff | null;
   logout: () => void;
 }
 
@@ -21,8 +22,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return id ? staffService.getById(id) ?? null : null;
   });
 
-  const login = useCallback((identifier: string, password?: string) => {
-    const found = staffService.authenticate(identifier, password);
+  const login = useCallback((identifier: string, password?: string, preferRestaurantId?: string | null) => {
+    const found = staffService.authenticate(identifier, password, preferRestaurantId);
     if (found) {
       setUser(found);
       window.localStorage.setItem(AUTH_KEY, found.id);

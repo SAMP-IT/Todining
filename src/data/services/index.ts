@@ -10,6 +10,7 @@ export { serviceRequestService, SERVICE_REQUEST_LABELS } from './serviceRequestS
 export { reservationService } from './reservationService';
 export type { ReservationInput } from './reservationService';
 export { billingService } from './billingService';
+export { sessionService } from './sessionService';
 export { feedbackService } from './feedbackService';
 export type { FeedbackInput } from './feedbackService';
 export { inventoryService } from './inventoryService';

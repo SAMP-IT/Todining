@@ -1,4 +1,4 @@
-import { format, isAfter, parseISO, startOfDay, subDays } from 'date-fns';
+import { format, isAfter, isSameDay, parseISO, startOfDay, subDays } from 'date-fns';
 import { getDb } from '@/data/mock/store';
 import { orderService } from './orderService';
 import { feedbackService } from './feedbackService';
@@ -17,7 +17,10 @@ export const analyticsService = {
     const revenue = (list: typeof completed) => list.reduce((s, o) => s + o.total, 0);
 
     return {
-      dailyRevenue: revenue(since(1)),
+      // "Today" = calendar today for the active restaurant only, never a rolling
+      // 24h window (which previously bled yesterday's orders into "Today's
+      // revenue" and disagreed with the Orders page's day grouping).
+      dailyRevenue: revenue(completed.filter((o) => isSameDay(parseISO(o.createdAt), now))),
       weeklyRevenue: revenue(since(7)),
       monthlyRevenue: revenue(since(30)),
       totalOrders: orders.length,

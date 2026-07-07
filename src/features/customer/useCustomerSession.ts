@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useReducer } from 'react';
+import { useMemo, useReducer } from 'react';
 import { useParams } from 'react-router-dom';
-import { useTenant } from '@/context/TenantContext';
 import { restaurantService, tableService } from '@/data/services';
 import { useRealtime } from '@/hooks/useRealtime';
 import type { Restaurant, RestaurantTable } from '@/types';
@@ -12,11 +11,16 @@ export interface CustomerSession {
 
 /**
  * Resolves the QR deep-link params (`/r/:slug/t/:tableId`) into a restaurant +
- * table, and syncs the active tenant. Returns `null` when the link is invalid.
+ * table. Returns `null` when the link is invalid.
+ *
+ * This is the SOLE source of the customer site's restaurant — every customer
+ * page reads it via the outlet context, never via TenantContext. Crucially it
+ * does NOT touch the global active workspace: the customer URL is per-link and
+ * must never overwrite (or persist over) the admin's selected hotel/branch,
+ * which is the single source of truth owned by TenantContext.
  */
 export function useCustomerSession(): CustomerSession | null {
   const { slug, tableId } = useParams<{ slug: string; tableId: string }>();
-  const { setRestaurantBySlug } = useTenant();
 
   // Re-resolve the restaurant/table when the admin renames or re-themes the
   // restaurant (or on a full cross-tab reset) so the customer header, tagline
@@ -46,10 +50,6 @@ export function useCustomerSession(): CustomerSession | null {
     return { restaurant, table };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug, tableId, version]);
-
-  useEffect(() => {
-    if (slug) setRestaurantBySlug(slug);
-  }, [slug, setRestaurantBySlug]);
 
   return session;
 }

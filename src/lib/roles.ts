@@ -42,7 +42,7 @@ export const ADMIN_NAV: { to: string; label: string; icon: string; ownerOnly?: b
   { to: '/admin/reservations', label: 'Reservations', icon: 'CalendarCheck' },
   { to: '/admin/inventory', label: 'Inventory', icon: 'Boxes' },
   { to: '/admin/billing', label: 'Billing', icon: 'IndianRupee' },
-  { to: '/admin/feedback', label: 'Feedback', icon: 'Star' },
+  { to: '/admin/feedback', label: 'Feedback', icon: 'Star', ownerOnly: true },
   { to: '/admin/notifications', label: 'Notifications', icon: 'MessageCircle' },
   { to: '/admin/staff', label: 'Staff', icon: 'Users' },
   { to: '/admin/restaurants', label: 'Restaurants', icon: 'Building2', ownerOnly: true },

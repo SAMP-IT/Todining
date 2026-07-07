@@ -134,11 +134,14 @@ const orders: TableSpec<Order> = {
   table: 'orders',
   toRow: (o) => ({
     id: o.id, restaurant_id: o.restaurantId, table_id: o.tableId, table_number: o.tableNumber,
-    status: o.status, subtotal: o.subtotal, tax: o.tax, service_charge: o.serviceCharge,
-    total: o.total, created_at: o.createdAt, updated_at: o.updatedAt,
+    session_id: o.sessionId, status: o.status, subtotal: o.subtotal, tax: o.tax,
+    service_charge: o.serviceCharge, total: o.total, created_at: o.createdAt, updated_at: o.updatedAt,
   }),
   fromRow: (row) => ({
     id: row.id, restaurantId: row.restaurant_id, tableId: row.table_id, tableNumber: row.table_number,
+    // Legacy rows predating dining sessions fall back to their own id, so each is
+    // its own single-order session and nothing breaks.
+    sessionId: row.session_id ?? row.id,
     items: [], status: row.status, subtotal: num(row.subtotal), tax: num(row.tax),
     serviceCharge: num(row.service_charge), total: num(row.total),
     createdAt: row.created_at, updatedAt: row.updated_at,
@@ -162,8 +165,8 @@ const reservations: TableSpec<Reservation> = {
 const bills: TableSpec<Bill> = {
   dbKey: 'bills',
   table: 'bills',
-  toRow: (b) => ({ id: b.id, restaurant_id: b.restaurantId, order_id: b.orderId, table_number: b.tableNumber, subtotal: b.subtotal, tax: b.tax, service_charge: b.serviceCharge, grand_total: b.grandTotal, created_at: b.createdAt }),
-  fromRow: (row) => ({ id: row.id, restaurantId: row.restaurant_id, orderId: row.order_id, tableNumber: row.table_number, items: [], subtotal: num(row.subtotal), tax: num(row.tax), serviceCharge: num(row.service_charge), grandTotal: num(row.grand_total), createdAt: row.created_at }),
+  toRow: (b) => ({ id: b.id, restaurant_id: b.restaurantId, invoice_number: b.invoiceNumber ?? null, session_id: b.sessionId ?? null, order_id: b.orderId, table_number: b.tableNumber, subtotal: b.subtotal, tax: b.tax, service_charge: b.serviceCharge, grand_total: b.grandTotal, created_at: b.createdAt }),
+  fromRow: (row) => ({ id: row.id, restaurantId: row.restaurant_id, invoiceNumber: row.invoice_number ?? undefined, sessionId: row.session_id ?? undefined, orderId: row.order_id, tableNumber: row.table_number, items: [], subtotal: num(row.subtotal), tax: num(row.tax), serviceCharge: num(row.service_charge), grandTotal: num(row.grand_total), createdAt: row.created_at }),
 };
 
 const feedback: TableSpec<Feedback> = {

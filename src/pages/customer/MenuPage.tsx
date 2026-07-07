@@ -1,16 +1,30 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
+import { Receipt } from 'lucide-react';
 import type { CustomerSession } from '@/features/customer/useCustomerSession';
-import { menuService } from '@/data/services';
+import { menuService, sessionService } from '@/data/services';
 import { useLiveQuery } from '@/hooks/useLiveQuery';
 import { MenuItemCard } from '@/features/menu/MenuItemCard';
 import { CategoryNav } from '@/features/menu/CategoryNav';
 import { CartBar } from '@/features/cart/CartBar';
 import { EmptyState } from '@/components/ui';
+import { formatMoney } from '@/lib/format';
 
 export function MenuPage() {
-  const { restaurant } = useOutletContext<CustomerSession>();
+  const { restaurant, table } = useOutletContext<CustomerSession>();
   const symbol = restaurant.settings.currencySymbol;
+
+  // The table's open dining session (if the guest has already ordered this
+  // visit). Lets them jump back to the running tab / "Complete Dining" while
+  // they keep adding items. Refreshes live as orders are placed or served.
+  const activeSession = useLiveQuery(
+    () => {
+      const sid = sessionService.activeIdForTable(restaurant.id, table.id);
+      return sid ? sessionService.get(restaurant.id, sid) : null;
+    },
+    { restaurantId: restaurant.id, types: ['order:created', 'order:updated', 'data:changed'] },
+  );
+  const latestOrderId = activeSession?.orders[activeSession.orders.length - 1]?.id;
 
   // Live-bound to the menu: only *available* items are shown, and the view
   // re-reads whenever the owner adds, edits, removes or toggles a dish — so an
@@ -72,6 +86,21 @@ export function MenuPage() {
 
   return (
     <div className="px-4 pb-28">
+      {activeSession && activeSession.status === 'active' && latestOrderId && (
+        <Link
+          to={`/r/${restaurant.slug}/t/${table.id}/order/${latestOrderId}`}
+          className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-ember-300 bg-ember-50 px-4 py-3 text-ember-700 shadow-soft"
+        >
+          <span className="flex items-center gap-2 text-sm font-semibold">
+            <Receipt className="h-4 w-4" />
+            Dining session active · {activeSession.orders.length} order{activeSession.orders.length === 1 ? '' : 's'}
+          </span>
+          <span className="text-sm font-bold">
+            {formatMoney(activeSession.total, symbol)} →
+          </span>
+        </Link>
+      )}
+
       <div className="py-4">
         <h1 className="font-display text-2xl font-semibold">What are you craving?</h1>
         {restaurant.tagline && <p className="text-sm text-ink-muted">{restaurant.tagline}</p>}

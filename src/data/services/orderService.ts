@@ -32,6 +32,24 @@ export const orderService = {
     return this.list(restaurantId).filter((o) => o.tableId === tableId);
   },
 
+  /**
+   * The sessionId of the table's OPEN dining session, or null. A session is open
+   * while it has at least one not-yet-completed order — i.e. the party is still
+   * dining and hasn't pressed "Complete Dining". Once every order is completed
+   * (billed), the table has no open session and the next order starts a fresh one.
+   */
+  activeSessionId(restaurantId: string, tableId: string): string | null {
+    const open = this.byTable(restaurantId, tableId).find((o) => o.status !== 'completed');
+    return open?.sessionId ?? null;
+  },
+
+  /** Every order in a dining session, oldest first. */
+  bySession(restaurantId: string, sessionId: string): Order[] {
+    return this.list(restaurantId)
+      .filter((o) => o.sessionId === sessionId)
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  },
+
   get(id: string): Order | undefined {
     return getDb().orders.find((o) => o.id === id);
   },
@@ -48,11 +66,16 @@ export const orderService = {
     }));
     const totals = computeTotals(restaurantId, items);
 
+    // Join the table's open dining session if one exists (the customer is
+    // re-ordering during the same visit); otherwise this order opens a new one.
+    const sessionId = this.activeSessionId(restaurantId, tableId) ?? makeId('sess');
+
     const order: Order = {
       id: makeId('ord'),
       restaurantId,
       tableId,
       tableNumber,
+      sessionId,
       items,
       status: 'pending',
       ...totals,
@@ -91,6 +114,14 @@ export const orderService = {
     });
     if (updated) {
       realtimeBus.emit({ type: 'order:updated', restaurantId: updated.restaurantId, payload: { orderId: id, status } });
+      // When an order is completed, free its table — unless another active
+      // order still occupies it (a table may hold multiple concurrent orders).
+      if (status === 'completed' && updated.tableId) {
+        const stillActive = this.byTable(updated.restaurantId, updated.tableId).some(
+          (o) => o.id !== id && o.status !== 'completed',
+        );
+        if (!stillActive) tableService.setStatus(updated.tableId, 'available');
+      }
     }
     return updated;
   },

@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import { LandingPage } from '@/pages/LandingPage';
 import { LoginPage } from '@/pages/LoginPage';
 import { AdminPanelEntry } from '@/pages/AdminPanelEntry';
@@ -11,16 +11,25 @@ import { RoleGuard } from '@/components/layout/RoleGuard';
 // the customer ordering path never ships recharts/jsPDF/admin code. Landing +
 // Login stay eager for instant first paint.
 export const router = createBrowserRouter([
-  // Opening the app lands on the Hotel Workspace Manager (Admin Panel), not a
-  // hotel's public site. The public website now lives at /site (a hotel card's
-  // "View site" and every "back to website" link point there).
-  { path: '/', element: <Navigate to="/admin-panel" replace /> },
-  { path: '/site', element: <LandingPage /> },
+  // ── Default entry point ─────────────────────────────────────────────────────
+  // Opening the app always lands on the staff Login Page. Owners sign in with
+  // credentials (hotel-isolated); Manager/Waiter/Kitchen open their board
+  // directly. This is the production default.
+  //
+  // The public customer website (Landing Page) is PRESERVED but no longer the
+  // default — it is reachable at /site (and /landing). It will become the public
+  // customer entry point in a future update. Structuring the routes this way
+  // keeps room for dedicated Owner / Manager / Waiter / Kitchen login flows and a
+  // separate public site without further reshaping.
+  { path: '/', element: <LoginPage /> },
   { path: '/login', element: <LoginPage /> },
+  { path: '/site', element: <LandingPage /> },
+  { path: '/landing', element: <LandingPage /> },
 
-  // Public entry point for the Admin Panel — a card-based landing page. Clicking
-  // the card navigates to /admin, which renders the full dashboard (RoleGuard +
-  // all admin routes unchanged).
+  // Private entry point for the Admin Panel — a card-based landing page. Not
+  // linked from the public website; reachable only via the explicit /admin-panel
+  // URL. Clicking a card navigates to /admin, which renders the full dashboard
+  // (RoleGuard + all admin routes unchanged).
   { path: '/admin-panel', element: <AdminPanelEntry /> },
 
   // Customer (QR) — no auth.
