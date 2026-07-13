@@ -19,3 +19,4 @@ export { upsellService } from './upsellService';
 export type { UpsellSuggestion } from './upsellService';
 export { staffService } from './staffService';
 export { analyticsService } from './analyticsService';
+export { adminAuthService } from './adminAuthService';

@@ -6,6 +6,7 @@ import { NotFoundPage } from '@/pages/NotFoundPage';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { StaffLayout } from '@/components/layout/StaffLayout';
 import { RoleGuard } from '@/components/layout/RoleGuard';
+import { AdminPanelGuard } from '@/components/layout/AdminPanelGuard';
 
 // Code-splitting: heavy/route-specific screens load on demand via route.lazy, so
 // the customer ordering path never ships recharts/jsPDF/admin code. Landing +
@@ -28,9 +29,18 @@ export const router = createBrowserRouter([
 
   // Private entry point for the Admin Panel — a card-based landing page. Not
   // linked from the public website; reachable only via the explicit /admin-panel
-  // URL. Clicking a card navigates to /admin, which renders the full dashboard
-  // (RoleGuard + all admin routes unchanged).
-  { path: '/admin-panel', element: <AdminPanelEntry /> },
+  // URL. Guarded: an AdminPanelGuard shows a login form (credentials validated
+  // against Supabase) before the panel renders, so /admin-panel cannot be reached
+  // directly without signing in. Clicking a card navigates to /admin, which
+  // renders the full dashboard (RoleGuard + all admin routes unchanged).
+  {
+    path: '/admin-panel',
+    element: (
+      <AdminPanelGuard>
+        <AdminPanelEntry />
+      </AdminPanelGuard>
+    ),
+  },
 
   // Customer (QR) — no auth.
   {

@@ -4,6 +4,8 @@ import { Toaster } from 'sonner';
 import { router } from './router';
 import { TenantProvider } from '@/context/TenantContext';
 import { AuthProvider } from '@/context/AuthContext';
+import { AdminAuthProvider } from '@/context/AdminAuthContext';
+import { ModuleUpdatesProvider } from '@/context/ModuleUpdatesContext';
 import { Button, Spinner } from '@/components/ui';
 import { bootstrapStore } from '@/data/mock/store';
 
@@ -67,7 +69,9 @@ export function App() {
     <DataGate>
       <AuthProvider>
         <TenantProvider>
-          <RouterProvider router={router} fallbackElement={<RouteLoader />} />
+          <AdminAuthProvider>
+            <ModuleUpdatesProvider>
+              <RouterProvider router={router} fallbackElement={<RouteLoader />} />
           <Toaster
             position="top-center"
             toastOptions={{
@@ -77,7 +81,9 @@ export function App() {
                 fontFamily: '"Plus Jakarta Sans", sans-serif',
               },
             }}
-          />
+              />
+            </ModuleUpdatesProvider>
+          </AdminAuthProvider>
         </TenantProvider>
       </AuthProvider>
     </DataGate>

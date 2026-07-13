@@ -2,12 +2,13 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
-  ArrowRight, Building2, ChevronDown, Home, Plus, ShieldCheck,
+  ArrowRight, Building2, ChevronDown, Home, LogOut, Plus, ShieldCheck,
 } from 'lucide-react';
 import type { Restaurant } from '@/types';
 import { Wordmark } from '@/components/layout/Brand';
 import { Badge, Button, Input, Modal, Select, Textarea } from '@/components/ui';
 import { useTenant } from '@/context/TenantContext';
+import { useAdminAuth } from '@/context/AdminAuthContext';
 import { useLiveQuery } from '@/hooks/useLiveQuery';
 import {
   menuService, orderService, restaurantService, staffService, tableService,
@@ -51,6 +52,7 @@ const EMPTY_BRANCH: BranchForm = {
  */
 export function AdminPanelEntry() {
   const { setRestaurantById, restaurantId } = useTenant();
+  const { logout } = useAdminAuth();
   const navigate = useNavigate();
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<CreateForm>(EMPTY_FORM);
@@ -142,9 +144,17 @@ export function AdminPanelEntry() {
 
       <header className="mx-auto flex max-w-5xl items-center justify-between px-5 py-5">
         <Wordmark />
-        <Link to="/site" className="text-sm font-semibold text-ink-soft hover:text-ink">
-          Back to website
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link to="/site" className="text-sm font-semibold text-ink-soft hover:text-ink">
+            Back to website
+          </Link>
+          <button
+            onClick={logout}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-ink/10 bg-white px-3 py-1.5 text-sm font-semibold text-ink-soft transition-colors hover:border-ember-400 hover:text-ember-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40"
+          >
+            <LogOut className="h-4 w-4" /> Log out
+          </button>
+        </div>
       </header>
 
       <main className="mx-auto max-w-5xl px-5 pb-16 pt-6 sm:pt-10">

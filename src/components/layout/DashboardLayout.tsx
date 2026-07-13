@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   BarChart3, Boxes, Building2, CalendarCheck, FolderTree, IndianRupee, LayoutDashboard, LayoutGrid,
   LogOut, Menu as MenuIcon, MessageCircle, ReceiptText, Star, UtensilsCrossed, Users, X,
@@ -7,6 +7,7 @@ import {
 import { Wordmark } from './Brand';
 import { RestaurantSwitcher } from './RestaurantSwitcher';
 import { useAuth } from '@/context/AuthContext';
+import { useModuleUpdates } from '@/context/ModuleUpdatesContext';
 import { ADMIN_NAV, ROLE_CONFIG } from '@/lib/roles';
 import { cn } from '@/lib/cn';
 
@@ -15,8 +16,20 @@ const ICONS: Record<string, typeof BarChart3> = {
   IndianRupee, Star, MessageCircle, Users, Building2, LayoutDashboard, FolderTree,
 };
 
+/** Resolve the current pathname to the sidebar module (route) it belongs to. */
+function currentModuleKey(pathname: string): string | null {
+  // Longest route first so '/admin/orders' wins over '/admin'.
+  const items = [...ADMIN_NAV].sort((a, b) => b.to.length - a.to.length);
+  for (const it of items) {
+    const match = it.end ? pathname === it.to : pathname === it.to || pathname.startsWith(`${it.to}/`);
+    if (match) return it.to;
+  }
+  return null;
+}
+
 function NavItems({ onNavigate }: { onNavigate?: () => void }) {
   const { user } = useAuth();
+  const { hasUpdate } = useModuleUpdates();
   // Anonymous visitors (Admin Panel opened without login) are treated as an
   // owner so the full menu — including owner-only Analytics & Restaurants — shows.
   const role = user?.role ?? 'owner';
@@ -38,8 +51,20 @@ function NavItems({ onNavigate }: { onNavigate?: () => void }) {
               )
             }
           >
-            <Icon className="h-[18px] w-[18px]" />
-            {item.label}
+            {({ isActive }) => (
+              <>
+                <Icon className="h-[18px] w-[18px]" />
+                <span className="flex-1">{item.label}</span>
+                {/* Unseen-update indicator: a green dot on the module whose data
+                    changed, hidden on the page you're currently viewing. */}
+                {hasUpdate(item.to) && !isActive && (
+                  <span
+                    className="h-2 w-2 shrink-0 rounded-full bg-emerald-500"
+                    aria-label="New updates"
+                  />
+                )}
+              </>
+            )}
           </NavLink>
         );
       })}
@@ -90,6 +115,17 @@ function UserChip() {
 
 export function DashboardLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { pathname } = useLocation();
+  const { hasUpdate, markViewed } = useModuleUpdates();
+
+  // Visiting a module marks it viewed (clears its dot). This also fires when an
+  // update lands while you're already on that page, so live viewing counts as
+  // seen — a fresh update after you leave will light the dot again.
+  const current = currentModuleKey(pathname);
+  const currentHasUpdate = current ? hasUpdate(current) : false;
+  useEffect(() => {
+    if (current && currentHasUpdate) markViewed(current);
+  }, [current, currentHasUpdate, markViewed]);
 
   return (
     <div className="min-h-[100dvh] lg:grid lg:grid-cols-[16rem_1fr]">
