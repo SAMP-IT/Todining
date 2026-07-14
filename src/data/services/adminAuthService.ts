@@ -12,7 +12,7 @@
 // one-way hash, not the plaintext password, and production always uses Supabase.
 // ─────────────────────────────────────────────────────────────────────────────
 import { supabase, isSupabaseEnabled } from '@/data/supabase/client';
-import { hashPassword, verifyPassword } from '@/lib/password';
+import { verifyPassword } from '@/lib/password';
 
 const TABLE = 'admin_users';
 
@@ -40,15 +40,6 @@ export const adminAuthService = {
         .select('username, password_hash')
         .eq('username', uname)
         .maybeSingle();
-
-      // Diagnostics — surface exactly why a sign-in did or didn't succeed.
-      console.info('[ToDining][admin-auth] lookup', {
-        username: uname,
-        generatedHash: hashPassword(password),
-        dbHash: data?.password_hash ?? null,
-        rowFound: !!data,
-        error: error?.message ?? null,
-      });
 
       if (error) {
         console.error('[ToDining][admin-auth] Credential lookup failed:', error.message);

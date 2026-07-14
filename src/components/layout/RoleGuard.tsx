@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import type { Role } from '@/types';
 import { useAuth } from '@/context/AuthContext';
-import { canAccess } from '@/lib/roles';
+import { canAccess, ROLE_CONFIG } from '@/lib/roles';
 
 /**
  * Gate a route by authentication and (optionally) role-based path access.
@@ -28,11 +28,13 @@ export function RoleGuard({
     if (open) return <>{children}</>;
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
+  // Authenticated but not allowed here → send them to THEIR own home, not the
+  // public marketing site (which stranded staff with no way back into the app).
   if (roles && !roles.includes(user.role)) {
-    return <Navigate to="/site" replace />;
+    return <Navigate to={ROLE_CONFIG[user.role].home} replace />;
   }
   if (!canAccess(user.role, location.pathname)) {
-    return <Navigate to="/site" replace />;
+    return <Navigate to={ROLE_CONFIG[user.role].home} replace />;
   }
   return <>{children}</>;
 }

@@ -122,11 +122,10 @@ export function LoginPage() {
                 >
                   <Icon className="h-5 w-5 text-ember-500" />
                   <span className="text-sm font-semibold">{ROLE_CONFIG[role].label}</span>
+                  {/* Do NOT render staff email here — this page is pre-auth/public,
+                      and exposing staff contact details invites targeted attacks. */}
                   {member ? (
-                    <>
-                      <span className="w-full truncate text-xs font-medium text-ink">{member.name}</span>
-                      <span className="w-full truncate text-[11px] text-ink-muted">{member.email}</span>
-                    </>
+                    <span className="w-full truncate text-xs font-medium text-ink">{member.name}</span>
                   ) : (
                     <span className="text-xs text-ink-muted">Not added yet</span>
                   )}

@@ -19,7 +19,11 @@ export const isSupabaseEnabled = Boolean(url && anonKey);
 
 export const supabase: SupabaseClient | null = isSupabaseEnabled
   ? createClient(url!, anonKey!, {
-      auth: { persistSession: false },
+      // Persist + auto-refresh the Supabase Auth session so a signed-in staff
+      // member stays authenticated across reloads. This is what makes RLS keyed
+      // on auth.uid() work (see docs/AUTH-RLS-MIGRATION.md). Harmless until sign-in
+      // is wired up: with no session, requests still run as anon.
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false },
       // Cap realtime throughput so a burst of writes can't flood the client.
       realtime: { params: { eventsPerSecond: 10 } },
     })

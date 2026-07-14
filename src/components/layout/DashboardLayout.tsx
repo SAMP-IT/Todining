@@ -30,9 +30,11 @@ function currentModuleKey(pathname: string): string | null {
 function NavItems({ onNavigate }: { onNavigate?: () => void }) {
   const { user } = useAuth();
   const { hasUpdate } = useModuleUpdates();
-  // Anonymous visitors (Admin Panel opened without login) are treated as an
-  // owner so the full menu — including owner-only Analytics & Restaurants — shows.
-  const role = user?.role ?? 'owner';
+  // /admin now requires an authenticated manager/owner (RoleGuard, no `open`), so
+  // `user` is present here. Fall back to the LEAST-privileged role — never owner —
+  // so owner-only nav (Analytics, Restaurants, Feedback) can never leak to a
+  // session without an owner role.
+  const role = user?.role ?? 'manager';
   const items = ADMIN_NAV.filter((i) => !i.ownerOnly || role === 'owner');
   return (
     <nav className="flex flex-col gap-1">

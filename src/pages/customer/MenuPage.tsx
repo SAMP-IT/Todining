@@ -33,14 +33,6 @@ export function MenuPage() {
     () => {
       const cats = menuService.categories(restaurant.id);
       const avail = menuService.availableItems(restaurant.id);
-      // [DEBUG-MENU] temporary — trace the slug-resolved restaurantId + its items.
-      console.debug('[DEBUG-MENU] Customer MenuPage query', {
-        slugRestaurantId: restaurant.id, name: restaurant.name,
-        parentId: restaurant.parentId ?? null, kind: restaurant.parentId ? 'BRANCH' : 'HOTEL',
-        availableCount: avail.length,
-        itemRestaurantIds: [...new Set(avail.map((i) => i.restaurantId))],
-        names: avail.map((i) => i.name),
-      });
       return { categories: cats, items: avail };
     },
     { restaurantId: restaurant.id, types: ['data:changed'] },

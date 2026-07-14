@@ -76,12 +76,14 @@ export const router = createBrowserRouter([
     children: [{ index: true, lazy: () => import('@/pages/staff/WaiterPage').then((m) => ({ Component: m.WaiterPage })) }],
   },
 
-  // Admin — open access: reachable directly from /admin-panel without a login.
-  // (`open` lets anonymous visitors in; a logged-in non-admin is still redirected.)
+  // Admin — requires an authenticated manager/owner. (Previously `open`, which let
+  // ANY anonymous visitor reach the full management console; that bypass is closed.
+  // The /admin-panel platform admin reaches a hotel's console by signing in as its
+  // owner/manager — a proper elevated hand-off is part of the auth migration.)
   {
     path: '/admin',
     element: (
-      <RoleGuard roles={['manager', 'owner']} open>
+      <RoleGuard roles={['manager', 'owner']}>
         <DashboardLayout />
       </RoleGuard>
     ),
