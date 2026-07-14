@@ -10,38 +10,32 @@
 
 ---
 
-## ⚠️ Production readiness: NOT SECURE YET — read this first
+## ⚠️ Production readiness: security status (read this first)
 
-This app currently runs almost entirely **client-side against the anon Supabase key** (or a
-pure localStorage fallback). Authentication and tenant isolation are **not enforced at the
-database layer**. Do **not** ship to production until the items below are fixed. See
-`docs/SECURITY-REMEDIATION.md` for the ordered runbook, and the **Security model** section
-below for the full list.
+**As of 2026-07-15 the app is DEPLOYED and public** (see **Deployment** below), running on a
+**self-hosted Supabase** whose schema (`supabase/setup-selfhost.sql`) ships **demo-grade permissive
+RLS — anon can read AND write every table.** So tenant isolation is **not enforced yet**: fine for a
+demo, but it's a live cross-tenant exposure. The **auth + RLS hardening (Batch 3)** in
+`docs/AUTH-RLS-MIGRATION.md` closes it.
 
-Highest-severity, confirmed in code:
+Status of the council-review criticals (`docs/COUNCIL-REVIEW.md`, an adversarial multi-agent audit):
 
-1. **`/admin` is a wide-open route.** `src/app/router.tsx` guards `/admin` with
-   `<RoleGuard roles={['manager','owner']} open>`. The `open` flag lets **unauthenticated
-   visitors straight through** (`src/components/layout/RoleGuard.tsx`), and
-   `DashboardLayout` explicitly **treats an anonymous visitor as an owner** so the *full*
-   management console (orders, billing, staff, inventory, analytics, restaurants) renders
-   for anyone who navigates to `/admin`. The `/admin-panel` login gate is bypassed entirely.
-2. **Hardcoded admin credentials in the browser bundle.** `src/data/services/adminAuthService.ts`
-   ships `LOCAL_FALLBACK = { username: 'SAMP-IP(manoj)', passwordHash: '19q822l' }`, and the
-   plaintext (`mavoc-2026`) is written in code comments and in `supabase/migrations/0008`.
-3. **Admin password hash is world-readable.** `supabase/migrations/0008_admin_panel_credentials.sql`
-   grants `anon` SELECT on `admin_users` with policy `using (true)` — anyone with the public
-   anon key can read the credential row.
-4. **"Password hashing" is djb2** (`src/lib/password.ts`) — a fast, non-cryptographic 32-bit
-   hash. Trivially brute-forced/reversed. Real owner creds live in `supabase/migrations/0005`
-   in the repo.
-5. **No Supabase Auth.** Every DB request runs as role `anon`; `auth.uid()` is always NULL, so
-   the RLS policies in `supabase/policies.sql` are ineffective (and are not even enabled on the
-   live project). Result: full cross-tenant read/write exposure (verified live in the remediation doc).
-6. **Credential/hash logging to console** in `adminAuthService.authenticate`.
-7. **Public INSERT policies `with check (true)`** on `orders`, `order_items`, `service_requests`,
-   `reservations`, `feedback` (`supabase/policies.sql`) — any anon client can inject rows into
-   any `restaurant_id`.
+- ✅ **FIXED — `/admin` open bypass.** The `open` flag is gone; `/admin` now requires an
+  authenticated manager/owner (`src/app/router.tsx`), and `DashboardLayout` defaults to
+  least-privilege, never owner. RoleGuard now redirects unauthorized staff to their own home.
+- ✅ **FIXED — console credential/PII logging.** Removed the hash-logging block in
+  `adminAuthService`, the `[DEBUG-MENU]` tenant-data log in `MenuPage`, and configured esbuild to
+  **drop all `console.*`/`debugger` from production builds** (`vite.config.ts`).
+- ✅ **FIXED — no real lint gate.** `npm run lint` now actually type-checks (see Commands).
+- ⚠️ **PENDING — no real auth / RLS not enforced (the big one).** No Supabase Auth yet; every DB
+  call runs as `anon`; the schema's demo RLS is permissive. Full cross-tenant read/write. → **Batch 3.**
+- ⚠️ **PENDING — hardcoded admin creds + world-readable hash.** `adminAuthService.LOCAL_FALLBACK`
+  (`SAMP-IP(manoj)`/`mavoc-2026`) and the `admin_users` anon-readable djb2 hash still ship. → Batch 3.
+- ⚠️ **PENDING — djb2 "hashing"** (`src/lib/password.ts`) + committed creds (`migrations/0005`).
+- ⚠️ **PENDING — permissive INSERT** (demo RLS / `with check (true)`) lets anon inject any row.
+
+Also: the repo (`SAMP-IT/Todining`) is currently **public** — `docs/COUNCIL-REVIEW.md` (the full
+vuln list) and the demo credential hashes are visible. Consider making it private before Batch 3.
 
 ---
 
@@ -49,38 +43,68 @@ Highest-severity, confirmed in code:
 
 - **Build/runtime:** Vite 6, React 18, TypeScript 5.7 (`"type": "module"`, ESM).
 - **Routing:** `react-router-dom` v6 (`createBrowserRouter`, route-level `lazy()` code-splitting).
-- **State:** `zustand` v5 (global stores), React Context (Auth, AdminAuth, Tenant, Cart, ModuleUpdates).
+- **State:** `zustand` v5 is a **dependency but unused**; state is React Context (Auth, AdminAuth,
+  Tenant, Cart, ModuleUpdates) + the in-memory store.
 - **Forms/validation:** `react-hook-form` + `zod` (`@hookform/resolvers`).
-- **Backend (optional):** `@supabase/supabase-js` v2 — anon key only in the client.
-- **UI/deps:** Tailwind CSS 3, `lucide-react` (icons), `recharts` (analytics), `jspdf` +
-  `jspdf-autotable` (bill PDF), `qrcode` (QR generation), `date-fns`, `clsx` + `tailwind-merge`
-  (`cn()`), `sonner` (toasts).
-- **No test framework, no ESLint.** `npm run lint` is **type-check only** (`tsc --noEmit`).
+- **Backend:** `@supabase/supabase-js` v2 — **anon key only** in the client (public by design).
+- **UI/deps:** Tailwind CSS 3, `lucide-react`, `recharts` (analytics), `jspdf` + `jspdf-autotable`
+  (bill PDF), `qrcode`, `date-fns`, `clsx` + `tailwind-merge` (`cn()`), `sonner` (toasts).
+- **No test framework, no ESLint.** `npm run lint` is a **real type-check gate** (`tsc -b --noEmit`)
+  — it honors the project references and checks the source. (It previously ran `tsc --noEmit` against
+  the references-only root `tsconfig.json`, which checked **zero files** and always passed.)
 
 ## Commands
 
 ```bash
 npm install
 npm run dev       # Vite dev server → http://localhost:5173
-npm run build     # tsc -b && vite build  (type-check + production build)
+npm run build     # tsc -b && vite build   (type-check + production build)
 npm run preview   # preview the production build
-npm run lint      # tsc --noEmit  (TYPE-CHECK ONLY — not eslint, no tests exist)
+npm run lint      # tsc -b --noEmit        (REAL type-check gate; honors project refs)
 ```
 
 There is **no test suite**. "Bug-free" claims must be backed by manual verification or new tests.
+The Docker build (`Dockerfile`) also runs `npm run build`, so a type/build error fails the deploy.
 
 ## Environment
 
-`.env` (optional — copy from `env.example`). When unset, the app runs on the in-memory /
-localStorage fallback so dev never hard-blocks.
+`VITE_*` vars are read at **build time** (Vite inlines them). Unset → the app runs on the
+localStorage fallback (each browser isolated, no shared data). Currently pointed at the self-hosted
+Supabase in the Dokploy **WEB** app's build args:
 
 ```
-VITE_SUPABASE_URL=
-VITE_SUPABASE_ANON_KEY=
+VITE_SUPABASE_URL=https://todining-supabase-ef0c6e-51-79-254-198.traefik.me
+VITE_SUPABASE_ANON_KEY=<anon JWT — public; matches the self-hosted stack's JWT_SECRET>
+# VITE_USE_SUPABASE_AUTH — reserved build flag for the Batch 3 auth cutover (not wired yet)
 ```
 
-`isSupabaseEnabled = Boolean(url && anonKey)` (`src/data/supabase/client.ts`) selects the backend.
-**Never** put the `service_role` key in any `VITE_*` var — it is bundled into the public build.
+`isSupabaseEnabled = Boolean(url && anonKey)` (`src/data/supabase/client.ts`) selects the backend;
+the client now uses `persistSession: true` (prep for Batch 3 auth). **Never** put the `service_role`
+key in any `VITE_*` var — it would ship in the public bundle.
+
+---
+
+## Deployment & Infrastructure (live)
+
+Hosted on the user's **self-managed Dokploy server** (`51.79.254.198`), not a managed PaaS. Moved
+**off Supabase Cloud (~$25/mo) to fully self-hosted** on 2026-07-15. Full runbook: `docs/DEPLOYMENT.md`.
+
+- **Frontend (WEB app):** `http://todining-web.51.79.254.198.nip.io` — Dokploy *Application* built
+  from this repo's `Dockerfile` (node:22 build → nginx:1.27 serve; SPA fallback + caching in
+  `deploy/nginx.conf`). Source: GitHub `SAMP-IT/Todining` `main` via the **Git provider** (public
+  repo). `VITE_*` passed as Docker **build args**.
+- **Backend (self-hosted Supabase):** `https://todining-supabase-ef0c6e-51-79-254-198.traefik.me`
+  — Dokploy *Compose* service from the Supabase template, **trimmed**: removed `vector`, `analytics`
+  (logflare), `functions` (edge runtime), and decoupled `db`/`kong`/`studio` from them. **Reason:**
+  the stock template has `db depends_on vector (healthy)`, so a flaky `vector` deadlocks first boot.
+  10 services run: `db, kong (gateway :8000), auth, rest, realtime, storage, imgproxy, meta, studio,
+  supavisor`. Secrets are Dokploy-generated; `traefik.me` gives free wildcard TLS to the IP. Studio
+  login is `DASHBOARD_USERNAME`/`DASHBOARD_PASSWORD` from the service's Environment tab.
+- **Schema:** run `supabase/setup-selfhost.sql` once in Studio → SQL Editor (see **Data model**).
+- **CI:** `.github/workflows/ci.yml` → `npm run lint` + `npm run build` on every push/PR to `main`.
+- **CD:** Dokploy auto-deploy webhook redeploys on push to `main` (add it under repo Settings →
+  Webhooks; the WEB app + Supabase compose each expose one in their Deployments tab).
+- **Git:** push with the **Manoj-V-348** GitHub account (`gh auth switch --user Manoj-V-348`).
 
 ---
 
@@ -97,131 +121,157 @@ read/write a **synchronous in-memory store** (`src/data/mock/store.ts`) that:
 
 Because the UI only knows the service interface, swapping mock↔Supabase requires **no UI changes**.
 
-```
-UI (pages/features)  →  data/services/*  →  data/mock/store (sync cache)  →  localStorage
-                                                     │
-                                                     └── (optional) Supabase write-through + realtime → bus → useLiveQuery
-```
-
 ### Directory map
 ```
+Dockerfile, .dockerignore   Production image (Vite build → nginx). deploy/nginx.conf = SPA config.
+.github/workflows/ci.yml    CI: lint + build on push/PR to main.
 src/
   app/            App shell (App.tsx = providers + DataGate), router.tsx
-  components/
-    ui/           Design-system primitives: Button, Card, Input, Modal, Badge, StatusBadge, ...
-    layout/       DashboardLayout, StaffLayout, RoleGuard, AdminPanelGuard, RestaurantSwitcher, Brand
+  components/ui/  Design-system primitives: Button, Card, Input, Modal, Badge, StatusBadge, ...
+  components/layout/  DashboardLayout, StaffLayout, RoleGuard, AdminPanelGuard, RestaurantSwitcher, Brand
   context/        AuthContext (staff), AdminAuthContext (/admin-panel), TenantContext, CartContext, ModuleUpdatesContext
-  data/
-    services/     menuService, orderService, reservationService, billingService, staffService, adminAuthService, ...
-    mock/         seed.ts (demo data), store.ts (in-memory cache + localStorage + Supabase write-through)
-    realtime/     bus.ts (subscribe/emit event bus)
-    supabase/     client.ts (anon client), mappers.ts (row ↔ domain)
-  features/       feature modules (menu, cart, orders, kitchen, waiter, reservations, billing, feedback, inventory, tables, service-requests, staff, customer, upsell)
+  data/services/  menuService, orderService, billingService, staffService, adminAuthService, ...
+  data/mock/      seed.ts (demo data), store.ts (in-memory cache + localStorage + Supabase write-through)
+  data/realtime/  bus.ts (subscribe/emit event bus)
+  data/supabase/  client.ts (anon client), mappers.ts (row ↔ domain — SOURCE OF TRUTH for columns)
+  features/       menu, cart, orders, kitchen, waiter, reservations, billing, feedback, inventory, tables, service-requests, staff, customer, upsell
   hooks/          useLiveQuery, useRealtime
-  lib/            cn, format, id, password (DEMO djb2), roles
-  pages/          thin route components: LandingPage, LoginPage, AdminPanel*, NotFoundPage, admin/*, customer/*, staff/*
+  lib/            cn, format, id (string ids), password (DEMO djb2), roles
+  pages/          thin route components: LandingPage, LoginPage, AdminPanel*, admin/*, customer/*, staff/*
   styles/         index.css (Tailwind layers + design tokens)
-supabase/         schema.sql, policies.sql (RLS), setup.sql, migrations/0001–0008, README.md
-docs/             PLAN.md (roadmap/feature map), SUPABASE.md, SECURITY-REMEDIATION.md, superpowers/specs/*
-remotion/         separate Remotion project for explainer/how-to videos (own package.json)
-scripts/          cleanup-supabase.mjs, backup JSON
+supabase/         setup-selfhost.sql (the schema actually run), schema.sql (UUID variant — NOT used),
+                  policies.sql (auth-scoped RLS for Batch 3), setup.sql, migrations/0001–0008, README.md
+docs/             PLAN.md, COUNCIL-REVIEW.md (audit), AUTH-RLS-MIGRATION.md, DEPLOYMENT.md,
+                  SECURITY-REMEDIATION.md, SUPABASE.md, superpowers/specs/*
+remotion/         independent Remotion project (explainer videos); NOT part of the app build
 ```
 
 ### Path alias
-`@/` → `src/` (used throughout; configured in `vite.config.ts` / `tsconfig`).
+`@/` → `src/` (configured in `vite.config.ts` / `tsconfig`).
 
 ---
 
 ## Routing & roles
 
 Routes (`src/app/router.tsx`):
-- `/` and `/login` → **LoginPage** (production default entry).
-- `/site`, `/landing` → public **LandingPage** (preserved, no longer default).
-- `/admin-panel` → **AdminPanelEntry**, wrapped by `AdminPanelGuard` (username/password against
-  Supabase `admin_users`; see AdminAuthContext). Card-based launcher into `/admin`.
-- `/admin/*` → **DashboardLayout**, `RoleGuard roles={['manager','owner']} open` ⚠️ (see security note).
-  Children: index Dashboard, analytics, categories, orders, tables, menu, reservations, inventory,
-  billing, feedback, notifications, staff, restaurants.
+- `/` and `/login` → **LoginPage** (default entry).
+- `/site`, `/landing` → public **LandingPage**.
+- `/admin-panel` → **AdminPanelEntry**, wrapped by `AdminPanelGuard` (username/password vs Supabase
+  `admin_users`). Card-based workspace launcher.
+- `/admin/*` → **DashboardLayout**, `RoleGuard roles={['manager','owner']}` (now auth-required — the
+  `open` bypass was removed). Children: Dashboard, analytics, categories, orders, tables, menu,
+  reservations, inventory, billing, feedback, notifications, staff, restaurants.
 - `/kitchen` → `RoleGuard ['kitchen','manager','owner']` → StaffLayout → KitchenPage.
 - `/waiter` → `RoleGuard ['waiter','manager','owner']` → StaffLayout → WaiterPage.
 - Customer (QR, no auth): `/r/:slug/t/:tableId` (menu) → `cart` → `order/:orderId` (track); `/reserve/:slug`.
 - `*` → NotFoundPage.
 
 Roles: `owner | manager | waiter | kitchen` (`src/lib/roles.ts`). `ROLE_CONFIG` sets each role's
-`home` and allowed route prefixes; `canAccess()` and `RoleGuard` enforce client-side only.
-`ADMIN_NAV` drives the sidebar (some items `ownerOnly`).
+`home` + allowed prefixes; `RoleGuard` enforces **client-side only** (real enforcement = RLS, Batch 3).
 
 ---
 
-## Security model (current) & what "going to production" requires
+## Security model & the pending Batch 3 (auth + RLS)
 
-**Two separate auth surfaces, both client-trust only today:**
-- **Staff** (`AuthContext` + `staffService`): login by email/username; owners require a password
-  (djb2), other roles are password-less demo cards. Session = staff **id string in localStorage**
-  (`todining_auth_staff`) → forgeable. No server verification.
-- **Admin Panel** (`AdminAuthContext` + `adminAuthService`): username/password vs Supabase
-  `admin_users` (or hardcoded fallback); session = `{username, expiresAt}` in localStorage.
+**Two client-trust auth surfaces today:**
+- **Staff** (`AuthContext` + `staffService`): login by email/username; owners need a djb2 password,
+  other roles are password-less demo cards. Session = staff **id in localStorage** → forgeable.
+- **Admin Panel** (`AdminAuthContext` + `adminAuthService`): username/password vs `admin_users`
+  (or the hardcoded `LOCAL_FALLBACK`); session = `{username, expiresAt}` in localStorage.
 
-**To go to production (ordered — RLS-first without auth = total lockout):**
-1. Provision **Supabase Auth** users for staff (service_role, server-side); set `staff.auth_uid`.
-2. Wire the app to `supabase.auth.signInWithPassword`; hydrate the store **after** a session exists.
-3. **Enable RLS** on all tables and (re)apply `supabase/policies.sql`.
-4. **Remove** the `/admin` `open` bypass and the "anon = owner" treatment in `DashboardLayout`.
-5. **Delete** hardcoded admin creds from the bundle; move admin auth server-side; **revoke** the
-   `anon` SELECT on `admin_users`.
-6. Replace **djb2** with real hashing (handled by Supabase Auth / server), rotate the committed creds.
-7. Tighten public INSERT policies (validate `restaurant_id`, rate-limit, captcha where relevant).
-8. Remove credential/hash `console.*` logging.
+**Batch 3 (ordered — auth must land before RLS or it's a total lockout; runbook: `docs/AUTH-RLS-MIGRATION.md`):**
+1. Provision **Supabase Auth** users for staff (service_role); set `staff.auth_uid`.
+2. Wire `supabase.auth.signInWithPassword`; resolve the staff row from `auth.uid()`; re-hydrate the
+   store after a session exists; scope realtime to the active `restaurant_id`.
+3. Move admin-panel auth server-side; **revoke** the `anon` SELECT on `admin_users`.
+4. Enable RLS and swap the demo permissive policies for `supabase/policies.sql` (auth-scoped) +
+   tightened public INSERTs. Replace djb2, rotate committed creds.
+Already done in earlier batches: `/admin` open bypass removed, console credential/PII logging
+stripped, real lint gate, session persistence enabled.
 
 ---
 
 ## Feature modules (16, per `docs/PLAN.md`)
 
 QR ordering · digital menu · cart + rule-based upsell · orders/lifecycle · kitchen board · waiter
-board · waiter-call service requests · tables + QR management · reservations (customer form + admin
-mgmt) · billing (tax/service charge, print, jsPDF export, history) · feedback (food/service/experience
-ratings) · inventory (stock + auto-deduct via `menu_item_ingredients` + low-stock alerts) · WhatsApp
-notifications (preview/log only — no real send) · analytics (recharts) · multi-restaurant SaaS
-(tenant switcher, super-admin) · staff & categories management.
+board · waiter-call service requests · tables + QR management · reservations · billing (tax/service
+charge, jsPDF export, history, per-year `invoice_number`) · feedback (food/service/experience) ·
+inventory (stock + low-stock alerts; note: recipe auto-deduct is NOT persisted to Supabase — see
+`docs/COUNCIL-REVIEW.md` H6) · WhatsApp notifications (preview/log only) · analytics (recharts) ·
+multi-restaurant + branches (`parent_id`) · staff & categories management.
 
-Integrations are **stubbed behind interfaces**: "AI upselling" is a rule-based engine
-(`upsellService`); "WhatsApp" only previews/logs the message (`notificationService`). Ready to swap
-for OpenAI / Meta WhatsApp / Twilio.
+Integrations are **stubbed behind interfaces**: "AI upselling" = rule-based `upsellService`;
+"WhatsApp" = `notificationService` (logs the message, no real send).
 
 ## Data model
-Postgres schema in `supabase/schema.sql`. Tenant tables: `restaurants` (tenant root) + `staff`,
-`tables`, `qr_codes`, `menu_categories`, `menu_items`, `inventory_items`, `menu_item_ingredients`,
-`orders`, `order_items`, `service_requests`, `reservations`, `customers`, `bills`, `feedback`,
-`upsell_rules`, `notifications`, `admin_users`. Every domain table carries `restaurant_id` (except
-`restaurants`). Enums for roles/statuses. `orders.updated_at` maintained by a trigger. Domain types
-live in `src/types` (single source of truth); `src/data/supabase/mappers.ts` maps rows ↔ domain.
+
+**The app uses TEXT primary keys** — it generates string ids (`rest_…`, `ord_…`, `stf_…`, via
+`src/lib/id.ts`). So the schema actually run is **`supabase/setup-selfhost.sql`** (or `setup.sql`),
+**NOT** the UUID `schema.sql` (that variant would reject every insert). `setup-selfhost.sql` is the
+consolidated current schema (folds in migrations 0001–0008): 16 tenant tables + `admin_users`,
+**demo-grade permissive RLS** ("Mode A": anon read+write), and the realtime publication. The **source
+of truth for columns is `src/data/supabase/mappers.ts`**.
+
+Tenant tables (all carry `restaurant_id`): `restaurants` (root; `parent_id` → branches), `staff`,
+`menu_categories`, `menu_items`, `tables`, `qr_codes`, `inventory_items`, `upsell_rules`, `customers`,
+`orders`, `order_items`, `service_requests`, `reservations`, `bills`, `feedback`, `notifications`.
+`orders`/`bills` carry `session_id` (dining session = one bill per table visit); `bills` carry
+`invoice_number`. `admin_users` gates `/admin-panel`. `orders.updated_at` maintained by a trigger.
 
 ---
 
-## Design system
+## Design system — **Warm Editorial** (in-progress overhaul)
 
-- **Fonts:** `Fraunces` (display / headings, `font-display`), `Plus Jakarta Sans` (body, `font-sans`).
-- **Palette** (`tailwind.config.js`): warm "modern dining" — `ink` (near-black text), `cream`
-  (backgrounds), **`ember`** primary accent (`ember-500 = #d9521f`), `sage` (green), `gold`.
-- **Tokens:** radii `xl/2xl/3xl`; shadows `soft/lift/glow`; animations `fade-up`, `scale-in`,
-  `pulse-ring`. Utility `card-surface` and `.pb-safe` (mobile safe-area) in `src/styles/index.css`.
-- **Light mode only** — `:root { color-scheme: light }`; there is **no dark theme**.
+Full spec is **`DESIGN.md`** (visual) + **`PRODUCT.md`** (strategy) at repo root — read both before
+any UI work. Editorial "printed fine-dining menu" direction: paper, warm ink, one drop of ember.
+
+- **Fonts:** `Cormorant Garamond` (display, `font-display`; runs light/airy — default headings to
+  `font-semibold` 600, size up so it reads substantial), `Plus Jakarta Sans` (body, `font-sans`).
+  Loaded in `index.html` (incl. italic axis, used for accents).
+- **Palette** (`tailwind.config.js`): `ink` (warm near-black `#2a211b`), `cream` (paper `#faf6ef`),
+  **`ember`** primary action (`ember-500 = #c0451c`), `sage` (deep bottle green = "live/served"),
+  `gold` (antique, signatures). **Light mode only** (`:root { color-scheme: light }`).
+- **Token strategy:** token *names* (`ember/sage/gold/ink/cream`) are **frozen** — only values are
+  retuned, so 350+ existing classNames inherit the new look with no edits. Restyle primitives but
+  keep their exact prop APIs (barrel `src/components/ui/index.ts`).
+- **Tokens:** radii `xl/2xl/3xl`; shadows `soft/lift/glow`; `body::before` is **paper grain** (SVG
+  noise, `multiply`) — the old radial-gradient atmosphere was removed as generic. `.tnum` = tabular
+  numerals for money. Utility `card-surface`, `.pb-safe` in `src/styles/index.css`.
+- **Copy:** **no em dashes** (use `·`, comma, colon, or period). No gradient text / side-stripe
+  borders / glassmorphism / identical icon-card grids (see DESIGN.md anti-slop list).
 - **Primitives:** `src/components/ui/*` (barrel `index.ts`). Compose with `cn()` (`src/lib/cn.ts`).
-- Mobile-first; customer flow is bottom-nav; admin/staff use sidebar + mobile drawer.
+- Mobile-first; customer flow = bottom-nav; admin/staff = sidebar + mobile drawer.
+
+### UI redesign workflow (per screen)
+1. Build a self-contained **HTML prototype in `design-samples/screens/*.html`** first; get approval.
+2. Then implement into React, preserving all data/service wiring and primitive APIs.
+3. Screenshots/renders go to `design-samples/renders/` (keep repo root clean).
+- **Playwright MCP blocks `file://`** — serve prototypes over HTTP first (`python -m http.server 8823`
+  from `design-samples/`), then navigate to `http://localhost:8823/...`.
 
 ## Conventions & gotchas
 
-- Feature-first structure; **pages are thin**, logic lives in `features/*` and `data/services/*`.
+- Feature-first; **pages are thin**, logic lives in `features/*` and `data/services/*`.
 - Keep the **service interface stable** — the mock store and Supabase path must stay swap-compatible.
 - Existing code is **densely commented** with rationale; match that voice when editing.
-- Realtime: components re-query via `useLiveQuery(fn, { types: [...] })` on bus events
-  (`data:changed`, etc.) — mutations must `realtimeBus.emit(...)` so other screens update live.
-- The store subscribes to **all** `postgres_changes` in `public` and refetches with `SELECT *` —
-  scope this per active `restaurant_id` for production (see remediation doc, defense-in-depth).
-- `remotion/` is an independent sub-project (video generation); not part of the app build.
+- Realtime: components re-query via `useLiveQuery(fn, { types: [...] })` on bus events; mutations must
+  `realtimeBus.emit(...)`. The store subscribes to **all** `postgres_changes` and refetches with
+  `SELECT *` — scope per `restaurant_id` in Batch 3 (fixes cross-tenant fan-out + multi-device alerts).
+- When editing the Supabase-facing shape, `mappers.ts` and `setup-selfhost.sql` must stay in sync.
+- **`tailwind.config.js` / `index.html` font changes do NOT hot-reload** — the Vite dev server keeps
+  serving stale CSS (e.g. a removed font silently falls back to Georgia). After such edits, **restart
+  `npm run dev`** (and `rm -rf node_modules/.vite`). The production build is always correct.
+- **Verify fonts/tokens by measurement, not by eye** — a serif fallback (Georgia) looks "close enough"
+  in a screenshot. Check via Playwright: `getComputedStyle(el).fontFamily` + `document.fonts.check('600 40px "Cormorant Garamond"')`.
+- `remotion/` is an independent sub-project; not part of the app build.
 
 ## Key references
-- `docs/PLAN.md` — full roadmap, phase plan, feature→phase coverage.
-- `docs/SECURITY-REMEDIATION.md` — ordered runbook to make tenant isolation real. **Read before prod.**
-- `docs/SUPABASE.md`, `supabase/README.md` — backend setup.
-- `docs/superpowers/specs/2026-06-23-multi-hotel-workspace-design.md`, `...2026-06-26-branch-management-design.md` — design specs.
+- **`DESIGN.md`** — Warm Editorial visual spec (color/type/motion/components). Read before UI work.
+- **`PRODUCT.md`** — register, users, brand voice, anti-references. Read before UI work.
+- `design-samples/` — approved HTML prototypes (`2-warm-editorial.html`, `screens/*`) + `renders/`.
+- `docs/COUNCIL-REVIEW.md` — adversarial audit: 83 confirmed findings, ranked. The fix backlog.
+- `docs/AUTH-RLS-MIGRATION.md` — **Batch 3** runbook (auth + RLS). **Do before real production.**
+- `docs/DEPLOYMENT.md` — Dokploy + self-hosted Supabase + CI/CD runbook.
+- `docs/PLAN.md` — roadmap / feature→phase coverage.
+- `docs/SECURITY-REMEDIATION.md`, `docs/SUPABASE.md`, `supabase/README.md` — backend background.
+- `docs/superpowers/specs/*` — multi-hotel workspace + branch design specs.

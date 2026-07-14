@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { ChefHat, ConciergeBell, ShieldCheck } from 'lucide-react';
-import { Button, Card, Input } from '@/components/ui';
-import { Wordmark } from '@/components/layout/Brand';
+import { ArrowRight, ChefHat, ConciergeBell, ShieldCheck } from 'lucide-react';
+import { Button, Input } from '@/components/ui';
 import { useAuth } from '@/context/AuthContext';
 import { useTenant } from '@/context/TenantContext';
 import { useLiveQuery } from '@/hooks/useLiveQuery';
@@ -20,6 +19,19 @@ const ROLES: { role: Role; icon: typeof ShieldCheck }[] = [
   { role: 'waiter', icon: ConciergeBell },
   { role: 'kitchen', icon: ChefHat },
 ];
+
+// A monogram "seal" — the editorial brand lockup used on both panels.
+function Seal({ className = '' }: { className?: string }) {
+  return (
+    <span
+      className={
+        'grid place-items-center rounded-full border font-display font-semibold ' + className
+      }
+    >
+      T
+    </span>
+  );
+}
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -43,7 +55,7 @@ export function LoginPage() {
     // shared across hotels signs into the SELECTED hotel — not an arbitrary one.
     const user = login(value, pwd, restaurantId);
     if (!user) {
-      toast.error('Invalid login — check your email/username and password.');
+      toast.error('Invalid login. Check your email/username and password.');
       return;
     }
     setRestaurantById(user.restaurantId);
@@ -52,33 +64,73 @@ export function LoginPage() {
   }
 
   return (
-    <div className="grid min-h-[100dvh] lg:grid-cols-2">
-      {/* Brand panel */}
-      <div className="relative hidden flex-col justify-between overflow-hidden bg-ink p-10 text-cream lg:flex">
-        <div className="absolute inset-0 opacity-30" style={{ background: 'radial-gradient(40rem 40rem at 20% 0%, rgba(217,82,31,0.5), transparent 60%)' }} />
-        <Wordmark className="relative [&_span]:text-cream" />
-        <div className="relative max-w-md">
-          <h1 className="font-display text-4xl font-semibold leading-tight text-cream">
-            The restaurant operating system your team will actually enjoy.
-          </h1>
-          <p className="mt-4 text-cream/70">
-            QR ordering, kitchen & waiter boards, reservations, billing, inventory and analytics — in one clean platform.
-          </p>
-        </div>
-        <p className="relative text-sm text-cream/50">Scan · Order · Dine</p>
-      </div>
+    <div className="grid min-h-[100dvh] lg:grid-cols-[1.05fr_1fr]">
+      {/* ---------- Brand panel ---------- */}
+      <aside className="relative hidden flex-col justify-between overflow-hidden bg-[#1b130c] p-8 text-cream lg:flex xl:p-14">
+        {/* dim restaurant atmosphere */}
+        <img
+          src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1100&q=70&auto=format&fit=crop"
+          alt=""
+          aria-hidden
+          onError={(e) => (e.currentTarget.style.opacity = '0')}
+          className="absolute inset-0 h-full w-full object-cover [filter:grayscale(0.35)_contrast(1.02)]"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(180deg, oklch(0.18 0.02 40 / .62), oklch(0.15 0.016 38 / .86) 62%, oklch(0.13 0.014 36 / .95)), radial-gradient(90% 60% at 85% 8%, oklch(0.55 0.185 37 / .32), transparent 60%)',
+          }}
+        />
+        <div className="pointer-events-none absolute inset-4 rounded-2xl border border-cream/15" />
 
-      {/* Login form */}
-      <div className="flex items-center justify-center p-6">
-        <div className="w-full max-w-sm">
-          <div className="mb-8 lg:hidden">
-            <Wordmark />
+        <div className="relative z-10 flex items-center gap-3">
+          <Seal className="h-9 w-9 border-cream text-lg" />
+          <span className="font-display text-2xl font-semibold tracking-tight">ToDining</span>
+        </div>
+
+        <div className="relative z-10 max-w-[20ch]">
+          <span className="flex items-center gap-3 text-[0.68rem] font-bold uppercase tracking-[0.3em] text-cream/70">
+            <span className="h-px w-8 bg-gold-400" />
+            For the people who run the room
+          </span>
+          <h1 className="mt-5 font-display text-[clamp(3rem,5vw,4.7rem)] font-semibold leading-[0.98] tracking-[-0.02em] text-cream">
+            Every table, every plate, in one <em className="italic text-ember-300">calm</em> place.
+          </h1>
+          <div className="mt-9 flex flex-wrap gap-x-4 gap-y-2 border-t border-cream/15 pt-6">
+            {['QR ordering', 'Kitchen & waiter boards', 'Reservations', 'Billing', 'Inventory', 'Analytics'].map(
+              (f) => (
+                <span
+                  key={f}
+                  className="text-[0.66rem] font-semibold uppercase tracking-[0.16em] text-cream/60 before:mr-4 before:text-gold-400 before:content-['·'] first:before:hidden first:before:mr-0"
+                >
+                  {f}
+                </span>
+              ),
+            )}
           </div>
-          <h2 className="text-2xl font-semibold">Staff sign in</h2>
-          <p className="mt-1 text-sm text-ink-muted">Sign in to access your dashboard.</p>
+        </div>
+
+        <div className="relative z-10 flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-cream/50">Scan · Order · Dine</span>
+          <span className="font-display text-xl italic text-cream/30">Est. 2019</span>
+        </div>
+      </aside>
+
+      {/* ---------- Login form ---------- */}
+      <main className="flex items-center justify-center p-6">
+        <div className="w-full max-w-sm">
+          <div className="mb-8 flex items-center gap-2.5 lg:hidden">
+            <Seal className="h-8 w-8 border-ink text-base text-ink" />
+            <span className="font-display text-xl font-semibold tracking-tight">ToDining</span>
+          </div>
+
+          <span className="text-[0.68rem] font-bold uppercase tracking-[0.28em] text-ember-600">Welcome back</span>
+          <h2 className="mt-2 text-[2.4rem] font-semibold leading-none tracking-tight">Staff sign in</h2>
+          <p className="mt-2 text-sm text-ink-muted">Sign in to reach your board and today's service.</p>
 
           <form
-            className="mt-6 space-y-4"
+            className="mt-7 space-y-4"
             onSubmit={(e) => {
               e.preventDefault();
               signIn(email, password || undefined);
@@ -100,16 +152,21 @@ export function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
             />
-            <Button type="submit" fullWidth size="lg">
+            <Button type="submit" fullWidth size="lg" className="group mt-1">
               Sign in
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Button>
           </form>
 
-          <div className="my-6 flex items-center gap-3 text-xs uppercase tracking-wide text-ink-muted">
-            <span className="h-px flex-1 bg-ink/10" /> Sign in as a team member <span className="h-px flex-1 bg-ink/10" />
+          <div className="my-6 flex items-center gap-3">
+            <span className="h-px flex-1 bg-ink/10" />
+            <span className="text-[0.64rem] font-bold uppercase tracking-[0.18em] text-ink-muted">
+              Or continue as a team member
+            </span>
+            <span className="h-px flex-1 bg-ink/10" />
           </div>
 
-          <Card className="grid grid-cols-3 gap-2 p-2">
+          <div className="grid grid-cols-3 gap-2.5">
             {ROLES.map(({ role, icon: Icon }) => {
               const member = memberFor(role);
               return (
@@ -118,30 +175,32 @@ export function LoginPage() {
                   type="button"
                   disabled={!member}
                   onClick={() => member && signIn(member.email)}
-                  className="flex flex-col items-start gap-1 rounded-xl p-3 text-left hover:bg-cream-deep disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-transparent"
+                  className="group flex flex-col items-start gap-2.5 rounded-2xl border border-ink/10 bg-white p-3.5 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-ember-400 hover:shadow-lift disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0 disabled:hover:border-ink/10 disabled:hover:shadow-none"
                 >
-                  <Icon className="h-5 w-5 text-ember-500" />
-                  <span className="text-sm font-semibold">{ROLE_CONFIG[role].label}</span>
+                  <span className="grid h-8 w-8 place-items-center rounded-lg bg-ember-100 text-ember-600">
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <span className="font-display text-lg font-semibold leading-none">{ROLE_CONFIG[role].label}</span>
                   {/* Do NOT render staff email here — this page is pre-auth/public,
                       and exposing staff contact details invites targeted attacks. */}
                   {member ? (
-                    <span className="w-full truncate text-xs font-medium text-ink">{member.name}</span>
+                    <span className="w-full truncate text-xs font-semibold text-ink-muted">{member.name}</span>
                   ) : (
                     <span className="text-xs text-ink-muted">Not added yet</span>
                   )}
                 </button>
               );
             })}
-          </Card>
+          </div>
 
           <p className="mt-6 text-center text-sm text-ink-muted">
             Are you a guest?{' '}
-            <Link to="/site" className="font-semibold text-ember-600 hover:underline">
+            <Link to="/site" className="font-bold text-ember-600 hover:underline">
               Scan a table to order
             </Link>
           </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

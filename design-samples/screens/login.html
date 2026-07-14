@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ToDining · Login (redesign)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:oklch(0.976 0.008 78);--paper-2:oklch(0.958 0.013 74);--card:oklch(0.995 0.004 80);
+  --hairline:oklch(0.83 0.014 60);--rule:oklch(0.72 0.02 55);
+  --ink:oklch(0.235 0.022 42);--ink-soft:oklch(0.40 0.022 44);--ink-mute:oklch(0.565 0.018 52);
+  --ember:oklch(0.55 0.185 37);--ember-2:oklch(0.48 0.18 35);--ember-hi:oklch(0.72 0.16 50);--ember-soft:oklch(0.935 0.038 46);
+  --forest:oklch(0.44 0.085 152);--forest-soft:oklch(0.93 0.04 150);--gold:oklch(0.66 0.11 82);--gold-hi:oklch(0.80 0.11 85);
+  /* dark panel */
+  --void:oklch(0.20 0.016 40);--void-2:oklch(0.16 0.014 38);--cream-on-dark:oklch(0.95 0.01 74);
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;min-height:100vh}
+h1,h2,h3{font-family:"Cormorant Garamond",serif;font-optical-sizing:auto}
+.tnum{font-variant-numeric:tabular-nums}
+.grain{position:fixed;inset:0;z-index:50;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E")}
+
+.wrap{display:grid;grid-template-columns:1.05fr 1fr;min-height:100vh}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}.brand{display:none!important}}
+
+/* ============ BRAND PANEL ============ */
+.brand{position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(2rem,3.5vw,3.4rem);background:var(--void-2);color:var(--cream-on-dark);overflow:hidden}
+.brand .photo{position:absolute;inset:0;z-index:0}
+.brand .photo img{width:100%;height:100%;object-fit:cover;filter:grayscale(.35) contrast(1.02)}
+.brand .veil{position:absolute;inset:0;z-index:1;
+  background:
+    linear-gradient(180deg, oklch(0.18 0.02 40 /.62), oklch(0.15 0.016 38 /.86) 62%, oklch(0.13 0.014 36 /.95)),
+    radial-gradient(90% 60% at 85% 8%, oklch(0.55 0.185 37 /.32), transparent 60%)}
+.brand .frame{position:absolute;inset:1rem;z-index:2;border:1px solid oklch(0.9 0.02 70 /.14);border-radius:1rem;pointer-events:none}
+.brand > *{position:relative;z-index:3}
+.blockmark{display:flex;align-items:center;gap:.7rem}
+.seal{width:2.3rem;height:2.3rem;border:1.4px solid var(--cream-on-dark);border-radius:99px;display:grid;place-items:center;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1.15rem}
+.blockmark b{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1.45rem;letter-spacing:-.01em}
+
+.brand-mid{max-width:20ch}
+.kick{display:inline-flex;align-items:center;gap:.7rem;font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;color:oklch(0.85 0.02 70 /.75);font-weight:700}
+.kick::before{content:"";width:2rem;height:1px;background:var(--gold)}
+.brand h1{font-weight:600;font-size:clamp(3rem,5vw,4.7rem);line-height:.98;letter-spacing:-.02em;margin-top:1.3rem;color:var(--cream-on-dark)}
+.brand h1 em{font-style:italic;color:var(--ember-hi)}
+
+.ticker{margin-top:2.2rem;padding-top:1.4rem;border-top:1px solid oklch(0.9 0.02 70 /.16);display:flex;flex-wrap:wrap;gap:.5rem 1.1rem}
+.ticker span{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:oklch(0.85 0.02 70 /.62);font-weight:600}
+.ticker span::before{content:"·";margin-right:1.1rem;color:var(--gold)}
+.ticker span:first-child::before{display:none}
+
+.brand-foot{display:flex;align-items:center;justify-content:space-between;color:oklch(0.85 0.02 70 /.5);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;font-weight:600}
+.brand-foot .n{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:1.4rem;letter-spacing:0;text-transform:none;color:oklch(0.85 0.02 70 /.3)}
+
+/* ============ FORM PANEL ============ */
+.form-side{display:flex;align-items:center;justify-content:center;padding:clamp(1.5rem,4vw,3rem)}
+.form{width:100%;max-width:25rem}
+.m-brand{display:none;margin-bottom:2rem}
+@media(max-width:900px){.m-brand{display:flex;align-items:center;gap:.6rem}.m-brand .seal{width:2rem;height:2rem;border-color:var(--ink);color:var(--ink);font-size:.9rem}.m-brand b{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:1.2rem}}
+
+.eyebrow{font-size:.68rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ember-2);font-weight:700}
+.form h2{font-weight:600;font-size:2.6rem;letter-spacing:-.02em;margin:.4rem 0 .3rem}
+.form .sub{color:var(--ink-mute);font-size:.9rem}
+
+form{margin-top:1.8rem;display:flex;flex-direction:column;gap:1.1rem}
+.field label{display:block;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;margin-bottom:.5rem}
+.field .inp{width:100%;border:1px solid var(--hairline);background:var(--card);border-radius:.6rem;padding:.8rem .95rem;font-family:inherit;font-size:.92rem;color:var(--ink);transition:all .3s var(--ease)}
+.field .inp::placeholder{color:var(--ink-mute)}
+.field .inp:focus{outline:none;border-color:var(--ember);box-shadow:0 0 0 3px oklch(0.55 0.185 37 /.14)}
+
+.btn-primary{margin-top:.4rem;width:100%;display:flex;align-items:center;justify-content:center;gap:.5rem;background:var(--ember);color:var(--paper);border:0;border-radius:.6rem;padding:.95rem;font-family:inherit;font-weight:700;font-size:.92rem;cursor:pointer;box-shadow:0 12px 26px -14px var(--ember);transition:all .35s var(--ease)}
+.btn-primary:hover{background:var(--ember-2);transform:translateY(-1px)}
+.btn-primary svg{transition:transform .35s var(--ease)}
+.btn-primary:hover svg{transform:translateX(3px)}
+
+.divider{display:flex;align-items:center;gap:1rem;margin:1.6rem 0 1.2rem}
+.divider::before,.divider::after{content:"";height:1px;flex:1;background:var(--hairline)}
+.divider span{font-size:.64rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute);font-weight:700}
+
+.roles{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+.role{display:flex;flex-direction:column;gap:.55rem;align-items:flex-start;text-align:left;background:var(--card);border:1px solid var(--hairline);border-radius:.8rem;padding:.85rem .8rem;cursor:pointer;transition:all .3s var(--ease)}
+.role:hover{border-color:var(--ember);transform:translateY(-2px);box-shadow:0 12px 22px -16px var(--ember)}
+.role .ic{width:2rem;height:2rem;border-radius:.55rem;display:grid;place-items:center;background:var(--ember-soft);color:var(--ember-2)}
+.role .rl{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1.1rem;line-height:1}
+.role .nm{font-size:.74rem;color:var(--ink-mute);font-weight:600}
+.role.empty{opacity:.55;cursor:not-allowed}
+.role.empty:hover{border-color:var(--hairline);transform:none;box-shadow:none}
+
+.guest{margin-top:1.6rem;text-align:center;font-size:.86rem;color:var(--ink-mute)}
+.guest a{color:var(--ember-2);font-weight:700;text-decoration:none}
+.guest a:hover{text-decoration:underline}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+
+  <!-- BRAND -->
+  <aside class="brand">
+    <div class="photo"><img alt="" src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1100&q=70&auto=format&fit=crop" onerror="this.parentElement.style.display='none'"></div>
+    <div class="veil"></div>
+    <div class="frame"></div>
+
+    <div class="blockmark"><span class="seal">T</span><b>ToDining</b></div>
+
+    <div class="brand-mid">
+      <span class="kick">For the people who run the room</span>
+      <h1>Every table, every plate, in one <em>calm</em> place.</h1>
+      <div class="ticker">
+        <span>QR ordering</span><span>Kitchen &amp; waiter boards</span><span>Reservations</span><span>Billing</span><span>Inventory</span><span>Analytics</span>
+      </div>
+    </div>
+
+    <div class="brand-foot"><span>Scan · Order · Dine</span><span class="n">Est. 2019</span></div>
+  </aside>
+
+  <!-- FORM -->
+  <main class="form-side">
+    <div class="form">
+      <div class="m-brand"><span class="seal">T</span><b>ToDining</b></div>
+
+      <span class="eyebrow">Welcome back</span>
+      <h2>Staff sign in</h2>
+      <p class="sub">Sign in to reach your board and today's service.</p>
+
+      <form onsubmit="return false">
+        <div class="field">
+          <label for="email">Email or username</label>
+          <input id="email" class="inp" type="text" placeholder="you@restaurant.com" autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="pw">Password</label>
+          <input id="pw" class="inp" type="password" placeholder="Your password" autocomplete="current-password">
+        </div>
+        <button class="btn-primary" type="submit">Sign in
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </form>
+
+      <div class="divider"><span>Or continue as a team member</span></div>
+
+      <div class="roles">
+        <button class="role">
+          <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <span class="rl">Manager</span><span class="nm">Arun</span>
+        </button>
+        <button class="role">
+          <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15h18M12 4a8 8 0 0 0-8 8h16a8 8 0 0 0-8-8ZM12 4V2"/></svg></span>
+          <span class="rl">Waiter</span><span class="nm">Sheik</span>
+        </button>
+        <button class="role">
+          <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.4 6a5 5 0 0 1 9.2 0 4 4 0 0 1 1.4 7.87V21H6Z"/><path d="M6 17h12"/></svg></span>
+          <span class="rl">Kitchen</span><span class="nm">Nasur</span>
+        </button>
+      </div>
+
+      <p class="guest">Are you a guest? <a href="#">Scan a table to order</a></p>
+    </div>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ToDining · Ember Noir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============ EMBER NOIR — dim, candle-lit, food-forward ============ */
+  :root{
+    /* OKLCH, warm-tinted, no pure black/white */
+    --void:      oklch(0.16 0.012 45);   /* deepest warm charcoal */
+    --surface:   oklch(0.20 0.014 44);   /* raised surface */
+    --surface-2: oklch(0.235 0.016 44);  /* card */
+    --hairline:  oklch(0.32 0.02 44);
+    --ink:       oklch(0.96 0.008 70);   /* warm off-white text */
+    --ink-soft:  oklch(0.80 0.014 65);
+    --ink-mute:  oklch(0.62 0.016 55);
+    --ember:     oklch(0.68 0.19 42);    /* primary accent */
+    --ember-hi:  oklch(0.76 0.16 55);
+    --ember-deep:oklch(0.55 0.18 38);
+    --sage:      oklch(0.72 0.09 150);
+    --gold:      oklch(0.80 0.11 85);
+    --r-lg:1.4rem; --r-md:1rem; --r-sm:.65rem;
+    --ease: cubic-bezier(0.16,1,0.3,1); /* ease-out-expo */
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:"Plus Jakarta Sans",system-ui,sans-serif;
+    background:
+      radial-gradient(120% 80% at 85% -5%, oklch(0.28 0.06 45 / .55), transparent 55%),
+      radial-gradient(90% 70% at 5% 110%, oklch(0.24 0.03 150 / .35), transparent 55%),
+      var(--void);
+    color:var(--ink);
+    min-height:100vh;
+    padding:clamp(1rem,4vw,3.5rem);
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:var(--ember);color:var(--void)}
+  .wrap{max-width:1180px;margin:0 auto}
+
+  /* ---- page masthead ---- */
+  .masthead{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;padding-bottom:2rem;border-bottom:1px solid var(--hairline);flex-wrap:wrap}
+  .brandmark{display:flex;align-items:center;gap:.7rem}
+  .dot{width:.55rem;height:.55rem;border-radius:99px;background:var(--ember);box-shadow:0 0 14px 1px var(--ember)}
+  .brandmark b{font-family:"Fraunces",serif;font-weight:500;font-size:1.35rem;letter-spacing:-.01em}
+  .kicker{font-size:.7rem;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mute);font-weight:600}
+  .masthead h1{font-family:"Fraunces",serif;font-weight:300;font-size:clamp(2.2rem,5vw,3.4rem);line-height:1;letter-spacing:-.02em;margin-top:.5rem}
+  .masthead h1 em{font-style:italic;color:var(--ember-hi)}
+
+  .grid{display:grid;grid-template-columns:minmax(340px,390px) 1fr;gap:clamp(1.5rem,4vw,3.5rem);margin-top:2.5rem;align-items:start}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
+
+  /* ========== PHONE — the diner surface ========== */
+  .phone{
+    position:sticky;top:2rem;
+    border-radius:2.4rem;padding:.5rem;
+    background:linear-gradient(180deg, var(--hairline), oklch(0.18 0.01 44));
+    box-shadow:0 40px 80px -30px oklch(0.05 0.02 40 / .9), 0 0 0 1px oklch(0.4 0.02 44 /.4) inset;
+  }
+  .screen{border-radius:2rem;overflow:hidden;background:var(--void);position:relative}
+  .statusbar{display:flex;justify-content:space-between;align-items:center;padding:.7rem 1.4rem .2rem;font-size:.72rem;color:var(--ink-soft);font-weight:600}
+  .sysicons{display:flex;align-items:center;gap:.4rem}
+  .sysicons svg{display:block}
+  .si-sig rect{fill:currentColor}
+  .si-bat rect{fill:none;stroke:currentColor;stroke-width:1.1}
+  .si-bat .fill,.si-bat .cap{fill:currentColor;stroke:none}
+  .pct{font-size:.72rem;font-weight:600;letter-spacing:.02em}
+  .app-top{padding:.4rem 1.25rem .9rem;display:flex;justify-content:space-between;align-items:center}
+  .table-chip{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:600;color:var(--ink-soft);border:1px solid var(--hairline);padding:.3rem .6rem;border-radius:99px}
+  .app-scroll{padding:0 1.25rem 1.4rem;max-height:640px;overflow:auto}
+  .app-scroll::-webkit-scrollbar{width:0}
+  .hero-q{font-family:"Fraunces",serif;font-weight:300;font-size:1.8rem;line-height:1.05;letter-spacing:-.02em;margin:.2rem 0 .1rem}
+  .hero-q em{font-style:italic;color:var(--ember-hi)}
+  .tagline{color:var(--ink-mute);font-size:.82rem;margin-bottom:1rem}
+
+  /* session banner — not a side-stripe, a full inset with leading glyph */
+  .session{display:flex;align-items:center;justify-content:space-between;gap:.75rem;
+    background:linear-gradient(180deg, oklch(0.26 0.04 44), oklch(0.22 0.03 44));
+    border:1px solid var(--ember-deep);border-radius:var(--r-md);padding:.7rem .85rem;margin-bottom:1.1rem}
+  .session .lbl{display:flex;align-items:center;gap:.5rem;font-size:.78rem;font-weight:600;color:var(--ink)}
+  .session .glyph{width:1.6rem;height:1.6rem;border-radius:.5rem;display:grid;place-items:center;background:var(--ember);color:var(--void);font-size:.9rem}
+  .session .amt{font-weight:700;font-size:.85rem;font-variant-numeric:tabular-nums}
+
+  /* category rail */
+  .cats{display:flex;gap:.45rem;overflow:auto;padding-bottom:.9rem;margin:0 -1.25rem 1rem;padding-left:1.25rem;padding-right:1.25rem}
+  .cats::-webkit-scrollbar{height:0}
+  .cat{flex:none;font-size:.78rem;font-weight:600;color:var(--ink-soft);padding:.4rem .8rem;border-radius:99px;border:1px solid var(--hairline);white-space:nowrap;transition:all .4s var(--ease)}
+  .cat.on{background:var(--ink);color:var(--void);border-color:var(--ink)}
+
+  .sec-label{font-family:"Fraunces",serif;font-size:1rem;font-weight:500;margin:.4rem 0 .8rem;display:flex;align-items:baseline;gap:.6rem}
+  .sec-label::after{content:"";flex:1;height:1px;background:var(--hairline)}
+
+  /* ===== the hero component: menu item ===== */
+  .dish{display:grid;grid-template-columns:5.2rem 1fr;gap:.9rem;padding:.75rem 0;border-bottom:1px solid var(--hairline);align-items:center}
+  .dish:last-child{border-bottom:0}
+  .thumb{width:5.2rem;height:5.2rem;border-radius:var(--r-sm);overflow:hidden;position:relative;background:linear-gradient(135deg,var(--ember-deep),oklch(0.3 0.04 44));flex:none}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+  .dish-body h4{font-family:"Fraunces",serif;font-weight:500;font-size:1.02rem;letter-spacing:-.01em;line-height:1.15}
+  .dish-body p{color:var(--ink-mute);font-size:.76rem;line-height:1.4;margin:.2rem 0 .5rem}
+  .dish-foot{display:flex;align-items:center;justify-content:space-between}
+  .price{font-weight:700;font-size:.9rem;font-variant-numeric:tabular-nums}
+  .price .cur{color:var(--ink-mute);font-weight:600;font-size:.78rem;margin-right:.1rem}
+  .add{width:2rem;height:2rem;border-radius:99px;border:1px solid var(--ember);background:transparent;color:var(--ember-hi);font-size:1.05rem;line-height:1;display:grid;place-items:center;cursor:pointer;transition:all .4s var(--ease)}
+  .add:hover{background:var(--ember);color:var(--void);box-shadow:0 0 20px -2px var(--ember)}
+  .tag{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--gold);margin-left:.5rem}
+
+  /* floating cart cta */
+  .cartbar{position:absolute;left:1rem;right:1rem;bottom:1rem;display:flex;align-items:center;justify-content:space-between;
+    background:var(--ember);color:oklch(0.18 0.02 40);border-radius:99px;padding:.75rem .8rem .75rem 1.1rem;
+    box-shadow:0 18px 40px -12px var(--ember-deep), 0 0 30px -8px var(--ember)}
+  .cartbar .n{display:flex;align-items:center;gap:.55rem;font-weight:700;font-size:.85rem}
+  .cartbar .n span{background:oklch(0.18 0.02 40);color:var(--ember-hi);width:1.5rem;height:1.5rem;border-radius:99px;display:grid;place-items:center;font-size:.78rem}
+  .cartbar .go{display:flex;align-items:center;gap:.4rem;font-weight:700;font-size:.85rem;font-variant-numeric:tabular-nums}
+
+  /* ========== SYSTEM PANEL ========== */
+  .panel{display:flex;flex-direction:column;gap:2.4rem}
+  .block > .eyebrow{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-mute);font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.7rem}
+  .block > .eyebrow::after{content:"";flex:1;height:1px;background:var(--hairline)}
+
+  .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.7rem}
+  .sw{border-radius:var(--r-sm);padding:.7rem;height:5.2rem;display:flex;flex-direction:column;justify-content:flex-end;border:1px solid oklch(1 0 0 /.06)}
+  .sw small{font-size:.66rem;font-weight:700;opacity:.9}
+  .sw code{font-size:.6rem;opacity:.65;font-family:ui-monospace,monospace}
+
+  .typespec > div{padding:.55rem 0;border-bottom:1px solid var(--hairline);display:flex;align-items:baseline;justify-content:space-between;gap:1rem}
+  .typespec > div:last-child{border-bottom:0}
+  .typespec .lab{font-size:.66rem;color:var(--ink-mute);font-weight:600;letter-spacing:.1em;text-transform:uppercase;flex:none}
+  .t-d1{font-family:"Fraunces",serif;font-weight:300;font-size:2.6rem;line-height:1;letter-spacing:-.02em}
+  .t-d2{font-family:"Fraunces",serif;font-weight:400;font-style:italic;font-size:1.7rem;line-height:1}
+  .t-h{font-family:"Fraunces",serif;font-weight:500;font-size:1.15rem}
+  .t-b{font-size:.95rem;color:var(--ink-soft)}
+  .t-c{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute);font-weight:700}
+
+  .btns{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center}
+  .btn{font-family:inherit;font-weight:600;font-size:.85rem;border-radius:99px;padding:.7rem 1.3rem;border:1px solid transparent;cursor:pointer;transition:all .4s var(--ease)}
+  .btn-primary{background:var(--ember);color:oklch(0.18 0.02 40)}
+  .btn-primary:hover{box-shadow:0 0 26px -4px var(--ember);transform:translateY(-1px)}
+  .btn-ghost{background:transparent;color:var(--ink);border-color:var(--hairline)}
+  .btn-ghost:hover{border-color:var(--ink-soft);background:oklch(1 0 0 /.04)}
+  .btn-quiet{background:transparent;color:var(--ink-mute)}
+  .btn-quiet:hover{color:var(--ink)}
+  .badges{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}
+  .badge{font-size:.68rem;font-weight:700;letter-spacing:.06em;padding:.28rem .6rem;border-radius:99px}
+  .b-live{background:oklch(0.72 0.09 150 /.18);color:var(--sage)}
+  .b-new{background:oklch(0.8 0.11 85 /.18);color:var(--gold)}
+  .b-out{background:oklch(0.62 0.02 55 /.16);color:var(--ink-mute)}
+
+  .motion-demo{display:flex;gap:.7rem;flex-wrap:wrap}
+  .mchip{border:1px solid var(--hairline);border-radius:var(--r-sm);padding:.6rem .9rem;font-size:.75rem;color:var(--ink-soft);animation:floaty 3.2s var(--ease) infinite alternate}
+  .mchip:nth-child(2){animation-delay:.4s}.mchip:nth-child(3){animation-delay:.8s}
+  @keyframes floaty{to{transform:translateY(-6px)}}
+
+  .foot{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--hairline);color:var(--ink-mute);font-size:.78rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <div>
+      <div class="brandmark"><span class="dot"></span><b>ToDining</b></div>
+      <h1>Direction 01 — <em>Ember&nbsp;Noir</em></h1>
+    </div>
+    <div style="text-align:right">
+      <div class="kicker">Design system · diner surface</div>
+      <p style="color:var(--ink-mute);font-size:.85rem;margin-top:.4rem;max-width:24ch">Dim, candle-lit ambiance. Food glows against warm charcoal.</p>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- ============ PHONE ============ -->
+    <div class="phone">
+      <div class="screen">
+        <div class="statusbar"><span>9:41</span><span class="sysicons"><svg class="si-sig" viewBox="0 0 18 12" width="17" height="11"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg class="si-bat" viewBox="0 0 26 12" width="24" height="11"><rect x=".5" y=".5" width="21" height="11" rx="3"/><rect x="2.2" y="2.2" width="14" height="7.6" rx="1.4" class="fill"/><rect x="23" y="4" width="2.4" height="4" rx="1" class="cap"/></svg><span class="pct">100%</span></span></div>
+        <div class="app-top">
+          <div class="brandmark"><span class="dot"></span><b style="font-size:1.05rem">ToDining</b></div>
+          <span class="table-chip">● Table 12</span>
+        </div>
+        <div class="app-scroll">
+          <div class="hero-q">What are you<br><em>craving</em> tonight?</div>
+          <p class="tagline">Firewood Kitchen · seasonal small plates</p>
+
+          <div class="session">
+            <div class="lbl"><span class="glyph"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg></span> Dining session · 2 orders</div>
+            <span class="amt">₹1,240 →</span>
+          </div>
+
+          <div class="cats">
+            <span class="cat on">Small plates</span>
+            <span class="cat">From the fire</span>
+            <span class="cat">Sides</span>
+            <span class="cat">Dessert</span>
+          </div>
+
+          <div class="sec-label">Small plates</div>
+
+          <div class="dish">
+            <div class="thumb"><img alt="" src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=220&q=70&auto=format&fit=crop" onerror="this.style.display='none'"></div>
+            <div class="dish-body">
+              <h4>Charred octopus <span class="tag">Chef's</span></h4>
+              <p>Ember-grilled, smoked paprika, salsa verde</p>
+              <div class="dish-foot"><span class="price"><span class="cur">₹</span>560</span><button class="add" aria-label="Add">+</button></div>
+            </div>
+          </div>
+
+          <div class="dish">
+            <div class="thumb"><img alt="" src="https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=220&q=70&auto=format&fit=crop" onerror="this.style.display='none'"></div>
+            <div class="dish-body">
+              <h4>Burrata &amp; heirloom tomato</h4>
+              <p>Basil oil, aged balsamic, sourdough crisp</p>
+              <div class="dish-foot"><span class="price"><span class="cur">₹</span>420</span><button class="add" aria-label="Add">+</button></div>
+            </div>
+          </div>
+
+          <div class="dish">
+            <div class="thumb"><img alt="" src="https://images.unsplash.com/photo-1633436375153-d7045cb93e38?w=220&q=70&auto=format&fit=crop" onerror="this.style.display='none'"></div>
+            <div class="dish-body">
+              <h4>Truffle tagliatelle</h4>
+              <p>Hand-cut pasta, black truffle, 24-month parmesan</p>
+              <div class="dish-foot"><span class="price"><span class="cur">₹</span>480</span><button class="add" aria-label="Add">+</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="cartbar">
+          <div class="n"><span>3</span> In your cart</div>
+          <div class="go">₹1,460 · View →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SYSTEM ============ -->
+    <div class="panel">
+      <div class="block">
+        <div class="eyebrow">Color · OKLCH, warm-tinted</div>
+        <div class="swatches">
+          <div class="sw" style="background:var(--void)"><small>Void</small><code>L .16</code></div>
+          <div class="sw" style="background:var(--surface-2)"><small>Card</small><code>L .235</code></div>
+          <div class="sw" style="background:var(--ember);color:var(--void)"><small>Ember</small><code>primary</code></div>
+          <div class="sw" style="background:var(--ember-hi);color:var(--void)"><small>Ember hi</small><code>accent</code></div>
+          <div class="sw" style="background:var(--gold);color:var(--void)"><small>Gold</small><code>chef</code></div>
+          <div class="sw" style="background:var(--sage);color:var(--void)"><small>Sage</small><code>live</code></div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="eyebrow">Typography · Fraunces × Plus Jakarta Sans</div>
+        <div class="typespec">
+          <div><span class="t-d1">Craving</span><span class="lab">Display 300</span></div>
+          <div><span class="t-d2">tonight</span><span class="lab">Italic accent</span></div>
+          <div><span class="t-h">Charred octopus</span><span class="lab">Dish · 500</span></div>
+          <div><span class="t-b">Ember-grilled, salsa verde</span><span class="lab">Body</span></div>
+          <div><span class="t-c">Small plates</span><span class="lab">Label · tracked</span></div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="eyebrow">Controls</div>
+        <div class="btns">
+          <button class="btn btn-primary">Add to table</button>
+          <button class="btn btn-ghost">View menu</button>
+          <button class="btn btn-quiet">Not now</button>
+        </div>
+        <div class="badges">
+          <span class="badge b-live">● Order live</span>
+          <span class="badge b-new">New</span>
+          <span class="badge b-out">Sold out</span>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="eyebrow">Motion · ease-out-expo</div>
+        <div class="motion-demo">
+          <div class="mchip">Fade + rise 8px</div>
+          <div class="mchip">Ember glow on hover</div>
+          <div class="mchip">No bounce, ever</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>ToDining · Ember Noir — sample 1 of 3</span>
+    <span>Fraunces · Plus Jakarta Sans · OKLCH color · prefers-reduced-motion honored</span>
+  </div>
+</div>
+</body>
+</html>

@@ -72,7 +72,7 @@ export function QuantityStepper({
 }) {
   const dim = size === 'sm' ? 'h-7 w-7 text-sm' : 'h-9 w-9';
   return (
-    <div className="inline-flex items-center gap-1 rounded-xl bg-ember-500 p-0.5 text-white">
+    <div className="inline-flex items-center gap-1 rounded-xl bg-ember-500 p-0.5 text-cream">
       <button onClick={onDecrement} className={cn('grid place-items-center rounded-lg font-bold hover:bg-white/15', dim)} aria-label="Decrease">
         −
       </button>
@@ -120,7 +120,7 @@ export function KpiCard({
   const toneBg = {
     ember: 'bg-ember-100 text-ember-600',
     sage: 'bg-sage-100 text-sage-600',
-    gold: 'bg-amber-100 text-amber-600',
+    gold: 'bg-gold-100 text-gold-600',
     ink: 'bg-ink/6 text-ink-soft',
   }[tone];
   return (

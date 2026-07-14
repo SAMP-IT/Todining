@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ToDining · Display font options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=DM+Serif+Display:ital@0;1&family=Instrument+Serif:ital@0;1&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;1,6..96,400&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:oklch(0.976 0.008 78);--card:oklch(0.995 0.004 80);--hairline:oklch(0.83 0.014 60);--rule:oklch(0.72 0.02 55);
+  --ink:oklch(0.235 0.022 42);--ink-soft:oklch(0.40 0.022 44);--ink-mute:oklch(0.565 0.018 52);
+  --ember:oklch(0.55 0.185 37);--gold:oklch(0.60 0.10 78);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;padding:clamp(1.5rem,4vw,3.5rem)}
+.grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E")}
+.wrap{max-width:1180px;margin:0 auto}
+.head{text-align:center;margin-bottom:2.5rem}
+.head .kick{font-size:.7rem;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mute);font-weight:700}
+.head h1{font-family:"Fraunces",serif;font-variation-settings:'opsz' 144;font-weight:400;font-size:clamp(2rem,4vw,3rem);letter-spacing:-.02em;margin-top:.6rem}
+.head p{color:var(--ink-mute);font-size:.9rem;margin-top:.6rem;max-width:52ch;margin-inline:auto}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.4rem}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--hairline);border-radius:1rem;padding:1.6rem 1.5rem;box-shadow:0 10px 30px -24px rgba(42,33,27,.4)}
+.card .tag{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:1.1rem}
+.card .tag .no{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ember);font-weight:700}
+.card .tag .nm{font-size:.78rem;color:var(--ink-mute);font-weight:600}
+.card .headline{font-size:clamp(1.9rem,3vw,2.6rem);line-height:1.02;letter-spacing:-.02em;color:var(--ink)}
+.card .headline em{color:var(--ember)}
+.rule{height:1px;background:var(--hairline);margin:1.3rem 0}
+.seclabel{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute);font-weight:700;margin-bottom:.7rem}
+.dish{display:flex;align-items:baseline;gap:.5rem}
+.dish .dn{font-size:1.15rem;font-weight:600;letter-spacing:-.01em}
+.dish .ld{flex:1;border-bottom:1.5px dotted var(--rule);transform:translateY(-.2rem)}
+.dish .pr{font-size:1.1rem;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* per-font display faces (headline + dish name use the display face) */
+.f-fraunces .headline,.f-fraunces .dish .dn,.f-fraunces .dish .pr{font-family:"Fraunces",serif;font-variation-settings:'opsz' 144;font-weight:400}
+.f-fraunces .dish .dn,.f-fraunces .dish .pr{font-weight:600}
+.f-fraunces .headline em{font-style:italic}
+
+.f-playfair .headline,.f-playfair .dish .dn,.f-playfair .dish .pr{font-family:"Playfair Display",serif;font-weight:400}
+.f-playfair .dish .dn,.f-playfair .dish .pr{font-weight:600}
+.f-playfair .headline em{font-style:italic}
+
+.f-cormorant .headline,.f-cormorant .dish .dn,.f-cormorant .dish .pr{font-family:"Cormorant Garamond",serif;font-weight:500}
+.f-cormorant .headline{font-size:clamp(2.2rem,3.4vw,3rem)}
+.f-cormorant .dish .dn,.f-cormorant .dish .pr{font-weight:600;font-size:1.25rem}
+.f-cormorant .headline em{font-style:italic}
+
+.f-dmserif .headline,.f-dmserif .dish .dn,.f-dmserif .dish .pr{font-family:"DM Serif Display",serif;font-weight:400}
+.f-dmserif .headline em{font-style:italic}
+
+.f-instrument .headline,.f-instrument .dish .dn,.f-instrument .dish .pr{font-family:"Instrument Serif",serif;font-weight:400}
+.f-instrument .headline{font-size:clamp(2.2rem,3.6vw,3.2rem)}
+.f-instrument .dish .dn,.f-instrument .dish .pr{font-size:1.3rem}
+.f-instrument .headline em{font-style:italic}
+
+.f-bodoni .headline,.f-bodoni .dish .dn,.f-bodoni .dish .pr{font-family:"Bodoni Moda",serif;font-variation-settings:'opsz' 96;font-weight:400}
+.f-bodoni .dish .dn,.f-bodoni .dish .pr{font-weight:600}
+.f-bodoni .headline em{font-style:italic}
+
+.note{text-align:center;color:var(--ink-mute);font-size:.82rem;margin-top:2.5rem}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+  <div class="head">
+    <div class="kick">ToDining · Warm Editorial</div>
+    <h1>Choosing the display font</h1>
+    <p>Same headline, same menu line, six editorial serifs. Body text stays Plus Jakarta Sans. Tell me the number you want (or “keep Fraunces”).</p>
+  </div>
+
+  <div class="grid">
+    <div class="card f-fraunces">
+      <div class="tag"><span class="no">01 · Fraunces</span><span class="nm">current · warm, high-contrast</span></div>
+      <div class="headline">Every table, every plate, in one <em>calm</em> place.</div>
+      <div class="rule"></div>
+      <div class="seclabel">Small plates</div>
+      <div class="dish"><span class="dn">Charred octopus</span><span class="ld"></span><span class="pr">₹560</span></div>
+    </div>
+
+    <div class="card f-playfair">
+      <div class="tag"><span class="no">02 · Playfair Display</span><span class="nm">classic fine-dining Didone</span></div>
+      <div class="headline">Every table, every plate, in one <em>calm</em> place.</div>
+      <div class="rule"></div>
+      <div class="seclabel">Small plates</div>
+      <div class="dish"><span class="dn">Charred octopus</span><span class="ld"></span><span class="pr">₹560</span></div>
+    </div>
+
+    <div class="card f-cormorant">
+      <div class="tag"><span class="no">03 · Cormorant Garamond</span><span class="nm">refined, literary, delicate</span></div>
+      <div class="headline">Every table, every plate, in one <em>calm</em> place.</div>
+      <div class="rule"></div>
+      <div class="seclabel">Small plates</div>
+      <div class="dish"><span class="dn">Charred octopus</span><span class="ld"></span><span class="pr">₹560</span></div>
+    </div>
+
+    <div class="card f-dmserif">
+      <div class="tag"><span class="no">04 · DM Serif Display</span><span class="nm">dramatic, stylish, tight</span></div>
+      <div class="headline">Every table, every plate, in one <em>calm</em> place.</div>
+      <div class="rule"></div>
+      <div class="seclabel">Small plates</div>
+      <div class="dish"><span class="dn">Charred octopus</span><span class="ld"></span><span class="pr">₹560</span></div>
+    </div>
+
+    <div class="card f-instrument">
+      <div class="tag"><span class="no">05 · Instrument Serif</span><span class="nm">modern editorial, trendy</span></div>
+      <div class="headline">Every table, every plate, in one <em>calm</em> place.</div>
+      <div class="rule"></div>
+      <div class="seclabel">Small plates</div>
+      <div class="dish"><span class="dn">Charred octopus</span><span class="ld"></span><span class="pr">₹560</span></div>
+    </div>
+
+    <div class="card f-bodoni">
+      <div class="tag"><span class="no">06 · Bodoni Moda</span><span class="nm">fashion Didone, bold drama</span></div>
+      <div class="headline">Every table, every plate, in one <em>calm</em> place.</div>
+      <div class="rule"></div>
+      <div class="seclabel">Small plates</div>
+      <div class="dish"><span class="dn">Charred octopus</span><span class="ld"></span><span class="pr">₹560</span></div>
+    </div>
+  </div>
+
+  <p class="note">All six pair with Plus Jakarta Sans for body/UI. We can also swap the body sans if you want, just say so.</p>
+</div>
+</body>
+</html>

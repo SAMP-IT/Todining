@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ToDining · Warm Editorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   ToDining — WARM EDITORIAL  ·  the menu as a beautifully set page
+   ================================================================ */
+:root{
+  --paper:     oklch(0.976 0.008 78);
+  --paper-2:   oklch(0.958 0.013 74);
+  --paper-3:   oklch(0.938 0.018 72);
+  --card:      oklch(0.995 0.004 80);
+  --hairline:  oklch(0.83 0.014 60);
+  --rule:      oklch(0.72 0.02 55);
+  --ink:       oklch(0.235 0.022 42);
+  --ink-soft:  oklch(0.40 0.022 44);
+  --ink-mute:  oklch(0.565 0.018 52);
+  --ember:     oklch(0.55 0.185 37);
+  --ember-2:   oklch(0.48 0.18 35);
+  --ember-soft:oklch(0.935 0.038 46);
+  --forest:    oklch(0.44 0.085 152);   /* sophisticated secondary */
+  --forest-soft:oklch(0.93 0.04 150);
+  --gold:      oklch(0.60 0.10 78);
+  --gold-soft: oklch(0.925 0.06 82);
+  --ease:      cubic-bezier(0.16,1,0.3,1);       /* out-expo */
+  --ease-io:   cubic-bezier(0.65,0,0.35,1);
+  --r:1rem; --r-sm:.6rem; --r-lg:1.4rem;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:"Plus Jakarta Sans",system-ui,sans-serif;
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  font-optical-sizing:auto;
+}
+::selection{background:var(--ember-soft)}
+h1,h2,h3,h4{font-family:"Fraunces",serif;font-optical-sizing:auto}
+.num{font-variant-numeric:tabular-nums}
+img{max-width:100%;display:block}
+
+/* fine paper grain — tactile, not a gradient blob */
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E")}
+/* soft warm vignette at the very edges only */
+.atmos{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% -20%, transparent 60%, oklch(0.9 0.02 60 /.5))}
+main{position:relative;z-index:2}
+
+.shell{max-width:1200px;margin:0 auto;padding:0 clamp(1.2rem,4vw,3rem)}
+
+/* ---------------- top bar ---------------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:1.4rem 0;position:relative;z-index:5}
+.brand{display:flex;align-items:center;gap:.6rem}
+.seal{width:2.1rem;height:2.1rem;border:1.5px solid var(--ink);border-radius:99px;display:grid;place-items:center;font-family:"Fraunces",serif;font-weight:500;font-size:.95rem;color:var(--ink)}
+.brand b{font-family:"Fraunces",serif;font-weight:500;font-size:1.2rem;letter-spacing:-.01em}
+.topnav{display:flex;gap:2rem;font-size:.74rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute);font-weight:600}
+.topnav span{cursor:default;transition:color .3s var(--ease)}
+.topnav span:hover{color:var(--ink)}
+@media(max-width:680px){.topnav{display:none}}
+
+/* ---------------- hero ---------------- */
+.hero{padding:clamp(2.5rem,7vw,6rem) 0 clamp(2rem,5vw,4rem);position:relative}
+.hero .idx{position:absolute;top:2.5rem;right:0;font-family:"Fraunces",serif;font-style:italic;font-weight:300;font-size:clamp(3rem,9vw,7rem);color:var(--paper-3);line-height:1;z-index:-1;user-select:none}
+.kicker{display:inline-flex;align-items:center;gap:.7rem;font-size:.72rem;letter-spacing:.34em;text-transform:uppercase;color:var(--ink-mute);font-weight:700}
+.kicker::before{content:"";width:2.2rem;height:1px;background:var(--rule)}
+.hero h1{font-weight:400;font-size:clamp(2.9rem,9vw,6.4rem);line-height:.98;letter-spacing:-.03em;margin:1.4rem 0 0;max-width:16ch}
+.hero h1 em{font-style:italic;color:var(--ember)}
+.hero h1 .drop{font-size:1.18em;line-height:.8}
+.hero .lede{margin-top:1.8rem;max-width:52ch;font-size:clamp(1rem,1.5vw,1.15rem);line-height:1.6;color:var(--ink-soft)}
+.hero .meta{display:flex;flex-wrap:wrap;gap:2.4rem;margin-top:2.6rem;padding-top:1.6rem;border-top:1px solid var(--hairline)}
+.hero .meta div{min-width:0}
+.hero .meta .lab{font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-mute);font-weight:700}
+.hero .meta .val{font-family:"Fraunces",serif;font-size:1.05rem;margin-top:.35rem;color:var(--ink)}
+.hero .meta .val em{font-style:italic;color:var(--ember)}
+
+/* section header shared */
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;margin:clamp(3rem,8vw,7rem) 0 2.6rem;flex-wrap:wrap}
+.sec-head .num-tag{font-family:"Fraunces",serif;font-style:italic;font-weight:300;font-size:1.05rem;color:var(--ember)}
+.sec-head h2{font-weight:400;font-size:clamp(1.9rem,4.5vw,3.2rem);line-height:1;letter-spacing:-.02em;margin-top:.5rem}
+.sec-head p{max-width:34ch;font-size:.92rem;line-height:1.55;color:var(--ink-mute)}
+
+/* ---------------- phones row ---------------- */
+.phones{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(1.2rem,3vw,2.4rem);align-items:start}
+@media(max-width:960px){.phones{grid-template-columns:1fr 1fr}.phones .ph-3{grid-column:1/-1;max-width:390px;margin:0 auto}}
+@media(max-width:640px){.phones{grid-template-columns:1fr;max-width:390px;margin:0 auto}.phones .ph-3{max-width:none}}
+.ph-cap{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute);font-weight:700;margin:1rem 0 0;text-align:center}
+.ph-cap b{color:var(--ink);font-weight:700}
+
+.phone{border-radius:2.4rem;padding:.5rem;background:linear-gradient(180deg,oklch(0.9 0.01 60),oklch(0.83 0.014 55));
+  box-shadow:0 50px 80px -40px oklch(0.35 0.03 45 /.55), 0 0 0 1px oklch(0.79 0.015 55) inset;}
+.screen{border-radius:2rem;overflow:hidden;background:var(--paper);position:relative;height:660px}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:34%;height:1.5rem;background:linear-gradient(180deg,oklch(0.9 0.01 60),oklch(0.83 0.014 55));border-radius:0 0 1rem 1rem;z-index:20}
+.statusbar{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1.4rem .1rem;font-size:.72rem;color:var(--ink-soft);font-weight:600}
+.sysicons{display:flex;align-items:center;gap:.4rem}
+.sysicons svg{display:block}.si-sig rect{fill:currentColor}
+.si-bat rect{fill:none;stroke:currentColor;stroke-width:1.1}.si-bat .fill,.si-bat .cap{fill:currentColor;stroke:none}
+.pct{font-size:.72rem;font-weight:600}
+
+/* app chrome */
+.app-top{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1.3rem .8rem}
+.app-top .brand b{font-size:1.02rem}
+.app-top .seal{width:1.7rem;height:1.7rem;font-size:.78rem;border-width:1.2px}
+.table-chip{font-size:.66rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute);border:1px solid var(--hairline);padding:.3rem .55rem;border-radius:.5rem}
+.scroll{height:calc(660px - 2.9rem);overflow:auto;padding:0 1.3rem 6rem;scrollbar-width:none}
+.scroll::-webkit-scrollbar{width:0}
+
+/* menu header */
+.m-intro{text-align:center;padding:.6rem 0 1rem}
+.m-intro .est{font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-mute);font-weight:700}
+.m-intro h3{font-weight:400;font-size:1.65rem;line-height:1.05;letter-spacing:-.02em;margin:.4rem 0}
+.m-intro h3 em{font-style:italic;color:var(--ember)}
+.m-intro .loc{color:var(--ink-mute);font-size:.76rem}
+
+.search{display:flex;align-items:center;gap:.6rem;border:1px solid var(--hairline);background:var(--card);border-radius:99px;padding:.6rem .9rem;margin:.4rem 0 1rem;color:var(--ink-mute);font-size:.82rem}
+.search svg{flex:none;color:var(--ink-mute)}
+.search .ph{flex:1}
+
+.session{display:flex;align-items:center;justify-content:space-between;gap:.7rem;background:var(--ember-soft);border:1px solid oklch(0.86 0.055 46);border-radius:.7rem;padding:.65rem .85rem;margin-bottom:1.1rem}
+.session .lbl{display:flex;align-items:center;gap:.5rem;font-size:.75rem;font-weight:700;color:var(--ember-2)}
+.session .amt{font-weight:700;font-size:.82rem;color:var(--ember-2)}
+.session svg{color:var(--ember-2)}
+
+/* category tabs w/ sliding underline */
+.tabs{position:relative;display:flex;gap:1.3rem;padding-bottom:.8rem;margin-bottom:.4rem;border-bottom:1px solid var(--hairline);overflow:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{height:0}
+.tab{flex:none;font-size:.68rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-mute);background:none;border:0;padding:0 0 .2rem;cursor:pointer;transition:color .3s var(--ease);white-space:nowrap}
+.tab.on{color:var(--ink)}
+.tab-underline{position:absolute;bottom:-1px;height:2px;background:var(--ember);border-radius:2px;transition:transform .5s var(--ease),width .5s var(--ease)}
+
+.sec-title{font-style:italic;font-weight:400;font-size:1.15rem;text-align:center;margin:1.4rem 0 .3rem;display:flex;align-items:center;justify-content:center;gap:.6rem}
+.sec-title .n{font-size:.7rem;font-style:normal;font-weight:700;letter-spacing:.1em;color:var(--ember);font-family:"Plus Jakarta Sans"}
+.legend{display:flex;justify-content:center;gap:1rem;font-size:.62rem;color:var(--ink-mute);font-weight:600;letter-spacing:.04em;margin-bottom:.8rem}
+.legend i{width:.4rem;height:.4rem;border-radius:99px;display:inline-block;margin-right:.3rem;vertical-align:middle}
+.dot-veg{background:var(--forest)}.dot-spicy{background:var(--ember)}.dot-chef{background:var(--gold)}
+
+/* dish rows */
+.dish{padding:.85rem 0;border-bottom:1px solid var(--hairline)}
+.dish:last-child{border-bottom:0}
+.dish-line{display:flex;align-items:baseline;gap:.5rem}
+.dish-line h4{font-weight:600;font-size:1.04rem;letter-spacing:-.01em;flex:none;display:flex;align-items:center;gap:.4rem}
+.d-dot{width:.42rem;height:.42rem;border-radius:99px;flex:none}
+.leader{flex:1;border-bottom:1.5px dotted var(--rule);transform:translateY(-.22rem)}
+.price{font-family:"Fraunces",serif;font-weight:600;font-size:1.02rem;flex:none;font-variant-numeric:tabular-nums}
+.dish p{color:var(--ink-mute);font-size:.78rem;line-height:1.45;margin-top:.35rem;max-width:40ch}
+.dish-foot{display:flex;align-items:center;gap:.7rem;margin-top:.65rem}
+/* stepper + add */
+.add{display:inline-flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ember);background:transparent;border:1px solid oklch(0.82 0.06 46);border-radius:.5rem;padding:.4rem .75rem;cursor:pointer;transition:all .35s var(--ease)}
+.add:hover{background:var(--ember);color:var(--paper);border-color:var(--ember)}
+.add.added{background:var(--forest);border-color:var(--forest);color:var(--paper)}
+.stepper{display:inline-flex;align-items:center;gap:.1rem;border:1px solid var(--hairline);border-radius:.5rem;background:var(--card)}
+.stepper button{width:1.9rem;height:1.9rem;border:0;background:none;color:var(--ink);font-size:1.1rem;cursor:pointer;display:grid;place-items:center}
+.stepper .q{min-width:1.4rem;text-align:center;font-weight:700;font-size:.82rem;font-variant-numeric:tabular-nums}
+
+/* featured dish with photo */
+.feature{margin:1rem 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--hairline);background:var(--card)}
+.feature .ph-img{height:9rem;background:linear-gradient(135deg,var(--ember-soft),var(--gold-soft));position:relative;overflow:hidden}
+.feature .ph-img img{width:100%;height:100%;object-fit:cover}
+.feature .fr-tag{position:absolute;top:.6rem;left:.6rem;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--paper);background:oklch(0.3 0.02 45 /.55);backdrop-filter:blur(4px);padding:.25rem .55rem;border-radius:.4rem}
+.feature .fr-body{padding:.85rem}
+.feature .fr-body .dish-line h4{font-size:1.1rem}
+
+/* floating cart */
+.cartbar{position:absolute;left:1rem;right:1rem;bottom:1rem;display:flex;align-items:center;justify-content:space-between;
+  background:var(--ink);color:var(--paper);border-radius:.9rem;padding:.8rem .85rem .8rem 1.1rem;z-index:15;
+  box-shadow:0 20px 40px -16px oklch(0.3 0.03 45 /.6);transition:transform .5s var(--ease)}
+.cartbar .n{font-weight:600;font-size:.83rem;display:flex;align-items:center;gap:.55rem}
+.cartbar .n .b{background:var(--ember);min-width:1.5rem;height:1.5rem;border-radius:99px;display:grid;place-items:center;font-size:.74rem;font-weight:700;padding:0 .3rem}
+.cartbar .go{font-weight:700;font-size:.83rem;font-variant-numeric:tabular-nums}
+
+/* ---------- phone 2 : the check / cart ---------- */
+.check{padding:1.4rem 0 0;text-align:center}
+.check .rname{font-weight:500;font-style:italic;font-size:1.35rem}
+.check .rmeta{font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-mute);font-weight:700;margin-top:.3rem}
+.check .torn{border-top:1.5px dashed var(--rule);margin:1.1rem 0}
+.citem{display:flex;align-items:baseline;gap:.5rem;padding:.55rem 0;text-align:left}
+.citem .q{font-variant-numeric:tabular-nums;color:var(--ink-mute);font-weight:700;font-size:.82rem;flex:none;width:1.6rem}
+.citem .nm{font-size:.88rem;font-weight:500;flex:none}
+.citem .nm small{display:block;color:var(--ink-mute);font-weight:500;font-size:.72rem;margin-top:.1rem}
+.citem .ld{flex:1;border-bottom:1px dotted var(--hairline);transform:translateY(-.2rem)}
+.citem .pr{font-family:"Fraunces",serif;font-weight:500;font-variant-numeric:tabular-nums;flex:none}
+.totals{text-align:left;margin-top:.4rem}
+.trow{display:flex;justify-content:space-between;padding:.3rem 0;font-size:.82rem;color:var(--ink-soft)}
+.trow .num{color:var(--ink)}
+.grand{display:flex;justify-content:space-between;align-items:baseline;margin-top:.5rem;padding-top:.7rem;border-top:1.5px solid var(--ink)}
+.grand .l{font-family:"Fraunces",serif;font-size:1.05rem}
+.grand .v{font-family:"Fraunces",serif;font-weight:700;font-size:1.5rem;font-variant-numeric:tabular-nums}
+.pay{margin-top:1.2rem;width:100%;background:var(--ember);color:var(--paper);border:0;border-radius:.7rem;padding:.9rem;font-family:inherit;font-weight:700;font-size:.9rem;letter-spacing:.02em;cursor:pointer;transition:all .35s var(--ease)}
+.pay:hover{background:var(--ember-2)}
+.pay-note{text-align:center;font-size:.7rem;color:var(--ink-mute);margin-top:.7rem}
+
+/* ---------- phone 3 : live order tracking ---------- */
+.track{padding:1.2rem 0}
+.track h3{text-align:center;font-weight:300;font-size:1.5rem;letter-spacing:-.02em}
+.track h3 em{font-style:italic;color:var(--ember)}
+.track .sub{text-align:center;font-size:.76rem;color:var(--ink-mute);margin:.3rem 0 1.6rem}
+.timeline{position:relative;padding-left:2.2rem}
+.timeline::before{content:"";position:absolute;left:.72rem;top:.4rem;bottom:.4rem;width:2px;background:var(--hairline)}
+.timeline .fill{position:absolute;left:.72rem;top:.4rem;width:2px;background:var(--forest);border-radius:2px;height:62%}
+.tnode{position:relative;padding:0 0 1.6rem}
+.tnode .marker{position:absolute;left:-2.2rem;top:0;width:1.5rem;height:1.5rem;border-radius:99px;background:var(--paper);border:2px solid var(--hairline);display:grid;place-items:center;color:var(--ink-mute)}
+.tnode.done .marker{background:var(--forest);border-color:var(--forest);color:var(--paper)}
+.tnode.active .marker{border-color:var(--ember);color:var(--ember);animation:ring 1.8s var(--ease) infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 oklch(0.55 0.185 37 /.45)}70%{box-shadow:0 0 0 8px oklch(0.55 0.185 37 /0)}100%{box-shadow:0 0 0 0 oklch(0.55 0.185 37 /0)}}
+.tnode h5{font-family:"Fraunces",serif;font-weight:500;font-size:1rem}
+.tnode.active h5{color:var(--ember)}
+.tnode p{font-size:.75rem;color:var(--ink-mute);margin-top:.2rem}
+.tnode .time{font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);font-weight:700;margin-top:.3rem}
+.track-card{margin-top:.4rem;background:var(--forest-soft);border:1px solid oklch(0.86 0.05 150);border-radius:.7rem;padding:.85rem;display:flex;align-items:center;gap:.7rem}
+.track-card .ic{width:2rem;height:2rem;border-radius:.5rem;background:var(--forest);color:var(--paper);display:grid;place-items:center;flex:none}
+.track-card .t{font-size:.8rem;font-weight:700;color:var(--forest)}
+.track-card .s{font-size:.72rem;color:var(--ink-soft);margin-top:.1rem}
+
+/* ---------------- statement ---------------- */
+.statement{padding:clamp(3rem,9vw,7rem) 0;text-align:center}
+.statement p{font-family:"Fraunces",serif;font-weight:400;font-style:italic;font-size:clamp(1.6rem,4.2vw,3rem);line-height:1.22;letter-spacing:-.01em;max-width:22ch;margin:0 auto;color:var(--ink)}
+.statement p em{font-style:normal;color:var(--ember)}
+.statement .by{margin-top:1.8rem;font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-mute);font-weight:700}
+
+/* ---------------- system panel ---------------- */
+.system{padding-bottom:2rem}
+.sys-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(1.6rem,4vw,3rem)}
+@media(max-width:760px){.sys-grid{grid-template-columns:1fr}}
+.eyebrow{font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;color:var(--ink-mute);font-weight:700;margin-bottom:1.1rem;display:flex;align-items:center;gap:.8rem}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--hairline)}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:.6rem}
+.sw{border-radius:var(--r-sm);padding:.6rem;height:4.8rem;display:flex;flex-direction:column;justify-content:flex-end;border:1px solid var(--hairline)}
+.sw small{font-size:.64rem;font-weight:700}.sw code{font-size:.56rem;opacity:.7;font-family:ui-monospace,monospace}
+.typespec>div{padding:.55rem 0;border-bottom:1px solid var(--hairline);display:flex;align-items:baseline;justify-content:space-between;gap:1rem}
+.typespec>div:last-child{border-bottom:0}
+.typespec .lab{font-size:.62rem;color:var(--ink-mute);font-weight:700;letter-spacing:.12em;text-transform:uppercase;flex:none}
+.t-d1{font-weight:400;font-size:2.5rem;line-height:1;letter-spacing:-.02em}
+.t-d2{font-weight:400;font-style:italic;font-size:1.55rem}
+.t-h{font-weight:500;font-size:1.1rem}
+.t-b{font-size:.92rem;color:var(--ink-soft)}
+.t-c{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-mute);font-weight:700}
+.btns{display:flex;flex-wrap:wrap;gap:.7rem;align-items:center;margin-bottom:1rem}
+.btn{font-family:inherit;font-weight:600;font-size:.84rem;border-radius:.6rem;padding:.7rem 1.3rem;border:1px solid transparent;cursor:pointer;transition:all .35s var(--ease)}
+.btn:active{transform:translateY(1px)}
+.b-primary{background:var(--ember);color:var(--paper)}.b-primary:hover{background:var(--ember-2);transform:translateY(-1px)}
+.b-ink{background:var(--ink);color:var(--paper)}.b-ink:hover{background:oklch(0.32 0.02 42)}
+.b-outline{background:var(--card);color:var(--ink);border-color:var(--hairline)}.b-outline:hover{border-color:var(--ink-soft)}
+.badges{display:flex;flex-wrap:wrap;gap:.5rem}
+.badge{font-size:.64rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.28rem .6rem;border-radius:.4rem}
+.b-live{background:var(--forest-soft);color:var(--forest)}
+.b-new{background:var(--gold-soft);color:oklch(0.52 0.1 78)}
+.b-out{background:var(--paper-2);color:var(--ink-mute)}
+.mnote{display:flex;flex-direction:column;gap:.5rem}
+.mnote div{display:flex;gap:.7rem;font-size:.82rem;color:var(--ink-soft);align-items:baseline}
+.mnote .k{font-family:"Fraunces",serif;font-style:italic;color:var(--ember);flex:none;width:8rem}
+
+/* ---------------- footer ---------------- */
+.foot{margin-top:clamp(3rem,7vw,5rem);padding:2rem 0;border-top:1px solid var(--hairline);display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem;color:var(--ink-mute);font-size:.76rem}
+
+/* reveal-on-scroll — only hidden when JS is present to reveal it (never permanently blank) */
+.js .reveal{opacity:0;transform:translateY(22px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.js .reveal.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.js .reveal{opacity:1;transform:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="atmos"></div>
+<div class="grain"></div>
+<main>
+  <div class="shell">
+
+    <div class="topbar">
+      <div class="brand"><span class="seal">T</span><b>ToDining</b></div>
+      <nav class="topnav"><span>Menu</span><span>Order</span><span>The System</span></nav>
+      <div class="topnav" style="letter-spacing:.12em"><span>Table 12 · Firewood Kitchen</span></div>
+    </div>
+
+    <!-- HERO -->
+    <header class="hero">
+      <span class="idx">01</span>
+      <span class="kicker">A dining room in your pocket</span>
+      <h1><span class="drop">S</span>can. Sit.<br>Simply&nbsp;<em>savour.</em></h1>
+      <p class="lede">ToDining turns a paper QR code into the whole front of house: a menu worth reading, an order that finds the kitchen, and a table that never waits for the check. Set like a page, not a form.</p>
+      <div class="meta">
+        <div><div class="lab">Est.</div><div class="val">2019 · Firewood Kitchen</div></div>
+        <div><div class="lab">Service</div><div class="val"><em>Scan</em> to order</div></div>
+        <div><div class="lab">Tonight</div><div class="val">Seasonal small plates</div></div>
+      </div>
+    </header>
+
+    <!-- SHOWCASE -->
+    <div class="sec-head reveal">
+      <div>
+        <span class="num-tag">Ⅰ · the guest</span>
+        <h2>Three moments, one&nbsp;table</h2>
+      </div>
+      <p>Browsing the menu, settling the check, and watching the kitchen — each treated with the same editorial care.</p>
+    </div>
+
+    <section class="phones">
+      <!-- PHONE 1 : MENU -->
+      <div class="reveal">
+        <div class="phone ph-1">
+          <div class="screen">
+            <div class="notch"></div>
+            <div class="statusbar"><span>9:41</span><span class="sysicons"><svg class="si-sig" viewBox="0 0 18 12" width="17" height="11"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg class="si-bat" viewBox="0 0 26 12" width="24" height="11"><rect x=".5" y=".5" width="21" height="11" rx="3"/><rect x="2.2" y="2.2" width="14" height="7.6" rx="1.4" class="fill"/><rect x="23" y="4" width="2.4" height="4" rx="1" class="cap"/></svg><span class="pct">100%</span></span></div>
+            <div class="app-top"><div class="brand"><span class="seal">T</span><b>ToDining</b></div><span class="table-chip">Table 12</span></div>
+            <div class="scroll">
+              <div class="m-intro">
+                <div class="est">Firewood Kitchen</div>
+                <h3>What are you <em>craving?</em></h3>
+                <div class="loc">Seasonal small plates &amp; open fire</div>
+              </div>
+              <div class="search">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+                <span class="ph">Search the menu</span>
+              </div>
+              <div class="session">
+                <span class="lbl"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8M8 11h8"/></svg> Dining session · 2 orders</span>
+                <span class="amt num">₹1,240 →</span>
+              </div>
+
+              <div class="tabs" id="tabs">
+                <button class="tab on">Small plates</button>
+                <button class="tab">From the fire</button>
+                <button class="tab">Sides</button>
+                <button class="tab">Dessert</button>
+                <span class="tab-underline" id="tabUnderline"></span>
+              </div>
+
+              <div class="sec-title"><span class="n">01</span> Small plates</div>
+              <div class="legend"><span><i class="dot-veg"></i>Vegetarian</span><span><i class="dot-spicy"></i>Spiced</span><span><i class="dot-chef"></i>Chef's pick</span></div>
+
+              <!-- featured -->
+              <div class="feature">
+                <div class="ph-img"><span class="fr-tag">Signature</span><img alt="" src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=520&q=72&auto=format&fit=crop" onerror="this.style.display='none'"></div>
+                <div class="fr-body">
+                  <div class="dish-line"><h4><span class="d-dot dot-chef"></span>Charred octopus</h4><span class="leader"></span><span class="price">₹560</span></div>
+                  <p>Ember-grilled over firewood, smoked paprika oil, salsa verde and charred lemon.</p>
+                  <div class="dish-foot"><button class="add" data-add>＋ Add to table</button></div>
+                </div>
+              </div>
+
+              <div class="dish">
+                <div class="dish-line"><h4><span class="d-dot dot-veg"></span>Burrata &amp; heirloom tomato</h4><span class="leader"></span><span class="price">₹420</span></div>
+                <p>Basil oil, aged balsamic, sourdough crisp.</p>
+                <div class="dish-foot">
+                  <div class="stepper"><button data-dec>−</button><span class="q">1</span><button data-inc>＋</button></div>
+                </div>
+              </div>
+              <div class="dish">
+                <div class="dish-line"><h4>Truffle tagliatelle</h4><span class="leader"></span><span class="price">₹480</span></div>
+                <p>Hand-cut pasta, black truffle, 24-month parmesan.</p>
+                <div class="dish-foot"><button class="add" data-add>＋ Add to table</button></div>
+              </div>
+              <div class="dish">
+                <div class="dish-line"><h4><span class="d-dot dot-spicy"></span>Nduja focaccia</h4><span class="leader"></span><span class="price">₹280</span></div>
+                <p>Whipped ricotta, hot honey, wild oregano.</p>
+                <div class="dish-foot"><button class="add" data-add>＋ Add to table</button></div>
+              </div>
+            </div>
+            <div class="cartbar" id="cartbar"><div class="n"><span class="b" id="cartCount">3</span> In your cart</div><div class="go num">₹1,460 · View →</div></div>
+          </div>
+        </div>
+        <div class="ph-cap"><b>Menu</b> · set like a page</div>
+      </div>
+
+      <!-- PHONE 2 : CHECK -->
+      <div class="reveal" style="transition-delay:.08s">
+        <div class="phone ph-2">
+          <div class="screen">
+            <div class="notch"></div>
+            <div class="statusbar"><span>9:47</span><span class="sysicons"><svg class="si-sig" viewBox="0 0 18 12" width="17" height="11"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg class="si-bat" viewBox="0 0 26 12" width="24" height="11"><rect x=".5" y=".5" width="21" height="11" rx="3"/><rect x="2.2" y="2.2" width="14" height="7.6" rx="1.4" class="fill"/><rect x="23" y="4" width="2.4" height="4" rx="1" class="cap"/></svg><span class="pct">100%</span></span></div>
+            <div class="app-top"><span class="table-chip">← Menu</span><span class="table-chip">Table 12</span></div>
+            <div class="scroll" style="padding-bottom:1.5rem">
+              <div class="check">
+                <div class="rname">Firewood Kitchen</div>
+                <div class="rmeta">The check · Table 12</div>
+                <div class="torn"></div>
+              </div>
+              <div class="citem"><span class="q num">1×</span><span class="nm">Charred octopus<small>Signature</small></span><span class="ld"></span><span class="pr num">₹560</span></div>
+              <div class="citem"><span class="q num">2×</span><span class="nm">Burrata &amp; tomato<small>Extra sourdough</small></span><span class="ld"></span><span class="pr num">₹840</span></div>
+              <div class="citem"><span class="q num">1×</span><span class="nm">Truffle tagliatelle</span><span class="ld"></span><span class="pr num">₹480</span></div>
+              <div class="torn"></div>
+              <div class="totals">
+                <div class="trow"><span>Subtotal</span><span class="num">₹1,880</span></div>
+                <div class="trow"><span>Service charge · 5%</span><span class="num">₹94</span></div>
+                <div class="trow"><span>GST</span><span class="num">₹99</span></div>
+                <div class="grand"><span class="l">Total</span><span class="v">₹2,073</span></div>
+              </div>
+              <button class="pay">Complete dining &amp; pay</button>
+              <p class="pay-note">Split the bill · Add a tip · Pay at the counter</p>
+            </div>
+          </div>
+        </div>
+        <div class="ph-cap"><b>The check</b> · no waiting</div>
+      </div>
+
+      <!-- PHONE 3 : TRACKING -->
+      <div class="reveal ph-3" style="transition-delay:.16s">
+        <div class="phone">
+          <div class="screen">
+            <div class="notch"></div>
+            <div class="statusbar"><span>9:52</span><span class="sysicons"><svg class="si-sig" viewBox="0 0 18 12" width="17" height="11"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg class="si-bat" viewBox="0 0 26 12" width="24" height="11"><rect x=".5" y=".5" width="21" height="11" rx="3"/><rect x="2.2" y="2.2" width="14" height="7.6" rx="1.4" class="fill"/><rect x="23" y="4" width="2.4" height="4" rx="1" class="cap"/></svg><span class="pct">100%</span></span></div>
+            <div class="app-top"><span class="table-chip">Order #248</span><span class="table-chip">Table 12</span></div>
+            <div class="scroll" style="padding-bottom:1.5rem">
+              <div class="track">
+                <h3>Your order is <em>on the pass</em></h3>
+                <div class="sub">Three plates · about 6 minutes away</div>
+                <div class="timeline">
+                  <div class="fill"></div>
+                  <div class="tnode done">
+                    <span class="marker"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                    <h5>Order placed</h5><p>Sent to the kitchen printer.</p><div class="time">9:47 pm</div>
+                  </div>
+                  <div class="tnode done">
+                    <span class="marker"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                    <h5>Fired in the kitchen</h5><p>Chef Anand started your plates.</p><div class="time">9:49 pm</div>
+                  </div>
+                  <div class="tnode active">
+                    <span class="marker"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="7"/></svg></span>
+                    <h5>On the pass</h5><p>Plating up. Your waiter has been notified.</p><div class="time">Now</div>
+                  </div>
+                  <div class="tnode">
+                    <span class="marker"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18M5 11V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4M4 11l1 8h14l1-8"/></svg></span>
+                    <h5>At your table</h5><p>Enjoy, served by Priya.</p><div class="time">Up next</div>
+                  </div>
+                </div>
+                <div class="track-card">
+                  <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg></span>
+                  <div><div class="t">Need something?</div><div class="s">Tap to call Priya to table 12.</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ph-cap"><b>Live tracking</b> · from fire to table</div>
+      </div>
+    </section>
+
+    <!-- STATEMENT -->
+    <section class="statement reveal">
+      <p>A menu should feel like it was <em>set</em>, not generated.</p>
+      <div class="by">ToDining · Warm Editorial</div>
+    </section>
+
+    <!-- SYSTEM -->
+    <div class="sec-head reveal">
+      <div><span class="num-tag">Ⅱ · the system</span><h2>Tokens &amp; type</h2></div>
+      <p>One warm-paper palette, two typefaces, a single drop of ember. Everything else is space and rule.</p>
+    </div>
+
+    <section class="system reveal">
+      <div class="sys-grid">
+        <div>
+          <div class="eyebrow">Colour · OKLCH, warm-tinted</div>
+          <div class="swatches">
+            <div class="sw" style="background:var(--paper);color:var(--ink)"><small>Paper</small><code>L .976</code></div>
+            <div class="sw" style="background:var(--paper-2);color:var(--ink)"><small>Deep</small><code>L .958</code></div>
+            <div class="sw" style="background:var(--ink);color:var(--paper)"><small>Ink</small><code>text</code></div>
+            <div class="sw" style="background:var(--ember);color:var(--paper)"><small>Ember</small><code>action</code></div>
+            <div class="sw" style="background:var(--forest);color:var(--paper)"><small>Forest</small><code>live</code></div>
+            <div class="sw" style="background:var(--gold);color:var(--paper)"><small>Gold</small><code>signature</code></div>
+          </div>
+          <div class="eyebrow" style="margin-top:2rem">Motion · out-expo, 0.9s</div>
+          <div class="mnote">
+            <div><span class="k">Reveal</span><span>fade + rise 22px as sections enter</span></div>
+            <div><span class="k">Underline</span><span>ember bar slides between categories</span></div>
+            <div><span class="k">Add</span><span>label swaps to ✓, cart count bumps</span></div>
+            <div><span class="k">Pulse</span><span>the active kitchen step, reduced-motion safe</span></div>
+          </div>
+        </div>
+        <div>
+          <div class="eyebrow">Typography · Fraunces × Plus Jakarta Sans</div>
+          <div class="typespec">
+            <div><span class="t-d1">Craving?</span><span class="lab">Display 300</span></div>
+            <div><span class="t-d2">small plates</span><span class="lab">Italic section</span></div>
+            <div><span class="t-h">Charred octopus</span><span class="lab">Dish · 500</span></div>
+            <div><span class="t-b">Ember-grilled, salsa verde</span><span class="lab">Body</span></div>
+            <div><span class="t-c">Firewood Kitchen</span><span class="lab">Label · tracked</span></div>
+          </div>
+          <div class="eyebrow" style="margin-top:2rem">Controls</div>
+          <div class="btns">
+            <button class="btn b-primary">Add to table</button>
+            <button class="btn b-ink">Complete dining</button>
+            <button class="btn b-outline">Browse menu</button>
+          </div>
+          <div class="badges">
+            <span class="badge b-live">● Order live</span>
+            <span class="badge b-new">New</span>
+            <span class="badge b-out">Sold out</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>ToDining · Warm Editorial — elevated sample</span>
+      <span>Fraunces · Plus Jakarta Sans · OKLCH · paper grain · prefers-reduced-motion honored</span>
+    </footer>
+  </div>
+</main>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var root = document.documentElement;
+  root.classList.add('js');  /* gate the hidden state on JS so content is never permanently blank */
+  var reveals = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+  function revealAll(){ reveals.forEach(function(el){ el.classList.add('in'); }); }
+
+  /* reveal on scroll (with a failsafe so nothing can stay hidden) */
+  if('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+    }, {threshold:0.14, rootMargin:'0px 0px -8% 0px'});
+    reveals.forEach(function(el){ io.observe(el); });
+    window.addEventListener('load', function(){ setTimeout(revealAll, 1600); });
+  } else { revealAll(); }
+
+  /* category underline */
+  var tabs = document.getElementById('tabs');
+  var underline = document.getElementById('tabUnderline');
+  function place(tab){ underline.style.width = tab.offsetWidth+'px'; underline.style.transform = 'translateX('+tab.offsetLeft+'px)'; }
+  if(tabs){
+    var active = tabs.querySelector('.tab.on');
+    requestAnimationFrame(function(){ place(active); });
+    tabs.querySelectorAll('.tab').forEach(function(t){
+      t.addEventListener('click', function(){
+        tabs.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});
+        t.classList.add('on'); place(t);
+      });
+    });
+  }
+
+  /* add-to-table feedback + cart bump */
+  var count = document.getElementById('cartCount');
+  var cartbar = document.getElementById('cartbar');
+  document.querySelectorAll('[data-add]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      if(btn.classList.contains('added')) return;
+      btn.classList.add('added');
+      btn.innerHTML = '✓ Added';
+      if(count){ count.textContent = (parseInt(count.textContent,10)+1); }
+      if(cartbar && !reduce){ cartbar.style.transform='translateY(-4px)'; setTimeout(function(){cartbar.style.transform='';},260); }
+      setTimeout(function(){ btn.classList.remove('added'); btn.innerHTML='＋ Add to table'; }, 1600);
+    });
+  });
+
+  /* quantity steppers */
+  document.querySelectorAll('.stepper').forEach(function(s){
+    var q = s.querySelector('.q');
+    s.querySelector('[data-inc]').addEventListener('click', function(){ q.textContent = (parseInt(q.textContent,10)+1); });
+    s.querySelector('[data-dec]').addEventListener('click', function(){ q.textContent = Math.max(1, parseInt(q.textContent,10)-1); });
+  });
+})();
+</script>
+</body>
+</html>

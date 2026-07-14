@@ -15,23 +15,31 @@
   body {
     @apply bg-cream text-ink font-sans antialiased;
     min-height: 100dvh;
+    font-optical-sizing: auto;
   }
 
-  /* Decorative warm grain/atmosphere on the app background */
+  /* Tactile paper grain — replaces the old generic radial-gradient glow.
+     Fixed, non-interactive, multiply-blended so it reads as printed stock. */
   body::before {
     content: '';
     position: fixed;
     inset: 0;
     z-index: -1;
-    background:
-      radial-gradient(60rem 60rem at 110% -10%, rgba(217, 82, 31, 0.06), transparent 60%),
-      radial-gradient(40rem 40rem at -10% 110%, rgba(79, 138, 91, 0.05), transparent 60%);
     pointer-events: none;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.16'/%3E%3C/svg%3E");
   }
 
+  /* Cormorant Garamond runs light and airy — default headings to a
+     substantial weight and tight tracking so they read editorial, not frail.
+     Explicit weight utilities on an element still win over this. */
   h1, h2, h3, h4 {
-    @apply font-display tracking-tight text-ink;
+    @apply font-display font-semibold tracking-tight text-ink;
   }
+
+  /* Money and data align on their figures */
+  .tnum { font-variant-numeric: tabular-nums; }
 
   *:focus-visible {
     @apply outline-none ring-2 ring-ember-500/60 ring-offset-2 ring-offset-cream rounded;
@@ -40,7 +48,7 @@
 
 @layer components {
   .card-surface {
-    @apply rounded-2xl border border-ink/5 bg-white shadow-soft;
+    @apply rounded-2xl border border-ink/10 bg-white shadow-soft;
   }
 
   .hide-scrollbar::-webkit-scrollbar {
