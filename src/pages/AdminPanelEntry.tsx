@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import {
-  ArrowRight, Building2, ChevronDown, Home, LogOut, Plus, ShieldCheck,
+  ArrowRight, Building2, ChevronDown, GitBranch, Home, LogOut, Plus,
 } from 'lucide-react';
 import type { Restaurant } from '@/types';
 import { Wordmark } from '@/components/layout/Brand';
@@ -42,6 +42,17 @@ interface BranchForm {
 const EMPTY_BRANCH: BranchForm = {
   name: '', code: '', address: '', phone: '', email: '', manager: '', description: '', status: 'active',
 };
+
+// Per-cell rules for the masthead totals index, by position. Every cell carries
+// `border-ink/10` for colour; these only pick the SIDES, which differ between the
+// 2-up phone layout and the 4-up `sm` layout. (A bare `border-r` with no colour
+// class would fall back to Tailwind's default grey and break the hairline.)
+const INDEX_CELL_RULES = [
+  'border-r pl-0', // 0 · opens both layouts
+  'sm:border-r', // 1 · ends the phone row, mid-row from sm
+  'border-r border-t pl-0 sm:border-t-0 sm:pl-4', // 2 · opens the phone's 2nd row
+  'border-t sm:border-t-0', // 3 · ends both layouts
+];
 
 /**
  * Hotel Workspace Dashboard — the central workspace manager at `/admin-panel`.
@@ -137,54 +148,95 @@ export function AdminPanelEntry() {
     setBranchForm(EMPTY_BRANCH);
   }
 
-  return (
-    <div className="relative min-h-[100dvh] overflow-hidden">
-      <div className="absolute -top-16 right-0 -z-10 h-80 w-80 rounded-full bg-ember-200/40 blur-3xl" />
-      <div className="absolute bottom-0 -left-16 -z-10 h-72 w-72 rounded-full bg-sage-100/50 blur-3xl" />
+  // Masthead index totals. Derived from the same live snapshot, so they track
+  // creations instantly rather than needing their own query.
+  const totalBranches = hotels.reduce((n, h) => n + h.branches.length, 0);
+  const totalTables = hotels.reduce((n, h) => n + h.stats.tables, 0);
+  const totalOrders = hotels.reduce((n, h) => n + h.stats.orders, 0);
 
-      <header className="mx-auto flex max-w-5xl items-center justify-between px-5 py-5">
-        <Wordmark />
-        <div className="flex items-center gap-4">
-          <Link to="/site" className="text-sm font-semibold text-ink-soft hover:text-ink">
-            Back to website
-          </Link>
-          <button
-            onClick={logout}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-ink/10 bg-white px-3 py-1.5 text-sm font-semibold text-ink-soft transition-colors hover:border-ember-400 hover:text-ember-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40"
-          >
-            <LogOut className="h-4 w-4" /> Log out
-          </button>
+  return (
+    <div className="min-h-[100dvh]">
+      <header className="border-b border-ink/10">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-5 py-4">
+          <Wordmark />
+          <div className="flex items-center gap-3 sm:gap-4">
+            <Link to="/site" className="text-sm font-semibold text-ink-soft hover:text-ink">
+              Back to website
+            </Link>
+            <button
+              onClick={logout}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-ink/10 bg-white px-3 py-1.5 text-sm font-semibold text-ink-soft transition-colors hover:border-ember-400 hover:text-ember-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40"
+            >
+              <LogOut className="h-4 w-4" /> Log out
+            </button>
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-5 pb-16 pt-6 sm:pt-10">
-        <div className="flex flex-col items-center text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white px-3 py-1 text-xs font-semibold text-ink-soft">
-            <ShieldCheck className="h-3.5 w-3.5 text-ember-500" /> Hotel workspace manager
+      <main className="mx-auto max-w-5xl px-5 pb-16 pt-8 sm:pt-12">
+        {/* ── Masthead ── */}
+        <div className="max-w-2xl">
+          <span className="flex items-center gap-3 text-[0.62rem] font-bold uppercase tracking-[0.28em] text-ink-muted">
+            <span className="h-px w-8 bg-gold-400" />
+            Admin Panel · Workspace manager
           </span>
-          <h1 className="mt-5 max-w-2xl font-display text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
-            Your <span className="text-ember-500">Hotel Workspaces</span>
+          <h1 className="mt-4 font-display text-[clamp(2.4rem,4.6vw,3.4rem)] font-semibold leading-[1.02] tracking-tight">
+            Your hotel <em className="italic text-ember-500">workspaces.</em>
           </h1>
-          <p className="mt-4 max-w-md text-ink-soft">
-            Each hotel is a fully isolated workspace with its own branches. Open a hotel to view its branches, enter one to manage it, or create a new hotel.
+          <p className="mt-4 max-w-[52ch] text-sm leading-relaxed text-ink-soft">
+            Each hotel is a fully isolated workspace with its own branches. Open a hotel to read its
+            branches, enter one to manage it, or set up a new house.
           </p>
         </div>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {hotels.map(({ restaurant: r, stats, branches }) => {
+        {/* A hairline index of totals, not a row of hero-metric cards. */}
+        <div className="mt-8 grid grid-cols-2 border-y border-ink/10 sm:grid-cols-4">
+          {[
+            ['Hotels', hotels.length],
+            ['Branches', totalBranches],
+            ['Tables', totalTables],
+            ['Orders', totalOrders],
+          ].map(([label, val], i) => (
+            <div
+              key={label as string}
+              className={cn(
+                'border-ink/10 px-4 py-3.5',
+                // Rules sit BETWEEN cells only, never on the row's outer edge, so
+                // this reads as a printed table rather than a row of boxes. The
+                // layout is 2-up on phones and 4-up from `sm`, so which cell ends
+                // a row changes with the breakpoint.
+                INDEX_CELL_RULES[i],
+              )}
+            >
+              <div className="text-[0.58rem] font-bold uppercase tracking-[0.18em] text-ink-muted">
+                {label}
+              </div>
+              <div className="tnum mt-1 font-display text-[1.9rem] font-semibold leading-none">
+                {val as number}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ── The index of houses ── */}
+        <div className="mt-10 space-y-3">
+          {hotels.map(({ restaurant: r, stats, branches }, i) => {
             const expanded = expandedId === r.id;
             return (
-              <div
-                key={r.id}
-                className="flex flex-col rounded-3xl border border-ink/8 bg-white p-6 shadow-soft transition-all"
-              >
+              <div key={r.id} className="rounded-xl border border-ink/10 bg-white">
                 <button
                   onClick={() => setExpandedId((id) => (id === r.id ? null : r.id))}
-                  className="flex items-center gap-3 text-left focus:outline-none"
+                  className="flex w-full items-center gap-4 p-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40"
                   aria-expanded={expanded}
                 >
+                  {/* Ghosted index numeral — an editorial signature, hidden on
+                      phones where the row needs every pixel for the name. */}
+                  <span className="tnum hidden font-display text-[1.6rem] font-semibold italic leading-none text-ink/15 sm:block">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  {/* The hotel's own mark. `logoColor` is real per-tenant branding. */}
                   <span
-                    className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-2xl text-lg font-bold text-white"
+                    className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl font-display text-lg font-semibold text-white"
                     style={{ background: r.logoColor }}
                   >
                     {r.logoUrl ? (
@@ -194,50 +246,75 @@ export function AdminPanelEntry() {
                     )}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <h2 className="truncate font-display text-lg font-semibold leading-tight">{r.name}</h2>
+                    <h2 className="truncate font-display text-xl font-semibold leading-tight">{r.name}</h2>
                     <p className="truncate text-xs text-ink-muted">
-                      {branches.length} {branches.length === 1 ? 'branch' : 'branches'} · {r.tagline ?? r.description ?? 'Hotel workspace'}
+                      <span className="tnum">{branches.length}</span>{' '}
+                      {branches.length === 1 ? 'branch' : 'branches'} ·{' '}
+                      {r.tagline ?? r.description ?? 'Hotel workspace'}
                     </p>
                   </div>
+                  {/* Per-hotel counts as a hairline strip, not four boxes. */}
+                  <div className="hidden items-center lg:flex">
+                    {[
+                      ['Menu', stats.menu], ['Tables', stats.tables],
+                      ['Orders', stats.orders], ['Staff', stats.staff],
+                    ].map(([label, val]) => (
+                      <div key={label as string} className="border-l border-ink/10 px-4 text-right">
+                        <div className="tnum font-display text-lg font-semibold leading-none">
+                          {val as number}
+                        </div>
+                        <div className="mt-1 text-[0.55rem] font-bold uppercase tracking-[0.16em] text-ink-muted">
+                          {label}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                   <ChevronDown
-                    className={cn('h-5 w-5 shrink-0 text-ink-muted transition-transform', expanded && 'rotate-180')}
+                    className={cn(
+                      'ml-1 h-5 w-5 shrink-0 text-ink-muted transition-transform',
+                      expanded && 'rotate-180',
+                    )}
                   />
                 </button>
 
-                <div className="mt-5 grid grid-cols-4 gap-2 text-center">
+                {/* Counts move inline below the name where the strip won't fit. */}
+                <div className="flex flex-wrap gap-x-5 gap-y-1 px-5 pb-4 lg:hidden">
                   {[
-                    ['Menu', stats.menu], ['Tables', stats.tables], ['Orders', stats.orders], ['Staff', stats.staff],
+                    ['Menu', stats.menu], ['Tables', stats.tables],
+                    ['Orders', stats.orders], ['Staff', stats.staff],
                   ].map(([label, val]) => (
-                    <div key={label as string} className="rounded-xl bg-cream-deep/50 py-2">
-                      <div className="font-display text-base font-semibold">{val as number}</div>
-                      <div className="text-[10px] uppercase tracking-wide text-ink-muted">{label}</div>
-                    </div>
+                    <span key={label as string} className="text-[0.7rem] font-semibold text-ink-muted">
+                      {label} <span className="tnum font-display text-sm text-ink">{val as number}</span>
+                    </span>
                   ))}
                 </div>
 
                 {expanded && (
-                  <div className="mt-5 space-y-1.5 border-t border-ink/5 pt-4">
-                    <p className="px-1 pb-1 text-[10px] font-semibold uppercase tracking-wide text-ink-muted">
+                  <div className="space-y-1.5 border-t border-ink/10 px-5 py-4">
+                    <p className="px-1 pb-1 text-[0.58rem] font-bold uppercase tracking-[0.18em] text-ink-muted">
                       Branches
                     </p>
 
                     {/* The hotel's own workspace is its Main Branch. */}
                     <button
                       onClick={() => enterWorkspace(r)}
-                      className="group flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left hover:bg-cream-deep focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40"
+                      className="group flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left hover:bg-cream-deep focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40"
                     >
                       <Home className="h-4 w-4 shrink-0 text-ember-500" />
                       <span className="flex-1 truncate text-sm font-semibold">Main Branch</span>
                       {r.id === restaurantId && <Badge tone="ember">Active</Badge>}
-                      <ArrowRight className="h-4 w-4 text-ember-600 transition-transform group-hover:translate-x-0.5" />
+                      <ArrowRight className="h-4 w-4 shrink-0 text-ember-600 transition-transform group-hover:translate-x-0.5" />
                     </button>
 
                     {branches.map((b) => (
                       <button
                         key={b.id}
                         onClick={() => enterWorkspace(b)}
-                        className="group flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left hover:bg-cream-deep focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40"
+                        className="group flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left hover:bg-cream-deep focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40"
                       >
+                        {/* A branch carries its parent's structure: the mark reads
+                            as a child, not another house. */}
+                        <GitBranch className="h-4 w-4 shrink-0 text-ink-muted" />
                         <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: b.logoColor }} />
                         <span className="flex-1 truncate text-sm font-medium">
                           {b.name}
@@ -247,13 +324,13 @@ export function AdminPanelEntry() {
                         <Badge tone={b.status === 'inactive' ? 'neutral' : 'sage'}>
                           {b.status === 'inactive' ? 'Inactive' : 'Active'}
                         </Badge>
-                        <ArrowRight className="h-4 w-4 text-ember-600 transition-transform group-hover:translate-x-0.5" />
+                        <ArrowRight className="h-4 w-4 shrink-0 text-ember-600 transition-transform group-hover:translate-x-0.5" />
                       </button>
                     ))}
 
                     <button
                       onClick={() => openBranchForm(r)}
-                      className="mt-1 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-ink/15 px-2.5 py-2 text-sm font-semibold text-ink-soft transition-colors hover:border-ember-400 hover:text-ember-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40"
+                      className="mt-1 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-ink/15 px-2.5 py-2 text-sm font-semibold text-ink-soft transition-colors hover:border-ember-400 hover:text-ember-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40"
                     >
                       <Plus className="h-4 w-4" /> Create Branch
                     </button>
@@ -263,22 +340,30 @@ export function AdminPanelEntry() {
             );
           })}
 
-          {/* Create New Hotel Workspace */}
+          {/* Create New Hotel Workspace — one ruled action closing the index,
+              rather than a same-sized tile pretending to be a workspace. */}
           <button
             onClick={() => setCreating(true)}
-            className="flex min-h-[12rem] flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed border-ink/15 p-6 text-center text-ink-soft transition-colors hover:border-ember-400 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40"
+            className="group flex w-full items-center gap-4 rounded-xl border border-dashed border-ink/20 p-5 text-left transition-colors hover:border-ember-400 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-ember-500/40"
           >
-            <span className="grid h-12 w-12 place-items-center rounded-2xl bg-ember-100 text-ember-600">
-              <Plus className="h-6 w-6" />
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-ember-100 text-ember-600">
+              <Plus className="h-5 w-5" />
             </span>
-            <span className="font-display text-lg font-semibold text-ink">Create New Hotel Workspace</span>
-            <span className="text-xs text-ink-muted">Spin up a fresh, isolated hotel.</span>
+            <span className="min-w-0">
+              <span className="block font-display text-xl font-semibold text-ink">
+                Create a new hotel workspace
+              </span>
+              <span className="block text-xs text-ink-muted">
+                A fresh, isolated house with its own menu, tables, staff and settings.
+              </span>
+            </span>
+            <ArrowRight className="ml-auto hidden h-4 w-4 shrink-0 text-ember-600 transition-transform group-hover:translate-x-0.5 sm:block" />
           </button>
         </div>
 
-        <p className="mt-8 text-center text-xs text-ink-muted">
+        <p className="mt-8 border-t border-ink/10 pt-6 text-center text-xs text-ink-muted">
           Staff?{' '}
-          <Link to="/login" className="font-semibold text-ember-600 hover:underline">
+          <Link to="/login" className="font-bold text-ember-600 hover:underline">
             Sign in here
           </Link>
         </p>
