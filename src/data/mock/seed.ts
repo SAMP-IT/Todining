@@ -44,7 +44,7 @@ export function createSeedData(): Database {
       name: 'Velans',
       slug: 'velans',
       tagline: 'Multi-cuisine fine dining',
-      logoColor: '#d9521f',
+      logoColor: '#c0451c',
       parentId: null,
       settings: { taxRate: 0.05, serviceChargeRate: 0.1, currency: 'INR', currencySymbol: '₹' },
     },
@@ -53,7 +53,7 @@ export function createSeedData(): Database {
       name: 'Cafe Aroma',
       slug: 'cafe-aroma',
       tagline: 'Coffee, bites & calm',
-      logoColor: '#4f8a5b',
+      logoColor: '#3d6b4c',
       parentId: null,
       settings: { taxRate: 0.05, serviceChargeRate: 0.08, currency: 'INR', currencySymbol: '₹' },
     },
@@ -64,15 +64,15 @@ export function createSeedData(): Database {
   // are password-less so their Login-page quick-cards open the board directly.
   const staff: Staff[] = [
     // Velans
-    { id: 'stf_owner', restaurantId: rA, name: 'Velan Raman', email: 'owner@velans.test', username: 'velans-main01', passwordHash: hashPassword('velans@2026'), role: 'owner', avatarColor: '#d9521f', active: true },
-    { id: 'stf_mgr', restaurantId: rA, name: 'Vikram Shah', email: 'manager@velans.test', role: 'manager', avatarColor: '#c98a1f', active: true },
-    { id: 'stf_waiter', restaurantId: rA, name: 'Ravi Kumar', email: 'waiter@velans.test', role: 'waiter', avatarColor: '#4f8a5b', active: true },
-    { id: 'stf_kitchen', restaurantId: rA, name: 'Chef Meera', email: 'kitchen@velans.test', role: 'kitchen', avatarColor: '#9c3110', active: true },
+    { id: 'stf_owner', restaurantId: rA, name: 'Velan Raman', email: 'owner@velans.test', username: 'velans-main01', passwordHash: hashPassword('velans@2026'), role: 'owner', avatarColor: '#c0451c', active: true },
+    { id: 'stf_mgr', restaurantId: rA, name: 'Vikram Shah', email: 'manager@velans.test', role: 'manager', avatarColor: '#b0862f', active: true },
+    { id: 'stf_waiter', restaurantId: rA, name: 'Ravi Kumar', email: 'waiter@velans.test', role: 'waiter', avatarColor: '#3d6b4c', active: true },
+    { id: 'stf_kitchen', restaurantId: rA, name: 'Chef Meera', email: 'kitchen@velans.test', role: 'kitchen', avatarColor: '#872f13', active: true },
     // Cafe Aroma
-    { id: 'stf_owner_b', restaurantId: rB, name: 'Sara Iyer', email: 'owner@aroma.test', username: 'cafe-aroma2026', passwordHash: hashPassword('cafe@2026'), role: 'owner', avatarColor: '#4f8a5b', active: true },
-    { id: 'stf_mgr_b', restaurantId: rB, name: 'Nikhil Rao', email: 'manager@aroma.test', role: 'manager', avatarColor: '#c98a1f', active: true },
-    { id: 'stf_waiter_b', restaurantId: rB, name: 'Dev Menon', email: 'waiter@aroma.test', role: 'waiter', avatarColor: '#3d6e48', active: true },
-    { id: 'stf_kitchen_b', restaurantId: rB, name: 'Chef Anu', email: 'kitchen@aroma.test', role: 'kitchen', avatarColor: '#9c3110', active: true },
+    { id: 'stf_owner_b', restaurantId: rB, name: 'Sara Iyer', email: 'owner@aroma.test', username: 'cafe-aroma2026', passwordHash: hashPassword('cafe@2026'), role: 'owner', avatarColor: '#3d6b4c', active: true },
+    { id: 'stf_mgr_b', restaurantId: rB, name: 'Nikhil Rao', email: 'manager@aroma.test', role: 'manager', avatarColor: '#b0862f', active: true },
+    { id: 'stf_waiter_b', restaurantId: rB, name: 'Dev Menon', email: 'waiter@aroma.test', role: 'waiter', avatarColor: '#305640', active: true },
+    { id: 'stf_kitchen_b', restaurantId: rB, name: 'Chef Anu', email: 'kitchen@aroma.test', role: 'kitchen', avatarColor: '#872f13', active: true },
   ];
 
   // ── Categories ───────────────────────────────────────────────────────────

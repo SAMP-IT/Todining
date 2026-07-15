@@ -17,7 +17,7 @@ export function RestaurantsPage() {
   const [editing, setEditing] = useState<Restaurant | null>(null);
   const [name, setName] = useState('');
   const [tagline, setTagline] = useState('');
-  const [logoColor, setLogoColor] = useState('#d9521f');
+  const [logoColor, setLogoColor] = useState('#c0451c');
   const [tax, setTax] = useState(0);
   const [service, setService] = useState(0);
   const [symbol, setSymbol] = useState('₹');
@@ -107,7 +107,7 @@ export function RestaurantsPage() {
                 <div className="flex min-w-0 items-center gap-3">
                   {/* Per-tenant branding: the owner's own colour, on their initial. */}
                   <span
-                    className="grid h-11 w-11 shrink-0 place-items-center rounded-xl font-display text-lg font-semibold text-white"
+                    className="grid h-11 w-11 shrink-0 place-items-center rounded-xl font-display text-lg font-semibold text-cream"
                     style={{ background: r.logoColor }}
                   >
                     {r.name.charAt(0)}
@@ -184,7 +184,7 @@ export function RestaurantsPage() {
           <Input label="Tagline" value={tagline} onChange={(e) => setTagline(e.target.value)} placeholder="e.g. Authentic Indian kitchen" />
           <div className="flex items-end gap-3">
             <Input label="Brand colour" type="color" value={logoColor} onChange={(e) => setLogoColor(e.target.value)} className="h-11 w-20 p-1" />
-            <span className="grid h-11 w-11 place-items-center rounded-xl font-display text-lg font-semibold text-white" style={{ background: logoColor }}>
+            <span className="grid h-11 w-11 place-items-center rounded-xl font-display text-lg font-semibold text-cream" style={{ background: logoColor }}>
               {(name || editing?.name || '?').charAt(0)}
             </span>
           </div>

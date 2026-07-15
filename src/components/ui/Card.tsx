@@ -10,5 +10,5 @@ export function CardBody({ className, ...props }: HTMLAttributes<HTMLDivElement>
 }
 
 export function CardHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('flex items-center justify-between border-b border-ink/5 px-5 py-4', className)} {...props} />;
+  return <div className={cn('flex items-center justify-between border-b border-ink/10 px-5 py-4', className)} {...props} />;
 }

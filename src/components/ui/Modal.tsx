@@ -35,23 +35,29 @@ export function Modal({ open, onClose, title, description, children, footer, siz
         role="dialog"
         aria-modal="true"
         className={cn(
-          'relative z-10 w-full rounded-t-3xl bg-white shadow-lift animate-scale-in sm:rounded-3xl',
+          'relative z-10 w-full rounded-t-2xl border border-ink/10 bg-white shadow-lift animate-scale-in sm:rounded-2xl',
           sizes[size],
         )}
       >
         {(title || description) && (
-          <div className="flex items-start justify-between gap-4 border-b border-ink/5 px-5 py-4">
+          <div className="flex items-start justify-between gap-4 border-b border-ink/10 px-5 py-4">
             <div>
-              {title && <h3 className="text-lg font-semibold">{title}</h3>}
-              {description && <p className="mt-0.5 text-sm text-ink-muted">{description}</p>}
+              {title && <h3 className="font-display text-2xl font-semibold leading-tight">{title}</h3>}
+              {description && <p className="mt-0.5 text-xs text-ink-muted">{description}</p>}
             </div>
-            <button onClick={onClose} className="rounded-lg p-1.5 text-ink-muted hover:bg-ink/5" aria-label="Close">
-              <X className="h-5 w-5" />
+            <button
+              onClick={onClose}
+              className="-mr-1 -mt-1 rounded-md p-1.5 text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink"
+              aria-label="Close"
+            >
+              <X className="h-4 w-4" />
             </button>
           </div>
         )}
         <div className="max-h-[70vh] overflow-y-auto px-5 py-4">{children}</div>
-        {footer && <div className="flex justify-end gap-2 border-t border-ink/5 px-5 py-4">{footer}</div>}
+        {footer && (
+          <div className="flex justify-end gap-2 border-t border-ink/10 bg-cream px-5 py-3.5">{footer}</div>
+        )}
       </div>
     </div>
   );

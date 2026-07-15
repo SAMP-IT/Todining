@@ -30,7 +30,7 @@ export function ServiceRequestSheet({
 }) {
   function request(type: ServiceRequestType, label: string) {
     serviceRequestService.create(restaurantId, tableId, type);
-    toast.success(`${label} sent — a waiter is on the way to Table ${tableNumber}.`);
+    toast.success(`${label} sent. A waiter is on the way to Table ${tableNumber}.`);
     onClose();
   }
 

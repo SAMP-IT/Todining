@@ -42,7 +42,7 @@ const restaurants: TableSpec<Restaurant> = {
   fromRow: (row) => ({
     id: row.id, name: row.name, slug: row.slug, tagline: row.tagline ?? undefined,
     description: row.description ?? undefined,
-    logoColor: row.logo_color ?? '#d9521f', logoUrl: row.logo_url ?? undefined,
+    logoColor: row.logo_color ?? '#c0451c', logoUrl: row.logo_url ?? undefined,
     parentId: row.parent_id ?? null, createdBy: row.created_by ?? undefined,
     createdAt: row.created_at ?? undefined, updatedAt: row.updated_at ?? undefined,
     code: row.code ?? undefined, address: row.address ?? undefined, phone: row.phone ?? undefined,

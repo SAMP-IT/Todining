@@ -128,7 +128,7 @@ export const restaurantService = {
         slug,
         tagline: input.tagline?.trim() || undefined,
         description: input.description?.trim() || undefined,
-        logoColor: input.logoColor || '#d9521f',
+        logoColor: input.logoColor || '#c0451c',
         logoUrl: input.logoUrl || undefined,
         parentId: null,
         createdBy: ownerId,

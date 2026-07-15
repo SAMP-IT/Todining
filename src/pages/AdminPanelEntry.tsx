@@ -25,7 +25,7 @@ interface CreateForm {
 }
 
 const EMPTY_FORM: CreateForm = {
-  name: '', ownerEmail: '', ownerUsername: '', password: '', logoColor: '#d9521f', description: '',
+  name: '', ownerEmail: '', ownerUsername: '', password: '', logoColor: '#c0451c', description: '',
 };
 
 interface BranchForm {
@@ -236,7 +236,7 @@ export function AdminPanelEntry() {
                   </span>
                   {/* The hotel's own mark. `logoColor` is real per-tenant branding. */}
                   <span
-                    className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl font-display text-lg font-semibold text-white"
+                    className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-xl font-display text-lg font-semibold text-cream"
                     style={{ background: r.logoColor }}
                   >
                     {r.logoUrl ? (
@@ -423,7 +423,7 @@ export function AdminPanelEntry() {
               className="h-11 w-20 p-1"
             />
             <span
-              className="grid h-11 w-11 place-items-center rounded-xl text-base font-bold text-white"
+              className="grid h-11 w-11 place-items-center rounded-xl text-base font-bold text-cream"
               style={{ background: form.logoColor }}
             >
               {(form.name || '?').charAt(0)}

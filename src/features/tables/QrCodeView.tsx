@@ -17,7 +17,7 @@ export function QrCodeView({ path, label }: { path: string; label: string }) {
   const absoluteUrl = `${window.location.origin}${path}`;
 
   useEffect(() => {
-    QRCode.toDataURL(absoluteUrl, { width: 480, margin: 1, color: { dark: '#1c1714', light: '#ffffff' } })
+    QRCode.toDataURL(absoluteUrl, { width: 480, margin: 1, color: { dark: '#2a211b', light: '#faf6ef' } })
       .then(setDataUrl)
       .catch(() => setDataUrl(null));
   }, [absoluteUrl]);

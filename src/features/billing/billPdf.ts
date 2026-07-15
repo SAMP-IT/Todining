@@ -11,7 +11,7 @@ import { restaurantService, orderService } from '@/data/services';
 // services so no caller signature, component, schema or business rule is touched.
 // ─────────────────────────────────────────────────────────────────────────────
 
-const BRAND_FALLBACK = '#d9521f';
+const BRAND_FALLBACK = '#c0451c'; // ember-500
 
 function hexToRgb(hex?: string): [number, number, number] {
   const m = /^#?([0-9a-f]{6})$/i.exec((hex ?? '').trim());

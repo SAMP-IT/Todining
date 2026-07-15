@@ -18,11 +18,11 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-ink/15 px-6 py-12 text-center">
-      {icon && <div className="mb-3 text-ink-muted">{icon}</div>}
-      <h3 className="text-base font-semibold text-ink">{title}</h3>
-      {description && <p className="mt-1 max-w-sm text-sm text-ink-muted">{description}</p>}
-      {action && <div className="mt-4">{action}</div>}
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-ink/15 bg-cream-deep/30 px-6 py-12 text-center">
+      {icon && <div className="mb-3 text-ink-muted/70">{icon}</div>}
+      <h3 className="font-display text-xl font-semibold text-ink">{title}</h3>
+      {description && <p className="mt-1 max-w-[40ch] text-sm leading-relaxed text-ink-muted">{description}</p>}
+      {action && <div className="mt-5">{action}</div>}
     </div>
   );
 }
