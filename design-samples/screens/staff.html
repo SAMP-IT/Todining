@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ToDining · Staff boards (Kitchen · Waiter)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:oklch(0.976 0.008 78);--paper-2:oklch(0.958 0.013 74);--card:oklch(0.995 0.004 80);
+  --hairline:oklch(0.83 0.014 60);--rule:oklch(0.72 0.02 55);
+  --ink:oklch(0.235 0.022 42);--ink-soft:oklch(0.40 0.022 44);--ink-mute:oklch(0.565 0.018 52);
+  --ember:oklch(0.55 0.185 37);--ember-2:oklch(0.48 0.18 35);--ember-soft:oklch(0.935 0.038 46);
+  --forest:oklch(0.44 0.085 152);--forest-soft:oklch(0.93 0.04 150);
+  --gold:oklch(0.52 0.09 78);--gold-soft:oklch(0.94 0.05 84);
+  --red:oklch(0.55 0.19 27);--red-soft:oklch(0.94 0.04 27);
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,h5{font-family:"Cormorant Garamond",serif;font-weight:600;letter-spacing:-.015em}
+.tnum{font-variant-numeric:tabular-nums}
+.grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E")}
+main{position:relative;z-index:1}
+.slab{max-width:1280px;margin:0 auto;padding:3rem 2rem .8rem}
+.slab .k{font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ember);font-weight:700}
+.slab h2{font-size:2rem;margin-top:.4rem}
+.slab p{color:var(--ink-mute);font-size:.86rem;margin-top:.3rem;max-width:76ch}
+.frame{max-width:1280px;margin:1rem auto 0;border:1px solid var(--hairline);border-radius:1rem;overflow:hidden;background:var(--paper);box-shadow:0 30px 60px -40px oklch(0.35 0.03 45 /.4)}
+
+/* staff shell */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.85rem 1.4rem;border-bottom:1px solid var(--hairline);background:oklch(0.976 0.008 78 /.92);backdrop-filter:blur(8px)}
+.tb-l{display:flex;align-items:center;gap:.8rem}
+.brand{display:flex;align-items:center;gap:.5rem}
+.seal{width:1.9rem;height:1.9rem;border:1.2px solid var(--ink);border-radius:99px;display:grid;place-items:center;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:.9rem}
+.brand b{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1.2rem}
+.tag{font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ember-2);background:var(--ember-soft);border:1px solid oklch(0.86 0.055 46);padding:.28rem .55rem;border-radius:.35rem}
+.tb-r{display:flex;align-items:center;gap:.5rem}
+.pill{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:700;color:var(--ink-soft);background:var(--card);border:1px solid var(--hairline);padding:.4rem .65rem;border-radius:.5rem;cursor:pointer}
+.pill:hover{border-color:var(--ink-soft)}
+
+.board{padding:1.4rem}
+.bhead{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:1.2rem}
+.bhead h1{font-size:2.1rem}
+.bhead .sub{font-size:.74rem;color:var(--ink-mute);font-weight:600}
+.live{display:inline-flex;align-items:center;gap:.4rem;font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--forest)}
+.live i{width:.4rem;height:.4rem;border-radius:99px;background:var(--forest);animation:blink 2s var(--ease) infinite}
+@keyframes blink{50%{opacity:.25}}
+
+/* ── KITCHEN columns ── */
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;align-items:start}
+@media(max-width:900px){.cols{grid-template-columns:1fr}}
+.col{border:1px solid var(--hairline);border-radius:.9rem;background:oklch(0.965 0.01 76);padding:.7rem}
+.col-h{display:flex;align-items:center;justify-content:space-between;padding:.15rem .3rem .7rem}
+.col-h .t{display:flex;align-items:center;gap:.45rem;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1.15rem}
+.col-h .t i{width:.45rem;height:.45rem;border-radius:99px}
+.i-new{background:var(--gold)}.i-prep{background:var(--ember)}.i-ready{background:var(--forest)}
+.col-h .c{font-size:.68rem;font-weight:800;color:var(--ink-soft);background:var(--card);border:1px solid var(--hairline);min-width:1.4rem;height:1.4rem;border-radius:99px;display:grid;place-items:center;padding:0 .35rem}
+.tickets{display:flex;flex-direction:column;gap:.7rem}
+
+/* ticket — status by tint + dot, never a side stripe */
+.tk{border:1px solid var(--hairline);border-radius:.75rem;background:var(--card);padding:.8rem;transition:all .3s var(--ease)}
+.tk.new{background:var(--gold-soft);border-color:oklch(0.88 0.05 84)}
+.tk.ready{background:var(--forest-soft);border-color:oklch(0.86 0.05 150)}
+.tk-h{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem}
+.tk-h h4{font-size:1.35rem;line-height:1}
+.tk-h .ago{display:inline-flex;align-items:center;gap:.25rem;font-size:.68rem;font-weight:700;color:var(--ink-mute);font-variant-numeric:tabular-nums}
+.tk-h .ago.warn{color:var(--ember-2)}
+.tk-h .ago.late{color:var(--red);background:var(--red-soft);padding:.1rem .35rem;border-radius:.3rem}
+.tk .no{font-size:.62rem;font-weight:700;letter-spacing:.1em;color:var(--ink-mute);margin-top:.15rem}
+.tk ul{list-style:none;margin:.7rem 0 0;display:flex;flex-direction:column;gap:.4rem}
+.tk li{display:flex;align-items:baseline;gap:.5rem;font-size:.86rem}
+.tk li .q{min-width:1.35rem;height:1.35rem;border-radius:.3rem;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-size:.7rem;font-weight:800;flex:none}
+.tk li .nm{font-weight:600}
+.tk .act{margin-top:.85rem;width:100%;border:0;border-radius:.5rem;padding:.6rem;font-family:inherit;font-weight:700;font-size:.8rem;cursor:pointer;transition:all .3s var(--ease)}
+.act-ember{background:var(--ember);color:var(--paper)}.act-ember:hover{background:var(--ember-2)}
+.act-forest{background:var(--forest);color:var(--paper)}.act-forest:hover{filter:brightness(.92)}
+.tk .waiting{margin-top:.85rem;text-align:center;font-size:.74rem;font-weight:700;color:var(--forest);background:oklch(1 0 0 /.5);border-radius:.5rem;padding:.55rem}
+.empty{text-align:center;font-size:.76rem;color:var(--ink-mute);padding:1.6rem 0}
+
+/* ── WAITER ── */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-bottom:1.6rem}
+@media(max-width:700px){.kpis{grid-template-columns:1fr}}
+.kpi{border:1px solid var(--hairline);border-radius:.8rem;background:var(--card);padding:.9rem 1rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem}
+.kpi .l{font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute)}
+.kpi .v{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:2.2rem;line-height:1;margin-top:.35rem;font-variant-numeric:tabular-nums}
+.kpi .ic{width:2rem;height:2rem;border-radius:.5rem;display:grid;place-items:center;flex:none}
+.ic-ember{background:var(--ember-soft);color:var(--ember-2)}
+.ic-forest{background:var(--forest-soft);color:var(--forest)}
+.ic-gold{background:var(--gold-soft);color:var(--gold)}
+
+.sec{margin-bottom:1.6rem}
+.sec-h{display:flex;align-items:center;gap:.7rem;margin-bottom:.8rem}
+.sec-h h3{font-size:1.4rem}
+.sec-h .ln{flex:1;height:1px;background:var(--hairline)}
+.sec-h .n{font-size:.64rem;font-weight:800;color:var(--ink-soft);background:var(--card);border:1px solid var(--hairline);min-width:1.3rem;height:1.3rem;border-radius:99px;display:grid;place-items:center;padding:0 .3rem}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* service request card */
+.sr{border:1px solid oklch(0.88 0.05 84);background:var(--gold-soft);border-radius:.75rem;padding:.85rem;display:flex;align-items:center;gap:.8rem}
+.sr .ic{width:2.2rem;height:2.2rem;border-radius:.5rem;background:var(--gold);color:var(--paper);display:grid;place-items:center;flex:none}
+.sr h5{font-size:1.05rem}
+.sr .m{font-size:.72rem;color:var(--ink-soft);margin-top:.1rem}
+.sr .btn{margin-left:auto;border:1px solid var(--ink);background:transparent;color:var(--ink);border-radius:.45rem;padding:.4rem .7rem;font-family:inherit;font-size:.72rem;font-weight:700;cursor:pointer}
+.sr .btn:hover{background:var(--ink);color:var(--paper)}
+
+/* waiter order card */
+.wo{border:1px solid var(--hairline);border-radius:.75rem;background:var(--card);padding:.85rem}
+.wo.ready{background:var(--forest-soft);border-color:oklch(0.86 0.05 150)}
+.wo-h{display:flex;align-items:baseline;justify-content:space-between}
+.wo-h h5{font-size:1.2rem}
+.badge{font-size:.58rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:.2rem .45rem;border-radius:.3rem}
+.b-gold{background:var(--gold-soft);color:var(--gold)}
+.b-ember{background:var(--ember-soft);color:var(--ember-2)}
+.b-forest{background:oklch(1 0 0 /.6);color:var(--forest)}
+.wo .meta{font-size:.66rem;color:var(--ink-mute);font-weight:600;margin-top:.1rem}
+.wo .its{font-size:.78rem;color:var(--ink-soft);margin-top:.5rem;line-height:1.5}
+.wo .act{margin-top:.7rem;width:100%;border:0;border-radius:.5rem;padding:.55rem;font-family:inherit;font-weight:700;font-size:.78rem;cursor:pointer;background:var(--forest);color:var(--paper)}
+
+/* phones */
+.phones{max-width:1280px;margin:1rem auto 0;padding:0 2rem;display:grid;grid-template-columns:repeat(2,minmax(0,340px));gap:2rem;justify-content:start}
+@media(max-width:760px){.phones{grid-template-columns:1fr;justify-content:center}}
+.phone{border-radius:2.2rem;padding:.45rem;background:linear-gradient(180deg,oklch(0.9 0.01 60),oklch(0.83 0.014 55));box-shadow:0 40px 70px -34px oklch(0.35 0.03 45 /.5)}
+.screen{position:relative;border-radius:1.85rem;overflow:hidden;background:var(--paper);height:680px}
+.scroll{height:100%;overflow:auto;scrollbar-width:none}
+.scroll::-webkit-scrollbar{width:0}
+.cap{text-align:center;margin-top:.8rem;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute);font-weight:700}
+.cap b{color:var(--ink)}
+/* Inside a phone frame, force the true phone layout. Media queries key off the
+   viewport, not the frame, so without this the mockups show desktop columns. */
+.phone .cols{grid-template-columns:1fr}
+.phone .grid2,.phone .grid3{grid-template-columns:1fr}
+.phone .kpi{flex-direction:column;gap:.2rem;padding:.6rem}
+.phone .sec{margin-bottom:1.1rem}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<main>
+
+<!-- ═══════ KITCHEN — desktop ═══════ -->
+<div class="slab">
+  <div class="k">Staff · 01</div>
+  <h2>Kitchen board</h2>
+  <p>Read at arm's length during a rush, so it stays calm and dense: big table numbers, qty chips you can count without leaning in, and one obvious action per ticket. Status is carried by tint + dot, never a side stripe. Tickets age: the clock warms to ember, then flags red when a table has waited too long.</p>
+</div>
+<div class="frame">
+  <div class="topbar">
+    <div class="tb-l">
+      <div class="brand"><span class="seal">T</span><b>ToDining</b></div>
+      <span class="tag">Kitchen</span>
+    </div>
+    <div class="tb-r">
+      <span class="pill">Velans ▾</span>
+      <span class="pill">Kitchen · Sign out</span>
+    </div>
+  </div>
+
+  <div class="board">
+    <div class="bhead">
+      <div>
+        <h1>Kitchen board</h1>
+        <div class="sub">Thursday, 15 July · dinner service</div>
+      </div>
+      <span class="live"><i></i> Live · 5 active</span>
+    </div>
+
+    <div class="cols">
+      <!-- NEW -->
+      <div class="col">
+        <div class="col-h"><span class="t"><i class="i-new"></i> New</span><span class="c">2</span></div>
+        <div class="tickets">
+          <div class="tk new">
+            <div class="tk-h"><h4>Table 1</h4><span class="ago">◷ 2m</span></div>
+            <div class="no">#F03RW</div>
+            <ul>
+              <li><span class="q">1</span><span class="nm">veg briyani</span></li>
+              <li><span class="q">2</span><span class="nm">chicken briyani</span></li>
+            </ul>
+            <button class="act act-ember">Start cooking</button>
+          </div>
+          <div class="tk new">
+            <div class="tk-h"><h4>Table 6</h4><span class="ago warn">◷ 9m</span></div>
+            <div class="no">#B71QP</div>
+            <ul>
+              <li><span class="q">1</span><span class="nm">Charred octopus</span></li>
+            </ul>
+            <button class="act act-ember">Start cooking</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PREPARING -->
+      <div class="col">
+        <div class="col-h"><span class="t"><i class="i-prep"></i> Preparing</span><span class="c">2</span></div>
+        <div class="tickets">
+          <div class="tk">
+            <div class="tk-h"><h4>Table 3</h4><span class="ago late">◷ 21m</span></div>
+            <div class="no">#K92LX</div>
+            <ul>
+              <li><span class="q">2</span><span class="nm">Truffle tagliatelle</span></li>
+              <li><span class="q">1</span><span class="nm">Burrata &amp; tomato</span></li>
+            </ul>
+            <button class="act act-forest">Mark ready</button>
+          </div>
+          <div class="tk">
+            <div class="tk-h"><h4>Table 8</h4><span class="ago">◷ 4m</span></div>
+            <div class="no">#M40TZ</div>
+            <ul><li><span class="q">3</span><span class="nm">Nduja focaccia</span></li></ul>
+            <button class="act act-forest">Mark ready</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- READY -->
+      <div class="col">
+        <div class="col-h"><span class="t"><i class="i-ready"></i> Ready</span><span class="c">1</span></div>
+        <div class="tickets">
+          <div class="tk ready">
+            <div class="tk-h"><h4>Table 12</h4><span class="ago">◷ 1m</span></div>
+            <div class="no">#A24F8</div>
+            <ul><li><span class="q">1</span><span class="nm">Garden grain bowl</span></li></ul>
+            <div class="waiting">Ready · waiting for waiter</div>
+          </div>
+          <div class="empty">Nothing else here</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ WAITER — desktop ═══════ -->
+<div class="slab">
+  <div class="k">Staff · 02</div>
+  <h2>Waiter board</h2>
+  <p>Three counts across the top, then the queues in priority order: guests calling, plates ready, and what the kitchen still holds.</p>
+</div>
+<div class="frame">
+  <div class="topbar">
+    <div class="tb-l">
+      <div class="brand"><span class="seal">T</span><b>ToDining</b></div>
+      <span class="tag">Waiter</span>
+    </div>
+    <div class="tb-r"><span class="pill">Velans ▾</span><span class="pill">Waiter · Sign out</span></div>
+  </div>
+
+  <div class="board">
+    <div class="bhead">
+      <div><h1>Waiter board</h1><div class="sub">Thursday, 15 July · dinner service</div></div>
+      <span class="live"><i></i> Live</span>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi">
+        <div><div class="l">Active tables</div><div class="v">4</div></div>
+        <span class="ic ic-ember"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18M5 11V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4M4 11l1 8h14l1-8"/></svg></span>
+      </div>
+      <div class="kpi">
+        <div><div class="l">Ready to serve</div><div class="v">2</div></div>
+        <span class="ic ic-forest"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15h18M12 4a8 8 0 0 0-8 8h16a8 8 0 0 0-8-8ZM12 4V2"/></svg></span>
+      </div>
+      <div class="kpi">
+        <div><div class="l">Service calls</div><div class="v">1</div></div>
+        <span class="ic ic-gold"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a2 2 0 0 0 3.4 0"/></svg></span>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><h3>Service requests</h3><span class="ln"></span><span class="n">1</span></div>
+      <div class="grid2">
+        <div class="sr">
+          <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a2 2 0 0 0 3.4 0"/></svg></span>
+          <div><h5>Table 3</h5><div class="m">Call waiter · 2 min ago</div></div>
+          <button class="btn">Resolve</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-h"><h3>Ready to serve</h3><span class="ln"></span><span class="n">2</span></div>
+      <div class="grid3">
+        <div class="wo ready">
+          <div class="wo-h"><h5>Table 12</h5><span class="badge b-forest">Ready</span></div>
+          <div class="meta">#A24F8 · 1 min ago</div>
+          <div class="its">1× Garden grain bowl</div>
+          <button class="act">Mark served</button>
+        </div>
+        <div class="wo ready">
+          <div class="wo-h"><h5>Table 5</h5><span class="badge b-forest">Ready</span></div>
+          <div class="meta">#R18KD · 3 min ago</div>
+          <div class="its">2× Chicken biryani, 1× Coke</div>
+          <button class="act">Mark served</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec" style="margin-bottom:0">
+      <div class="sec-h"><h3>In the kitchen</h3><span class="ln"></span><span class="n">2</span></div>
+      <div class="grid3">
+        <div class="wo">
+          <div class="wo-h"><h5>Table 1</h5><span class="badge b-gold">Pending</span></div>
+          <div class="meta">#F03RW · 2 min ago</div>
+          <div class="its">1× veg briyani, 2× chicken briyani</div>
+        </div>
+        <div class="wo">
+          <div class="wo-h"><h5>Table 3</h5><span class="badge b-ember">Preparing</span></div>
+          <div class="meta">#K92LX · 21 min ago</div>
+          <div class="its">2× Truffle tagliatelle, 1× Burrata &amp; tomato</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MOBILE ═══════ -->
+<div class="slab">
+  <div class="k">Staff · 03</div>
+  <h2>On a phone</h2>
+  <p>Waiters work from a phone on the floor; the kitchen usually has a screen. Columns stack, tickets keep their full-size table numbers and actions.</p>
+</div>
+<div class="phones">
+  <div>
+    <div class="phone"><div class="screen"><div class="scroll">
+      <div class="topbar" style="padding:.7rem 1rem">
+        <div class="tb-l"><div class="brand"><span class="seal" style="width:1.6rem;height:1.6rem;font-size:.78rem">T</span><b style="font-size:1.05rem">ToDining</b></div><span class="tag">Kitchen</span></div>
+      </div>
+      <div class="board" style="padding:1rem">
+        <div class="bhead" style="margin-bottom:.9rem"><div><h1 style="font-size:1.6rem">Kitchen board</h1><div class="sub">Dinner service</div></div></div>
+        <div class="cols">
+          <div class="col">
+            <div class="col-h"><span class="t"><i class="i-new"></i> New</span><span class="c">1</span></div>
+            <div class="tickets">
+              <div class="tk new">
+                <div class="tk-h"><h4>Table 1</h4><span class="ago">◷ 2m</span></div>
+                <div class="no">#F03RW</div>
+                <ul><li><span class="q">1</span><span class="nm">veg briyani</span></li><li><span class="q">2</span><span class="nm">chicken briyani</span></li></ul>
+                <button class="act act-ember">Start cooking</button>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="col-h"><span class="t"><i class="i-prep"></i> Preparing</span><span class="c">1</span></div>
+            <div class="tickets">
+              <div class="tk">
+                <div class="tk-h"><h4>Table 3</h4><span class="ago late">◷ 21m</span></div>
+                <div class="no">#K92LX</div>
+                <ul><li><span class="q">2</span><span class="nm">Truffle tagliatelle</span></li></ul>
+                <button class="act act-forest">Mark ready</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div></div></div>
+    <div class="cap"><b>Kitchen</b> · stacked columns</div>
+  </div>
+
+  <div>
+    <div class="phone"><div class="screen"><div class="scroll">
+      <div class="topbar" style="padding:.7rem 1rem">
+        <div class="tb-l"><div class="brand"><span class="seal" style="width:1.6rem;height:1.6rem;font-size:.78rem">T</span><b style="font-size:1.05rem">ToDining</b></div><span class="tag">Waiter</span></div>
+      </div>
+      <div class="board" style="padding:1rem">
+        <div class="bhead" style="margin-bottom:.9rem"><div><h1 style="font-size:1.6rem">Waiter board</h1><div class="sub">Dinner service</div></div></div>
+        <div class="kpis" style="grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1.1rem">
+          <div class="kpi" style="padding:.6rem;flex-direction:column;gap:.2rem"><div class="l" style="font-size:.52rem">Tables</div><div class="v" style="font-size:1.5rem">4</div></div>
+          <div class="kpi" style="padding:.6rem;flex-direction:column;gap:.2rem"><div class="l" style="font-size:.52rem">Ready</div><div class="v" style="font-size:1.5rem">2</div></div>
+          <div class="kpi" style="padding:.6rem;flex-direction:column;gap:.2rem"><div class="l" style="font-size:.52rem">Calls</div><div class="v" style="font-size:1.5rem">1</div></div>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><h3 style="font-size:1.15rem">Service requests</h3><span class="ln"></span><span class="n">1</span></div>
+          <div class="sr">
+            <span class="ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a2 2 0 0 0 3.4 0"/></svg></span>
+            <div><h5 style="font-size:.95rem">Table 3</h5><div class="m">Call waiter · 2 min</div></div>
+            <button class="btn">Resolve</button>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><h3 style="font-size:1.15rem">Ready to serve</h3><span class="ln"></span><span class="n">1</span></div>
+          <div class="wo ready">
+            <div class="wo-h"><h5>Table 12</h5><span class="badge b-forest">Ready</span></div>
+            <div class="meta">#A24F8 · 1 min ago</div>
+            <div class="its">1× Garden grain bowl</div>
+            <button class="act">Mark served</button>
+          </div>
+        </div>
+      </div>
+    </div></div></div>
+    <div class="cap"><b>Waiter</b> · floor phone</div>
+  </div>
+</div>
+<div style="height:4rem"></div>
+</main>
+</body>
+</html>

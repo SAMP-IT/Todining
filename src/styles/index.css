@@ -33,13 +33,20 @@
 
   /* Cormorant Garamond runs light and airy — default headings to a
      substantial weight and tight tracking so they read editorial, not frail.
-     Explicit weight utilities on an element still win over this. */
+     Explicit weight utilities on an element still win over this.
+
+     `lining-nums` is NOT optional: Cormorant ships oldstyle figures by default,
+     which render 1 as an I-like glyph and 0 as an o ("Table 12" -> "Table I2",
+     "₹80" -> "₹8o"). Every number in this app is money, a table or a count, so
+     display type must use lining figures. */
   h1, h2, h3, h4 {
     @apply font-display font-semibold tracking-tight text-ink;
+    font-variant-numeric: lining-nums;
   }
 
-  /* Money and data align on their figures */
-  .tnum { font-variant-numeric: tabular-nums; }
+  /* Money and data: align on their figures, and force lining figures — note
+     `tabular-nums` alone does NOT override Cormorant's oldstyle default. */
+  .tnum { font-variant-numeric: tabular-nums lining-nums; }
 
   *:focus-visible {
     @apply outline-none ring-2 ring-ember-500/60 ring-offset-2 ring-offset-cream rounded;
