@@ -220,10 +220,12 @@ Tenant tables (all carry `restaurant_id`): `restaurants` (root; `parent_id` → 
 
 ---
 
-## Design system — **Warm Editorial** (in-progress overhaul)
+## Design system — **Warm Editorial** (shipped across all 26 screens)
 
 Full spec is **`DESIGN.md`** (visual) + **`PRODUCT.md`** (strategy) at repo root — read both before
 any UI work. Editorial "printed fine-dining menu" direction: paper, warm ink, one drop of ember.
+Every screen (customer flow, staff boards, all 13 admin screens, landing, 404, admin panel) is
+done; match the existing screens rather than inventing a new look.
 
 - **Fonts:** `Cormorant Garamond` (display, `font-display`; runs light/airy — default headings to
   `font-semibold` 600, size up so it reads substantial), `Plus Jakarta Sans` (body, `font-sans`).
@@ -263,6 +265,18 @@ any UI work. Editorial "printed fine-dining menu" direction: paper, warm ink, on
   `npm run dev`** (and `rm -rf node_modules/.vite`). The production build is always correct.
 - **Verify fonts/tokens by measurement, not by eye** — a serif fallback (Georgia) looks "close enough"
   in a screenshot. Check via Playwright: `getComputedStyle(el).fontFamily` + `document.fonts.check('600 40px "Cormorant Garamond"')`.
+- **Cormorant ships OLDSTYLE figures and `tabular-nums` does NOT override them** — money rendered
+  `₹80` as `₹8o` and `1` as `I`. `src/styles/index.css` forces `lining-nums` on `.font-display` +
+  headings (base layer) and `.tnum` = `tabular-nums lining-nums` (components layer, so it wins).
+  **Put `.tnum` on every money/count/time value.** Never add `.tnum` to a "Table 12" heading —
+  Cormorant's tabular figures gap it into "Table I 2".
+- **Charts have their own colour rules.** Our sage (OKLCH C 0.071) and ink-muted (0.026) are under the
+  chart chroma floor (C ≥ 0.10) and read *gray* as fills, so `AnalyticsPage` uses a chroma-lifted data
+  green (`#2f9159`). Validate any new categorical palette with the `dataviz` skill's
+  `validate_palette.js` rather than eyeballing CVD. Colour must key off the **entity**, never an array
+  index — the pie repainted "Confirmed" gold whenever "Pending" filtered out.
+- **Checking `document.scrollWidth` alone misses clipped content** — a table can scroll inside its own
+  `overflow-x-auto` while the page reports zero overflow. Assert on inner scrollers too.
 - `remotion/` is an independent sub-project; not part of the app build.
 
 ## Key references
