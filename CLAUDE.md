@@ -101,9 +101,14 @@ Hosted on the user's **self-managed Dokploy server** (`51.79.254.198`), not a ma
   supavisor`. Secrets are Dokploy-generated; `traefik.me` gives free wildcard TLS to the IP. Studio
   login is `DASHBOARD_USERNAME`/`DASHBOARD_PASSWORD` from the service's Environment tab.
 - **Schema:** run `supabase/setup-selfhost.sql` once in Studio → SQL Editor (see **Data model**).
-- **CI:** `.github/workflows/ci.yml` → `npm run lint` + `npm run build` on every push/PR to `main`.
-- **CD:** Dokploy auto-deploy webhook redeploys on push to `main` (add it under repo Settings →
-  Webhooks; the WEB app + Supabase compose each expose one in their Deployments tab).
+- **CI/CD:** one workflow, `.github/workflows/ci.yml`:
+  - `ci` job — `npm run lint` + `npm run build` on every push/PR to `main`.
+  - `deploy` job — `needs: ci` (so a red build can **never** ship) and only on a push to `main`;
+    POSTs to the Dokploy WEB app's deploy webhook, read from the repo secret **`DOKPLOY_DEPLOY_URL`**
+    (Settings → Secrets and variables → Actions). Dokploy then clones `main` and rebuilds.
+  - Deliberately *not* wired as a raw GitHub→Dokploy webhook: that redeploys on every push even when
+    CI is red, and gives no deploy visibility in the Actions tab. Don't add one — you'd double-deploy.
+  - The Supabase compose service has its own separate webhook; never point repo pushes at it.
 - **Git:** push with the **Manoj-V-348** GitHub account (`gh auth switch --user Manoj-V-348`).
 
 ---
@@ -124,7 +129,7 @@ Because the UI only knows the service interface, swapping mock↔Supabase requir
 ### Directory map
 ```
 Dockerfile, .dockerignore   Production image (Vite build → nginx). deploy/nginx.conf = SPA config.
-.github/workflows/ci.yml    CI: lint + build on push/PR to main.
+.github/workflows/ci.yml    CI/CD: lint + build, then a deploy gated on a green build.
 src/
   app/            App shell (App.tsx = providers + DataGate), router.tsx
   components/ui/  Design-system primitives: Button, Card, Input, Modal, Badge, StatusBadge, ...
