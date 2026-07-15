@@ -53,7 +53,7 @@ export function TrackPage() {
     sessionService.completeDining(restaurant.id, order!.sessionId);
     setTick((t) => t + 1);
     setCompleting(false);
-    toast.success('Dining complete — here is your final bill.');
+    toast.success('Dining complete. Here is your final bill.');
   }
 
   function submitFeedback(v: FeedbackValues) {
@@ -70,94 +70,105 @@ export function TrackPage() {
   }
 
   return (
-    <div className="px-4 pb-10">
-      <div className="mt-5 flex items-center gap-2 rounded-2xl bg-sage-50 p-3 text-sage-600">
-        <CheckCircle2 className="h-5 w-5" />
-        <p className="text-sm font-semibold">Order #{order.id.slice(-5).toUpperCase()} placed at {formatTime(order.createdAt)}</p>
-      </div>
-
-      <div className="mt-5 rounded-2xl border border-ink/5 bg-white p-5 shadow-soft">
-        <h2 className="mb-4 font-display text-lg font-semibold">Live status</h2>
-        <OrderStatusTimeline status={order.status} />
-      </div>
-
-      {/* Running dining session — everything ordered on this table so far.
-          Shown while dining; once billed, the final bill below lists it all. */}
-      {sessionOpen && (
-        <div className="mt-4 rounded-2xl border border-ink/5 bg-white p-5 shadow-soft">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold">Your table so far</h3>
-            <span className="text-xs text-ink-muted">
-              Table {session.tableNumber} · {session.orders.length} order{session.orders.length === 1 ? '' : 's'}
-            </span>
-          </div>
-          <div className="mt-3 space-y-2 text-sm">
-            {session.items.map((it) => (
-              <div key={it.id} className="flex items-center justify-between">
-                <span className="text-ink-soft"><span className="font-semibold text-ink">{it.qty}×</span> {it.name}</span>
-                <span className="font-medium">{formatMoney(it.unitPrice * it.qty, symbol)}</span>
-              </div>
-            ))}
-            <div className="flex items-center justify-between border-t border-ink/8 pt-2 font-bold">
-              <span>Running total</span>
-              <span className="font-display">{formatMoney(session.total, symbol)}</span>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Still dining: add more or finish the visit. No bill until "Complete Dining". */}
-      {sessionOpen && (
-        <div className="mt-4 space-y-3">
-          <Link to={`/r/${restaurant.slug}/t/${table.id}`}>
-            <Button variant="outline" fullWidth>
-              <UtensilsCrossed className="h-4 w-4" /> Order more items
-            </Button>
-          </Link>
-          <div className="rounded-2xl border border-ink/5 bg-white p-5 text-center shadow-soft">
-            <p className="font-semibold">Finished dining?</p>
-            <p className="mb-3 mt-1 text-sm text-ink-muted">
-              Close your table and get one final bill for everything you ordered.
+    <div className="px-4 pb-10 lg:px-8 lg:pb-16">
+      {/* Two columns on desktop: the kitchen's progress on the left, the guest's
+          running table and the close-out on the right. The `sessionOpen` and
+          `sessionBill` branches are mutually exclusive, so the phone's single
+          column always reads in the right order without any reordering. */}
+      <div className="lg:grid lg:grid-cols-[1fr_340px] lg:items-start lg:gap-10">
+        <div className="min-w-0">
+          <div className="mt-5 flex items-center gap-2.5 rounded-xl border border-sage-200 bg-sage-100 px-3.5 py-2.5 text-sage-600 lg:mt-8">
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+            <p className="text-xs font-bold">
+              Order #{order.id.slice(-5).toUpperCase()} placed at {formatTime(order.createdAt)}
             </p>
-            <Button fullWidth loading={completing} onClick={completeDining}>
-              Complete Dining · {formatMoney(session.total, symbol)}
-            </Button>
           </div>
-        </div>
-      )}
 
-      {/* Session closed: the single final bill for the whole visit */}
-      {sessionBill && (
-        <div className="mt-4">
-          <BillSummary bill={sessionBill} restaurantName={restaurant.name} symbol={symbol} />
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <Button variant="outline" onClick={async () => (await import('@/features/billing/billPdf')).printBillPdf(sessionBill, restaurant.name, symbol)}>
-              <Printer className="h-4 w-4" /> Print
-            </Button>
-            <Button variant="outline" onClick={async () => (await import('@/features/billing/billPdf')).downloadBillPdf(sessionBill, restaurant.name, symbol)}>
-              <Download className="h-4 w-4" /> PDF
-            </Button>
+          <div className="mt-4 rounded-2xl border border-ink/10 bg-white p-5 lg:p-6">
+            <h2 className="mb-5 font-display text-xl font-semibold lg:text-2xl">Live status</h2>
+            <OrderStatusTimeline status={order.status} />
           </div>
-        </div>
-      )}
 
-      {/* Feedback — after the final bill */}
-      {sessionBill && (
-        <div className="mt-4 rounded-2xl border border-ink/5 bg-white p-5 shadow-soft">
-          {alreadyReviewed || feedbackSent ? (
-            <div className="flex flex-col items-center py-4 text-center">
-              <Star className="h-8 w-8 fill-gold-400 text-gold-400" />
-              <p className="mt-2 font-semibold">Thanks for your feedback!</p>
-              <p className="text-sm text-ink-muted">We hope to see you again soon.</p>
+          {/* Session closed: the single final bill for the whole visit */}
+          {sessionBill && (
+            <div className="mt-4">
+              <BillSummary bill={sessionBill} restaurantName={restaurant.name} symbol={symbol} />
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <Button variant="outline" onClick={async () => (await import('@/features/billing/billPdf')).printBillPdf(sessionBill, restaurant.name, symbol)}>
+                  <Printer className="h-4 w-4" /> Print
+                </Button>
+                <Button variant="outline" onClick={async () => (await import('@/features/billing/billPdf')).downloadBillPdf(sessionBill, restaurant.name, symbol)}>
+                  <Download className="h-4 w-4" /> PDF
+                </Button>
+              </div>
             </div>
-          ) : (
-            <>
-              <h3 className="mb-4 font-display text-lg font-semibold">How was everything?</h3>
-              <FeedbackForm onSubmit={submitFeedback} />
-            </>
+          )}
+
+          {/* Feedback — after the final bill */}
+          {sessionBill && (
+            <div className="mt-4 rounded-2xl border border-ink/10 bg-white p-5 lg:p-6">
+              {alreadyReviewed || feedbackSent ? (
+                <div className="flex flex-col items-center py-4 text-center">
+                  <Star className="h-7 w-7 fill-gold-400 text-gold-400" />
+                  <p className="mt-2 font-display text-xl font-semibold">Thanks for your feedback!</p>
+                  <p className="mt-0.5 text-xs text-ink-muted">We hope to see you again soon.</p>
+                </div>
+              ) : (
+                <>
+                  <h3 className="mb-4 font-display text-xl font-semibold lg:text-2xl">How was everything?</h3>
+                  <FeedbackForm onSubmit={submitFeedback} />
+                </>
+              )}
+            </div>
           )}
         </div>
-      )}
+
+        {/* Still dining: the running table, plus add-more or finish the visit.
+            No bill exists until "Complete Dining" closes the session. */}
+        {sessionOpen && (
+          <aside className="mt-4 lg:sticky lg:top-24 lg:mt-8">
+            <div className="rounded-2xl border border-ink/10 bg-white p-5">
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="font-display text-xl font-semibold">Your table so far</h3>
+                <span className="shrink-0 text-[0.62rem] font-bold uppercase tracking-[0.08em] text-ink-muted">
+                  Table {session.tableNumber} · {session.orders.length} order{session.orders.length === 1 ? '' : 's'}
+                </span>
+              </div>
+
+              <div className="mt-3">
+                {session.items.map((it) => (
+                  <div key={it.id} className="flex items-baseline gap-2 border-b border-ink/10 py-2 text-sm last:border-b-0">
+                    <span className="tnum font-bold text-ink-muted">{it.qty}×</span>
+                    <span className="min-w-0 flex-1 truncate">{it.name}</span>
+                    <span className="tnum font-display font-semibold">{formatMoney(it.unitPrice * it.qty, symbol)}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-3 flex items-baseline justify-between border-t-[1.5px] border-ink pt-2">
+                <span className="font-display text-base font-semibold">Running total</span>
+                <span className="tnum font-display text-xl font-bold">{formatMoney(session.total, symbol)}</span>
+              </div>
+            </div>
+
+            <Link to={`/r/${restaurant.slug}/t/${table.id}`} className="mt-3 block">
+              <Button variant="outline" fullWidth>
+                <UtensilsCrossed className="h-4 w-4" /> Order more items
+              </Button>
+            </Link>
+
+            <div className="mt-3 rounded-2xl border border-ink/10 bg-white p-5 text-center">
+              <h3 className="font-display text-xl font-semibold">Finished dining?</h3>
+              <p className="mb-4 mt-1 text-xs leading-relaxed text-ink-muted">
+                Close your table and get one final bill for everything you ordered.
+              </p>
+              <Button fullWidth loading={completing} onClick={completeDining}>
+                Complete Dining · <span className="tnum">{formatMoney(session.total, symbol)}</span>
+              </Button>
+            </div>
+          </aside>
+        )}
+      </div>
     </div>
   );
 }

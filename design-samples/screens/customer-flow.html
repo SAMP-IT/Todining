@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ToDining · Customer flow (Menu · Cart · Track · Reserve)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:oklch(0.976 0.008 78);--paper-2:oklch(0.958 0.013 74);--card:oklch(0.995 0.004 80);
+  --hairline:oklch(0.83 0.014 60);--rule:oklch(0.72 0.02 55);
+  --ink:oklch(0.235 0.022 42);--ink-soft:oklch(0.40 0.022 44);--ink-mute:oklch(0.565 0.018 52);
+  --ember:oklch(0.55 0.185 37);--ember-2:oklch(0.48 0.18 35);--ember-soft:oklch(0.935 0.038 46);
+  --forest:oklch(0.44 0.085 152);--forest-soft:oklch(0.93 0.04 150);
+  --gold:oklch(0.60 0.10 78);--gold-soft:oklch(0.925 0.06 82);
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;padding:clamp(1.2rem,3vw,2.5rem)}
+h1,h2,h3,h4,h5{font-family:"Cormorant Garamond",serif;font-weight:600;letter-spacing:-.01em}
+.tnum{font-variant-numeric:tabular-nums}
+.grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E")}
+.wrap{max-width:1700px;margin:0 auto}
+.head{margin-bottom:2rem}
+.head .kick{font-size:.68rem;letter-spacing:.32em;text-transform:uppercase;color:var(--ink-mute);font-weight:700}
+.head h1{font-size:clamp(2rem,4vw,3rem);margin-top:.5rem}
+.head h1 em{font-style:italic;color:var(--ember)}
+.head p{color:var(--ink-mute);font-size:.88rem;margin-top:.5rem;max-width:70ch}
+
+.rail{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(1rem,2vw,2rem);align-items:start}
+@media(max-width:1400px){.rail{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.rail{grid-template-columns:1fr;max-width:400px;margin:0 auto}}
+.cap{text-align:center;margin-top:.9rem;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute);font-weight:700}
+.cap b{color:var(--ink)}
+
+/* phone */
+.phone{border-radius:2.4rem;padding:.5rem;background:linear-gradient(180deg,oklch(0.9 0.01 60),oklch(0.83 0.014 55));box-shadow:0 40px 70px -34px oklch(0.35 0.03 45 /.5),0 0 0 1px oklch(0.79 0.015 55) inset}
+.screen{position:relative;border-radius:2rem;overflow:hidden;background:var(--paper);height:720px}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:34%;height:1.4rem;background:linear-gradient(180deg,oklch(0.9 0.01 60),oklch(0.83 0.014 55));border-radius:0 0 .9rem .9rem;z-index:30}
+.sbar{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1.3rem .1rem;font-size:.7rem;color:var(--ink-soft);font-weight:600}
+.sysicons{display:flex;align-items:center;gap:.35rem}
+.sysicons svg{display:block}.si-sig rect{fill:currentColor}
+.si-bat rect{fill:none;stroke:currentColor;stroke-width:1.1}.si-bat .fill,.si-bat .cap2{fill:currentColor;stroke:none}
+.pct{font-size:.7rem;font-weight:600}
+.scroll{height:calc(720px - 2.4rem);overflow:auto;scrollbar-width:none}
+.scroll::-webkit-scrollbar{width:0}
+.pad{padding:0 1.15rem}
+
+/* app chrome */
+.appbar{position:sticky;top:0;z-index:20;background:oklch(0.976 0.008 78 /.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--hairline);padding:.55rem 1.15rem;display:flex;align-items:center;justify-content:space-between}
+.seal{width:1.6rem;height:1.6rem;border:1.2px solid var(--ink);border-radius:99px;display:grid;place-items:center;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:.78rem}
+.brand{display:flex;align-items:center;gap:.5rem}
+.brand b{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1.05rem}
+.chip{font-size:.62rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);border:1px solid var(--hairline);padding:.25rem .5rem;border-radius:.4rem}
+.backlink{display:inline-flex;align-items:center;gap:.35rem;font-size:.78rem;font-weight:700;color:var(--ink-soft);background:none;border:0;padding:0;cursor:pointer;margin-top:.9rem}
+
+/* menu intro */
+.intro{text-align:center;padding:1rem 0 .9rem}
+.intro .est{font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-mute);font-weight:700}
+.intro h3{font-size:1.75rem;line-height:1.05;margin:.35rem 0 .2rem;font-weight:600}
+.intro h3 em{font-style:italic;color:var(--ember)}
+.intro .loc{color:var(--ink-mute);font-size:.74rem}
+.search{display:flex;align-items:center;gap:.55rem;border:1px solid var(--hairline);background:var(--card);border-radius:99px;padding:.55rem .85rem;margin-bottom:.9rem;color:var(--ink-mute);font-size:.8rem}
+.session{display:flex;align-items:center;justify-content:space-between;gap:.6rem;background:var(--ember-soft);border:1px solid oklch(0.86 0.055 46);border-radius:.65rem;padding:.6rem .75rem;margin-bottom:.9rem}
+.session .l{display:flex;align-items:center;gap:.45rem;font-size:.72rem;font-weight:700;color:var(--ember-2)}
+.session .a{font-weight:700;font-size:.78rem;color:var(--ember-2)}
+
+/* category rail (sticky) */
+.cats{position:sticky;top:2.7rem;z-index:15;display:flex;gap:.4rem;overflow:auto;scrollbar-width:none;background:oklch(0.976 0.008 78 /.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--hairline);margin:0 -1.15rem;padding:.5rem 1.15rem}
+.cats::-webkit-scrollbar{height:0}
+.cat{flex:none;font-size:.7rem;font-weight:700;letter-spacing:.06em;color:var(--ink-soft);background:var(--card);border:1px solid var(--hairline);padding:.35rem .7rem;border-radius:99px;white-space:nowrap;cursor:pointer;transition:all .3s var(--ease)}
+.cat.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+.sec{display:flex;align-items:center;justify-content:center;gap:.5rem;margin:1.2rem 0 .2rem;font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:500;font-size:1.1rem}
+.sec .n{font-family:"Plus Jakarta Sans";font-style:normal;font-size:.62rem;font-weight:700;letter-spacing:.12em;color:var(--ember)}
+.legend{display:flex;justify-content:center;gap:.8rem;font-size:.58rem;color:var(--ink-mute);font-weight:600;margin-bottom:.6rem}
+.legend i{width:.35rem;height:.35rem;border-radius:99px;display:inline-block;margin-right:.25rem;vertical-align:middle}
+.d-veg{background:var(--forest)}.d-chef{background:var(--gold)}.d-spicy{background:var(--ember)}
+
+/* dish row — editorial, keeps the real photo */
+.dish{display:grid;grid-template-columns:4.6rem 1fr;gap:.8rem;padding:.85rem 0;border-bottom:1px solid var(--hairline);align-items:center}
+.dish:last-of-type{border-bottom:0}
+.thumb{position:relative;width:4.6rem;height:4.6rem;border-radius:.6rem;overflow:hidden;background:var(--paper-2)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .out{position:absolute;inset:0;display:grid;place-items:center;background:oklch(0.2 0.02 40 /.55)}
+.thumb .out span{background:oklch(1 0 0 /.9);color:var(--ink);font-size:.5rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:.1rem .3rem;border-radius:99px}
+.dname{display:flex;align-items:center;gap:.35rem}
+.dname h4{font-size:1.02rem;line-height:1.15;font-weight:600}
+.veg{width:.7rem;height:.7rem;border:1.5px solid var(--forest);border-radius:.15rem;display:grid;place-items:center;flex:none}
+.veg span{width:.3rem;height:.3rem;border-radius:99px;background:var(--forest)}
+.dish p{color:var(--ink-mute);font-size:.72rem;line-height:1.4;margin:.15rem 0 .45rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.drow{display:flex;align-items:center;justify-content:space-between}
+.price{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1.1rem;font-variant-numeric:tabular-nums}
+.add{display:inline-flex;align-items:center;gap:.25rem;font-size:.7rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--ember);background:transparent;border:1px solid oklch(0.82 0.06 46);border-radius:.45rem;padding:.32rem .6rem;cursor:pointer;transition:all .3s var(--ease)}
+.add:hover{background:var(--ember);color:var(--paper);border-color:var(--ember)}
+.unavail{font-size:.68rem;font-weight:600;color:var(--ink-mute)}
+.step{display:inline-flex;align-items:center;border:1px solid var(--hairline);border-radius:.45rem;background:var(--card);overflow:hidden}
+.step button{width:1.6rem;height:1.6rem;border:0;background:none;color:var(--ink);font-size:.95rem;cursor:pointer;display:grid;place-items:center}
+.step .q{min-width:1.2rem;text-align:center;font-weight:700;font-size:.76rem;font-variant-numeric:tabular-nums}
+
+/* bottom bars */
+.cartbar{position:absolute;left:.9rem;right:.9rem;bottom:.9rem;z-index:25;display:flex;align-items:center;justify-content:space-between;background:var(--ink);color:var(--paper);border-radius:.8rem;padding:.7rem .75rem .7rem 1rem;box-shadow:0 18px 36px -14px oklch(0.3 0.03 45 /.6)}
+.cartbar .n{font-weight:600;font-size:.8rem;display:flex;align-items:center;gap:.5rem}
+.cartbar .n .b{background:var(--ember);min-width:1.4rem;height:1.4rem;border-radius:99px;display:grid;place-items:center;font-size:.7rem;font-weight:700}
+.cartbar .go{font-weight:700;font-size:.8rem;font-variant-numeric:tabular-nums}
+.cta{position:absolute;left:.9rem;right:.9rem;bottom:.9rem;z-index:25;display:flex;align-items:center;justify-content:center;gap:.4rem;background:var(--ember);color:var(--paper);border:0;border-radius:.7rem;padding:.85rem;font-family:inherit;font-weight:700;font-size:.85rem;cursor:pointer;box-shadow:0 16px 32px -14px var(--ember)}
+.cta:hover{background:var(--ember-2)}
+
+/* page titles inside app */
+.ptitle{font-size:1.6rem;margin-top:.35rem;font-weight:600}
+.psub{color:var(--ink-mute);font-size:.74rem;margin-bottom:.9rem}
+
+/* cart lines */
+.lines{border-top:1px solid var(--hairline)}
+.cline{display:grid;grid-template-columns:3.1rem 1fr auto;gap:.7rem;align-items:center;padding:.7rem 0;border-bottom:1px solid var(--hairline)}
+.cline .th{width:3.1rem;height:3.1rem;border-radius:.5rem;overflow:hidden;background:var(--paper-2)}
+.cline .th img{width:100%;height:100%;object-fit:cover}
+.cline h5{font-size:.9rem;font-weight:600;line-height:1.15}
+.cline .u{font-size:.68rem;color:var(--ink-mute);font-weight:600;margin-top:.1rem}
+.cline .lp{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1rem;font-variant-numeric:tabular-nums;text-align:right}
+
+/* upsell */
+.upsell{margin-top:1rem;border:1px dashed var(--rule);border-radius:.7rem;padding:.75rem;background:var(--gold-soft)}
+.upsell .t{font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--gold);margin-bottom:.5rem}
+.upsell .row{display:flex;align-items:center;gap:.6rem}
+.upsell .th{width:2.4rem;height:2.4rem;border-radius:.4rem;overflow:hidden;flex:none;background:var(--paper-2)}
+.upsell .th img{width:100%;height:100%;object-fit:cover}
+.upsell h5{font-size:.85rem;font-weight:600}
+.upsell .p{font-size:.7rem;color:var(--ink-soft);font-weight:600}
+.upsell .add{margin-left:auto}
+
+/* the check */
+.check{margin-top:1rem;background:var(--card);border:1px solid var(--hairline);border-radius:.8rem;padding:.9rem}
+.trow{display:flex;justify-content:space-between;padding:.25rem 0;font-size:.78rem;color:var(--ink-soft)}
+.trow b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.grand{display:flex;justify-content:space-between;align-items:baseline;margin-top:.5rem;padding-top:.6rem;border-top:1.5px solid var(--ink)}
+.grand .l{font-family:"Cormorant Garamond",serif;font-size:1rem;font-weight:600}
+.grand .v{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:1.4rem;font-variant-numeric:tabular-nums}
+
+/* track */
+.okbar{display:flex;align-items:center;gap:.5rem;background:var(--forest-soft);border:1px solid oklch(0.86 0.05 150);color:var(--forest);border-radius:.65rem;padding:.6rem .75rem;margin-top:.9rem}
+.okbar p{font-size:.74rem;font-weight:700}
+.panel{margin-top:.9rem;background:var(--card);border:1px solid var(--hairline);border-radius:.8rem;padding:.9rem}
+.panel h4{font-size:1.05rem;margin-bottom:.75rem;font-weight:600}
+.tl{position:relative;padding-left:1.9rem}
+.tl::before{content:"";position:absolute;left:.6rem;top:.35rem;bottom:.35rem;width:2px;background:var(--hairline)}
+.tl .fill{position:absolute;left:.6rem;top:.35rem;width:2px;background:var(--forest);border-radius:2px;height:60%}
+.node{position:relative;padding-bottom:1.1rem}
+.node:last-child{padding-bottom:0}
+.node .m{position:absolute;left:-1.9rem;top:-.05rem;width:1.25rem;height:1.25rem;border-radius:99px;background:var(--paper);border:2px solid var(--hairline);display:grid;place-items:center;color:var(--ink-mute)}
+.node.done .m{background:var(--forest);border-color:var(--forest);color:var(--paper)}
+.node.act .m{border-color:var(--ember);color:var(--ember);animation:ring 1.8s var(--ease) infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 oklch(0.55 0.185 37 /.45)}70%{box-shadow:0 0 0 7px oklch(0.55 0.185 37 /0)}100%{box-shadow:0 0 0 0 oklch(0.55 0.185 37 /0)}}
+.node h5{font-size:.92rem;font-weight:600}
+.node.act h5{color:var(--ember)}
+.node .s{font-size:.68rem;color:var(--ink-mute);margin-top:.1rem}
+.sofar{display:flex;justify-content:space-between;font-size:.76rem;padding:.2rem 0}
+.sofar .q{font-weight:700}
+.outline{width:100%;display:flex;align-items:center;justify-content:center;gap:.4rem;background:var(--card);color:var(--ink);border:1px solid var(--hairline);border-radius:.65rem;padding:.7rem;font-family:inherit;font-weight:700;font-size:.8rem;cursor:pointer;margin-top:.9rem}
+.outline:hover{border-color:var(--ink-soft)}
+.finish{margin-top:.9rem;background:var(--card);border:1px solid var(--hairline);border-radius:.8rem;padding:.9rem;text-align:center}
+.finish h5{font-size:1.05rem;font-weight:600}
+.finish p{font-size:.72rem;color:var(--ink-mute);margin:.25rem 0 .7rem}
+.btn-ember{width:100%;background:var(--ember);color:var(--paper);border:0;border-radius:.65rem;padding:.75rem;font-family:inherit;font-weight:700;font-size:.82rem;cursor:pointer}
+.btn-ember:hover{background:var(--ember-2)}
+
+/* reserve */
+.res-head{display:flex;align-items:center;gap:.7rem;margin:1.4rem 0 1rem}
+.res-head .ic{width:2.6rem;height:2.6rem;border-radius:.6rem;display:grid;place-items:center;background:var(--ember);color:var(--paper);flex:none}
+.res-head h3{font-size:1.5rem;line-height:1.05;font-weight:600}
+.res-head .s{font-size:.72rem;color:var(--ink-mute)}
+.field{margin-bottom:.7rem}
+.field label{display:block;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;margin-bottom:.35rem}
+.field .inp{width:100%;border:1px solid var(--hairline);background:var(--card);border-radius:.55rem;padding:.6rem .7rem;font-family:inherit;font-size:.82rem;color:var(--ink)}
+.field .inp::placeholder{color:var(--ink-mute)}
+.field .inp:focus{outline:none;border-color:var(--ember);box-shadow:0 0 0 3px oklch(0.55 0.185 37 /.14)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+  <header class="head">
+    <div class="kick">ToDining · Warm Editorial · Cormorant Garamond</div>
+    <h1>The guest flow, <em>set like a page</em></h1>
+    <p>Menu, cart, live tracking and reservations. Every real feature preserved: item photos, veg markers, sold-out states, the upsell, dining sessions, tax + service-charge math, and the running table total.</p>
+  </header>
+
+  <div class="rail">
+
+    <!-- ══════════ 1 · MENU ══════════ -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="sbar"><span>9:41</span><span class="sysicons"><svg class="si-sig" viewBox="0 0 18 12" width="16" height="10"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg class="si-bat" viewBox="0 0 26 12" width="22" height="10"><rect x=".5" y=".5" width="21" height="11" rx="3"/><rect x="2.2" y="2.2" width="14" height="7.6" rx="1.4" class="fill"/><rect x="23" y="4" width="2.4" height="4" rx="1" class="cap2"/></svg><span class="pct">100%</span></span></div>
+        <div class="scroll">
+          <div class="appbar"><div class="brand"><span class="seal">T</span><b>ToDining</b></div><span class="chip">Table 12</span></div>
+          <div class="pad">
+            <div class="intro">
+              <div class="est">Firewood Kitchen</div>
+              <h3>What are you <em>craving?</em></h3>
+              <div class="loc">Seasonal small plates &amp; open fire</div>
+            </div>
+            <div class="search">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              Search the menu
+            </div>
+            <div class="session">
+              <span class="l"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8M8 11h8"/></svg> Dining session · 2 orders</span>
+              <span class="a tnum">₹1,240 →</span>
+            </div>
+          </div>
+
+          <div class="pad"><div class="cats">
+            <span class="cat on">Small plates</span><span class="cat">From the fire</span><span class="cat">Sides</span><span class="cat">Dessert</span>
+          </div></div>
+
+          <div class="pad">
+            <div class="sec"><span class="n">01</span> Small plates</div>
+            <div class="legend"><span><i class="d-veg"></i>Veg</span><span><i class="d-chef"></i>Chef's pick</span><span><i class="d-spicy"></i>Spiced</span></div>
+
+            <div class="dish">
+              <div class="thumb"><img alt="" src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=200&q=70&auto=format&fit=crop" onerror="this.style.display='none'"></div>
+              <div>
+                <div class="dname"><h4>Charred octopus</h4><i class="d-chef" style="width:.4rem;height:.4rem;border-radius:99px;display:inline-block"></i></div>
+                <p>Ember-grilled over firewood, smoked paprika, salsa verde.</p>
+                <div class="drow"><span class="price">₹560</span><button class="add">＋ Add</button></div>
+              </div>
+            </div>
+
+            <div class="dish">
+              <div class="thumb"><img alt="" src="https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=200&q=70&auto=format&fit=crop" onerror="this.style.display='none'"></div>
+              <div>
+                <div class="dname"><h4>Burrata &amp; tomato</h4><span class="veg"><span></span></span></div>
+                <p>Basil oil, aged balsamic, sourdough crisp.</p>
+                <div class="drow"><span class="price">₹420</span>
+                  <span class="step"><button>−</button><span class="q">2</span><button>＋</button></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dish">
+              <div class="thumb"><img alt="" src="https://images.unsplash.com/photo-1633436375153-d7045cb93e38?w=200&q=70&auto=format&fit=crop" onerror="this.style.display='none'"></div>
+              <div>
+                <div class="dname"><h4>Truffle tagliatelle</h4></div>
+                <p>Hand-cut pasta, black truffle, 24-month parmesan.</p>
+                <div class="drow"><span class="price">₹480</span><button class="add">＋ Add</button></div>
+              </div>
+            </div>
+
+            <div class="dish" style="opacity:.7">
+              <div class="thumb"><img alt="" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&q=70&auto=format&fit=crop" onerror="this.style.display='none'"><span class="out"><span>Sold out</span></span></div>
+              <div>
+                <div class="dname"><h4>Garden grain bowl</h4><span class="veg"><span></span></span></div>
+                <p>Charred greens, farro, herb tahini, dukkah.</p>
+                <div class="drow"><span class="price">₹320</span><span class="unavail">Unavailable</span></div>
+              </div>
+            </div>
+            <div style="height:4.5rem"></div>
+          </div>
+        </div>
+        <div class="cartbar"><span class="n"><span class="b">3</span> In your cart</span><span class="go tnum">₹1,460 · View →</span></div>
+      </div></div>
+      <div class="cap"><b>01 Menu</b> · browse &amp; add</div>
+    </div>
+
+    <!-- ══════════ 2 · CART ══════════ -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="sbar"><span>9:44</span><span class="sysicons"><svg class="si-sig" viewBox="0 0 18 12" width="16" height="10"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg class="si-bat" viewBox="0 0 26 12" width="22" height="10"><rect x=".5" y=".5" width="21" height="11" rx="3"/><rect x="2.2" y="2.2" width="14" height="7.6" rx="1.4" class="fill"/><rect x="23" y="4" width="2.4" height="4" rx="1" class="cap2"/></svg><span class="pct">100%</span></span></div>
+        <div class="scroll"><div class="pad">
+          <button class="backlink"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> Add more items</button>
+          <h3 class="ptitle">Your order</h3>
+          <p class="psub">Table 12 · Firewood Kitchen</p>
+
+          <div class="lines">
+            <div class="cline">
+              <span class="th"><img alt="" src="https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=120&q=70&auto=format&fit=crop" onerror="this.style.display='none'"></span>
+              <div><h5>Charred octopus</h5><div class="u tnum">₹560 each</div>
+                <span class="step" style="margin-top:.35rem"><button>−</button><span class="q">1</span><button>＋</button></span>
+              </div>
+              <span class="lp">₹560</span>
+            </div>
+            <div class="cline">
+              <span class="th"><img alt="" src="https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=120&q=70&auto=format&fit=crop" onerror="this.style.display='none'"></span>
+              <div><h5>Burrata &amp; tomato</h5><div class="u tnum">₹420 each</div>
+                <span class="step" style="margin-top:.35rem"><button>−</button><span class="q">2</span><button>＋</button></span>
+              </div>
+              <span class="lp">₹840</span>
+            </div>
+          </div>
+
+          <div class="upsell">
+            <div class="t">Goes well with</div>
+            <div class="row">
+              <span class="th"><img alt="" src="https://images.unsplash.com/photo-1633436375153-d7045cb93e38?w=120&q=70&auto=format&fit=crop" onerror="this.style.display='none'"></span>
+              <div><h5>Truffle tagliatelle</h5><div class="p tnum">₹480</div></div>
+              <button class="add">＋ Add</button>
+            </div>
+          </div>
+
+          <div class="check">
+            <div class="trow"><span>Subtotal</span><b>₹1,400</b></div>
+            <div class="trow"><span>Tax (5%)</span><b>₹70</b></div>
+            <div class="trow"><span>Service charge (5%)</span><b>₹70</b></div>
+            <div class="grand"><span class="l">Total</span><span class="v">₹1,540</span></div>
+          </div>
+          <div style="height:4.5rem"></div>
+        </div></div>
+        <button class="cta">Place order · <span class="tnum">₹1,540</span></button>
+      </div></div>
+      <div class="cap"><b>02 Cart</b> · review &amp; place</div>
+    </div>
+
+    <!-- ══════════ 3 · TRACK ══════════ -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="sbar"><span>9:52</span><span class="sysicons"><svg class="si-sig" viewBox="0 0 18 12" width="16" height="10"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg class="si-bat" viewBox="0 0 26 12" width="22" height="10"><rect x=".5" y=".5" width="21" height="11" rx="3"/><rect x="2.2" y="2.2" width="14" height="7.6" rx="1.4" class="fill"/><rect x="23" y="4" width="2.4" height="4" rx="1" class="cap2"/></svg><span class="pct">100%</span></span></div>
+        <div class="scroll"><div class="pad">
+          <div class="okbar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            <p>Order #A24F8 placed at 9:47 PM</p>
+          </div>
+
+          <div class="panel">
+            <h4>Live status</h4>
+            <div class="tl">
+              <div class="fill"></div>
+              <div class="node done"><span class="m"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><h5>Order placed</h5><div class="s">Sent to the kitchen.</div></div>
+              <div class="node done"><span class="m"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><h5>Preparing</h5><div class="s">Chef Anand fired your plates.</div></div>
+              <div class="node act"><span class="m"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg></span><h5>Ready</h5><div class="s">On the pass. Your waiter is notified.</div></div>
+              <div class="node"><span class="m"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18M5 11V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4M4 11l1 8h14l1-8"/></svg></span><h5>Served</h5><div class="s">Enjoy, served by Priya.</div></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem">
+              <h4 style="margin:0">Your table so far</h4><span style="font-size:.6rem;color:var(--ink-mute);font-weight:600">Table 12 · 2 orders</span>
+            </div>
+            <div class="sofar"><span><span class="q">1×</span> Charred octopus</span><b class="tnum">₹560</b></div>
+            <div class="sofar"><span><span class="q">2×</span> Burrata &amp; tomato</span><b class="tnum">₹840</b></div>
+            <div class="sofar"><span><span class="q">1×</span> Truffle tagliatelle</span><b class="tnum">₹480</b></div>
+            <div class="grand" style="margin-top:.4rem;padding-top:.5rem"><span class="l">Running total</span><span class="v" style="font-size:1.2rem">₹1,880</span></div>
+          </div>
+
+          <button class="outline">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h1a2 2 0 0 0 2-2V2M6 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+            Order more items
+          </button>
+
+          <div class="finish">
+            <h5>Finished dining?</h5>
+            <p>Close your table and get one final bill for everything you ordered.</p>
+            <button class="btn-ember">Complete Dining · <span class="tnum">₹1,880</span></button>
+          </div>
+          <div style="height:1rem"></div>
+        </div></div>
+      </div></div>
+      <div class="cap"><b>03 Track</b> · live status &amp; finish</div>
+    </div>
+
+    <!-- ══════════ 4 · RESERVE ══════════ -->
+    <div>
+      <div class="phone"><div class="screen">
+        <div class="notch"></div>
+        <div class="sbar"><span>10:02</span><span class="sysicons"><svg class="si-sig" viewBox="0 0 18 12" width="16" height="10"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg><svg class="si-bat" viewBox="0 0 26 12" width="22" height="10"><rect x=".5" y=".5" width="21" height="11" rx="3"/><rect x="2.2" y="2.2" width="14" height="7.6" rx="1.4" class="fill"/><rect x="23" y="4" width="2.4" height="4" rx="1" class="cap2"/></svg><span class="pct">100%</span></span></div>
+        <div class="scroll"><div class="pad">
+          <div class="brand" style="margin-top:.9rem"><span class="seal">T</span><b>ToDining</b></div>
+
+          <div class="res-head">
+            <span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18m-9 5 2 2 4-4"/></svg></span>
+            <div><h3>Reserve a table</h3><div class="s">Firewood Kitchen · seasonal small plates</div></div>
+          </div>
+
+          <div class="field"><label>Your name</label><input class="inp" placeholder="Manoj V"></div>
+          <div class="field"><label>Phone</label><input class="inp" placeholder="+91 98765 43210"></div>
+          <div class="two">
+            <div class="field"><label>Date</label><input class="inp" type="date" value="2026-07-18"></div>
+            <div class="field"><label>Time</label><input class="inp" type="time" value="19:30"></div>
+          </div>
+          <div class="field"><label>Guests</label><input class="inp" type="number" value="4"></div>
+          <div class="field"><label>Notes (optional)</label><input class="inp" placeholder="Window table, birthday…"></div>
+
+          <button class="btn-ember" style="margin-top:.4rem">Request reservation</button>
+          <p style="text-align:center;font-size:.68rem;color:var(--ink-mute);margin-top:.6rem">You'll get a WhatsApp confirmation once it's approved.</p>
+
+          <div class="panel" style="text-align:center;margin-top:1.2rem;background:var(--forest-soft);border-color:oklch(0.86 0.05 150)">
+            <span style="display:grid;place-items:center;width:2.6rem;height:2.6rem;border-radius:99px;background:var(--forest);color:var(--paper);margin:0 auto .5rem">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </span>
+            <h4 style="margin:0">Reservation requested</h4>
+            <p style="font-size:.7rem;color:var(--ink-soft);margin-top:.3rem">Thanks Manoj, we've got your request for Fri 18 Jul, 7:30 PM for 4 guests.</p>
+          </div>
+          <div style="height:1rem"></div>
+        </div></div>
+      </div></div>
+      <div class="cap"><b>04 Reserve</b> · form &amp; confirmed state</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
