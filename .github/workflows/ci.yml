@@ -59,8 +59,17 @@ jobs:
             echo "::error::Missing repo secret DOKPLOY_DEPLOY_URL — add it under Settings → Secrets and variables → Actions (value = the Dokploy WEB app webhook URL)."
             exit 1
           fi
-          echo "Triggering Dokploy deploy for ${GITHUB_SHA::7}…"
-          code=$(curl -sS -X POST -o /dev/null -w '%{http_code}' --max-time 30 "$DEPLOY_URL")
+          echo "Triggering Dokploy deploy for ${GITHUB_SHA::7} on ${GITHUB_REF}…"
+          # Dokploy reads the branch out of the webhook PAYLOAD (GitHub push events
+          # carry `ref: refs/heads/<branch>`) and compares it to the app's configured
+          # branch. A bodyless POST has no branch, so Dokploy answers
+          #   HTTP 301 {"message":"Branch Not Match"}
+          # and does nothing. Send a GitHub-shaped push payload so the branch matches.
+          code=$(curl -sS -X POST \
+            -H 'Content-Type: application/json' \
+            -H 'X-GitHub-Event: push' \
+            -d "{\"ref\":\"${GITHUB_REF}\"}" \
+            -o /dev/null -w '%{http_code}' --max-time 30 "$DEPLOY_URL")
           echo "Dokploy responded: HTTP $code"
           case "$code" in
             2*) echo "✅ Deploy triggered. Dokploy is now cloning main + rebuilding — watch WEB → Deployments." ;;
