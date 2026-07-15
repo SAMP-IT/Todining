@@ -1,22 +1,33 @@
-name: CI
+name: CI/CD
 
-# Quality gate: type-check + production build on every push and PR to main.
-# (Deployment is handled separately by Dokploy's auto-deploy webhook.)
+# Pipeline
+#   push/PR to main → type-check + production build   (quality gate)
+#   push to main that PASSES → trigger a Dokploy redeploy
+#
+# The deploy is gated on `needs: ci`, so a broken build can never reach production.
+# (This replaces wiring Dokploy's webhook straight to GitHub, which would redeploy
+# on every push even when CI is red.)
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
 
+# Queue runs per branch rather than cancelling — never kill a deploy mid-flight.
+concurrency:
+  group: cicd-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  build:
+  ci:
+    name: Type-check & build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 22 # matches the Dockerfile build stage
           cache: npm
 
       - name: Install dependencies
@@ -27,3 +38,31 @@ jobs:
 
       - name: Production build
         run: npm run build
+
+  deploy:
+    name: Deploy to Dokploy
+    needs: ci # ← the gate: only runs if type-check + build are green
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: http://todining-web.51.79.254.198.nip.io
+    steps:
+      - name: Trigger Dokploy redeploy
+        env:
+          # Repo secret → Settings → Secrets and variables → Actions.
+          # Value = the WEB app's webhook URL from Dokploy → WEB → Deployments.
+          DEPLOY_URL: ${{ secrets.DOKPLOY_DEPLOY_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${DEPLOY_URL:-}" ]; then
+            echo "::error::Missing repo secret DOKPLOY_DEPLOY_URL — add it under Settings → Secrets and variables → Actions (value = the Dokploy WEB app webhook URL)."
+            exit 1
+          fi
+          echo "Triggering Dokploy deploy for ${GITHUB_SHA::7}…"
+          code=$(curl -sS -X POST -o /dev/null -w '%{http_code}' --max-time 30 "$DEPLOY_URL")
+          echo "Dokploy responded: HTTP $code"
+          case "$code" in
+            2*) echo "✅ Deploy triggered. Dokploy is now cloning main + rebuilding — watch WEB → Deployments." ;;
+            *)  echo "::error::Dokploy rejected the deploy trigger (HTTP $code). Check the webhook URL / that Dokploy is reachable."; exit 1 ;;
+          esac
