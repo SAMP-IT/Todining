@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { ArrowLeftRight, Building2, Check, Settings2, ShieldCheck } from 'lucide-react';
+import { ArrowLeftRight, Building2, Check, GitBranch, Settings2, ShieldCheck } from 'lucide-react';
 import type { Restaurant } from '@/types';
 import { useTenant } from '@/context/TenantContext';
 import { useAuth } from '@/context/AuthContext';
@@ -77,41 +77,66 @@ export function RestaurantsPage() {
 
   return (
     <div>
-      <PageHeader title="Restaurants" subtitle="Your restaurant workspace — menu, orders, staff and data, all in one place." />
+      <PageHeader title="Restaurants" subtitle="Your restaurant workspace: menu, orders, staff and data, all in one place." />
 
-      <div className="mb-5 flex items-start gap-3 rounded-2xl border border-sage-500/30 bg-sage-50 p-4">
+      {/* Isolation notice. Tinted forest panel with a hairline, never a side stripe. */}
+      <div className="mb-5 flex items-start gap-3 rounded-xl border border-sage-500/25 bg-sage-50 p-4">
         <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-sage-600" />
         <div>
-          <p className="font-semibold text-sage-700">This workspace is yours alone</p>
-          <p className="text-sm text-sage-600">Your menu, orders, bookings and staff are fully isolated to this restaurant. The counts below are scoped to it.</p>
+          <p className="font-display text-base font-semibold leading-tight text-sage-600">This workspace is yours alone</p>
+          <p className="mt-0.5 text-sm leading-relaxed text-sage-600/85">
+            Your menu, orders, bookings and staff are fully isolated to this restaurant. The counts below are scoped to it.
+          </p>
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
         {restaurants.map(({ restaurant: r, stats }) => {
           const isActive = r.id === restaurantId;
+          const isBranch = r.parentId != null;
+          const parent = isBranch ? allRestaurants.find((p) => p.id === r.parentId) : undefined;
           return (
-            <div key={r.id} className={cn('rounded-2xl border-2 bg-white p-5 shadow-soft transition-colors', isActive ? 'border-ember-300' : 'border-ink/5')}>
+            <div
+              key={r.id}
+              className={cn(
+                'rounded-xl border bg-white p-5 transition-colors',
+                isActive ? 'border-ember-500/40' : 'border-ink/10',
+              )}
+            >
               <div className="flex items-start justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="grid h-11 w-11 place-items-center rounded-xl text-base font-bold text-white" style={{ background: r.logoColor }}>
+                <div className="flex min-w-0 items-center gap-3">
+                  {/* Per-tenant branding: the owner's own colour, on their initial. */}
+                  <span
+                    className="grid h-11 w-11 shrink-0 place-items-center rounded-xl font-display text-lg font-semibold text-white"
+                    style={{ background: r.logoColor }}
+                  >
                     {r.name.charAt(0)}
                   </span>
-                  <div>
-                    <h3 className="font-display text-lg font-semibold leading-tight">{r.name}</h3>
-                    <p className="text-xs text-ink-muted">{r.tagline}</p>
+                  <div className="min-w-0">
+                    <h3 className="truncate font-display text-xl font-semibold leading-tight">{r.name}</h3>
+                    <p className="truncate text-[0.6rem] font-bold uppercase tracking-[0.16em] text-ink-muted">/{r.slug}</p>
                   </div>
                 </div>
-                {isActive ? <Badge tone="ember" dot>Active</Badge> : null}
+                {isActive ? <Badge tone="ember" dot className="shrink-0">Active</Badge> : null}
               </div>
 
-              <div className="mt-4 grid grid-cols-5 gap-2 text-center">
-                {[
+              {r.tagline && <p className="mt-2.5 text-sm leading-relaxed text-ink-soft">{r.tagline}</p>}
+
+              {isBranch && (
+                <p className="mt-2 flex items-center gap-1.5 text-[0.68rem] font-semibold text-ink-muted">
+                  <GitBranch className="h-3.5 w-3.5 shrink-0" />
+                  Branch of <span className="text-ink-soft">{parent?.name ?? 'its parent restaurant'}</span>
+                </p>
+              )}
+
+              {/* Counts, ruled like a printed index rather than boxed tiles. */}
+              <div className="mt-4 grid grid-cols-5 gap-1 border-y border-ink/10 py-2.5 text-center">
+                {([
                   ['Menu', stats.menu], ['Tables', stats.tables], ['Orders', stats.orders], ['Bookings', stats.reservations], ['Staff', stats.staff],
-                ].map(([label, val]) => (
-                  <div key={label as string} className="rounded-xl bg-cream-deep/50 py-2">
-                    <div className="font-display text-lg font-semibold">{val as number}</div>
-                    <div className="text-[10px] uppercase tracking-wide text-ink-muted">{label}</div>
+                ] as [string, number][]).map(([label, val]) => (
+                  <div key={label}>
+                    <div className="tnum font-display text-xl font-semibold leading-none">{val}</div>
+                    <div className="mt-1 text-[0.5rem] font-bold uppercase tracking-[0.1em] text-ink-muted">{label}</div>
                   </div>
                 ))}
               </div>
@@ -137,7 +162,7 @@ export function RestaurantsPage() {
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
         {active && (
           <p className="flex items-center gap-1.5 text-sm text-ink-muted">
-            <Building2 className="h-4 w-4" /> Currently managing <strong className="text-ink">{active.name}</strong>.
+            <Building2 className="h-4 w-4" /> Currently managing <strong className="font-semibold text-ink">{active.name}</strong>.
           </p>
         )}
       </div>
@@ -159,7 +184,7 @@ export function RestaurantsPage() {
           <Input label="Tagline" value={tagline} onChange={(e) => setTagline(e.target.value)} placeholder="e.g. Authentic Indian kitchen" />
           <div className="flex items-end gap-3">
             <Input label="Brand colour" type="color" value={logoColor} onChange={(e) => setLogoColor(e.target.value)} className="h-11 w-20 p-1" />
-            <span className="grid h-11 w-11 place-items-center rounded-xl text-base font-bold text-white" style={{ background: logoColor }}>
+            <span className="grid h-11 w-11 place-items-center rounded-xl font-display text-lg font-semibold text-white" style={{ background: logoColor }}>
               {(name || editing?.name || '?').charAt(0)}
             </span>
           </div>

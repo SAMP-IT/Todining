@@ -12,6 +12,9 @@ import { formatMoney, formatTime } from '@/lib/format';
 
 const FILTERS: ('all' | OrderStatus)[] = ['all', ...ORDER_STATUS_FLOW];
 
+/** Micro-caps column head, shared by every table on this screen. */
+const TH = 'px-3.5 py-2.5 text-[0.58rem] font-extrabold uppercase tracking-[0.14em] text-ink-muted';
+
 /** Human label for a day's order group: "Today", "Yesterday", or "Mon, 23 Jun 2026". */
 function dayLabel(iso: string): string {
   const d = parseISO(iso);
@@ -51,17 +54,23 @@ export function OrdersPage() {
     <div>
       <PageHeader title="Orders" subtitle="Every order across all tables, live." />
 
-      <div className="hide-scrollbar mb-4 flex gap-2 overflow-x-auto">
+      {/* Ink pills: the filter is a state, not an action, so it never takes ember. */}
+      <div className="hide-scrollbar mb-5 flex gap-1.5 overflow-x-auto pb-0.5">
         {FILTERS.map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
             className={cn(
-              'whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm font-semibold capitalize transition-colors',
-              filter === f ? 'bg-ink text-cream' : 'bg-white text-ink-soft hover:bg-cream-deep',
+              'whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[0.74rem] font-bold capitalize transition-colors',
+              filter === f
+                ? 'border-ink bg-ink text-cream'
+                : 'border-ink/10 bg-white text-ink-soft hover:border-ink/25 hover:text-ink',
             )}
           >
-            {f} {f !== 'all' && <span className="opacity-60">({orders.filter((o) => o.status === f).length})</span>}
+            {f}{' '}
+            {f !== 'all' && (
+              <span className="tnum opacity-60">({orders.filter((o) => o.status === f).length})</span>
+            )}
           </button>
         ))}
       </div>
@@ -78,33 +87,43 @@ export function OrdersPage() {
               .reduce((s, o) => s + o.total, 0);
             return (
               <div key={group.key}>
-                <div className="mb-2 flex items-center justify-between px-1">
-                  <h2 className="text-sm font-semibold text-ink">
-                    {group.label} <span className="font-normal text-ink-muted">· {group.orders.length} order{group.orders.length === 1 ? '' : 's'}</span>
+                <div className="flex items-baseline justify-between gap-3 px-0.5 pb-2">
+                  <h2 className="font-sans text-[0.78rem] font-bold text-ink">
+                    {group.label}{' '}
+                    <span className="tnum font-medium text-ink-muted">· {group.orders.length} order{group.orders.length === 1 ? '' : 's'}</span>
                   </h2>
-                  <span className="text-sm font-semibold text-ink-soft">{formatMoney(dayTotal, symbol)}</span>
+                  <span className="tnum font-display text-base font-semibold">{formatMoney(dayTotal, symbol)}</span>
                 </div>
-                <div className="overflow-hidden rounded-2xl border border-ink/5 bg-white shadow-soft">
-                  <table className="w-full text-sm">
-                    <thead className="bg-cream-deep/60 text-left text-xs uppercase tracking-wide text-ink-muted">
+                <div className="overflow-hidden rounded-xl border border-ink/10 bg-white">
+                  <table className="w-full text-left text-[0.82rem]">
+                    <thead className="bg-cream-deep">
                       <tr>
-                        <th className="px-4 py-3 font-semibold">Order</th>
-                        <th className="px-4 py-3 font-semibold">Table</th>
-                        <th className="hidden px-4 py-3 font-semibold sm:table-cell">Items</th>
-                        <th className="px-4 py-3 font-semibold">Total</th>
-                        <th className="hidden px-4 py-3 font-semibold sm:table-cell">Time</th>
-                        <th className="px-4 py-3 font-semibold">Status</th>
+                        <th className={TH}>Order</th>
+                        <th className={TH}>Table</th>
+                        <th className={cn(TH, 'hidden sm:table-cell')}>Items</th>
+                        <th className={TH}>Total</th>
+                        <th className={cn(TH, 'hidden sm:table-cell')}>Time</th>
+                        <th className={TH}>Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-ink/5">
+                    <tbody>
                       {group.orders.map((o) => (
-                        <tr key={o.id} className="cursor-pointer hover:bg-cream-deep/40" onClick={() => setSelected(o)}>
-                          <td className="px-4 py-3 font-semibold">#{o.id.slice(-5).toUpperCase()}</td>
-                          <td className="px-4 py-3">T{o.tableNumber}</td>
-                          <td className="hidden px-4 py-3 text-ink-soft sm:table-cell">{o.items.reduce((s, i) => s + i.qty, 0)} items</td>
-                          <td className="px-4 py-3 font-semibold">{formatMoney(o.total, symbol)}</td>
-                          <td className="hidden px-4 py-3 text-ink-muted sm:table-cell">{formatTime(o.createdAt)}</td>
-                          <td className="px-4 py-3"><OrderStatusBadge status={o.status} /></td>
+                        <tr
+                          key={o.id}
+                          className="cursor-pointer border-t border-ink/10 transition-colors hover:bg-cream-deep/50"
+                          onClick={() => setSelected(o)}
+                        >
+                          <td className="tnum px-3.5 py-2.5 font-bold">#{o.id.slice(-5).toUpperCase()}</td>
+                          <td className="tnum px-3.5 py-2.5">T{o.tableNumber}</td>
+                          <td className="tnum hidden px-3.5 py-2.5 text-ink-muted sm:table-cell">
+                            {(() => {
+                              const n = o.items.reduce((s, i) => s + i.qty, 0);
+                              return `${n} item${n === 1 ? '' : 's'}`;
+                            })()}
+                          </td>
+                          <td className="tnum px-3.5 py-2.5 font-display text-[0.95rem] font-semibold">{formatMoney(o.total, symbol)}</td>
+                          <td className="tnum hidden px-3.5 py-2.5 text-ink-muted sm:table-cell">{formatTime(o.createdAt)}</td>
+                          <td className="px-3.5 py-2.5"><OrderStatusBadge status={o.status} /></td>
                         </tr>
                       ))}
                     </tbody>
@@ -123,25 +142,32 @@ export function OrdersPage() {
         description={selectedLive ? `Table ${selectedLive.tableNumber} · ${formatTime(selectedLive.createdAt)}` : ''}
       >
         {selectedLive && (
-          <div className="space-y-4">
-            <div className="space-y-2">
+          <div>
+            {/* The printed check: items, then the charges, then a heavy rule
+                under the grand total. */}
+            <div className="space-y-0.5">
               {selectedLive.items.map((it) => (
-                <div key={it.id} className="flex items-center justify-between text-sm">
-                  <span><span className="font-semibold">{it.qty}×</span> {it.name}</span>
-                  <span className="font-medium">{formatMoney(it.unitPrice * it.qty, symbol)}</span>
+                <div key={it.id} className="flex items-baseline justify-between gap-4 py-1 text-[0.82rem]">
+                  <span><span className="tnum font-bold">{it.qty}×</span> {it.name}</span>
+                  <span className="tnum shrink-0">{formatMoney(it.unitPrice * it.qty, symbol)}</span>
                 </div>
               ))}
             </div>
-            <div className="space-y-1 border-t border-ink/8 pt-3 text-sm">
+
+            <div className="mt-2 space-y-0.5 border-t border-ink/10 pt-2">
               <Row label="Subtotal" value={formatMoney(selectedLive.subtotal, symbol)} />
               <Row label="Tax" value={formatMoney(selectedLive.tax, symbol)} />
               <Row label="Service charge" value={formatMoney(selectedLive.serviceCharge, symbol)} />
-              <div className="flex justify-between pt-1 font-bold"><span>Total</span><span>{formatMoney(selectedLive.total, symbol)}</span></div>
             </div>
 
-            <div>
-              <p className="mb-2 text-sm font-semibold">Update status</p>
-              <div className="flex flex-wrap gap-2">
+            <div className="mt-2 flex items-baseline justify-between gap-4 border-t-[1.5px] border-ink pt-2.5">
+              <span className="font-display text-base font-semibold">Total</span>
+              <span className="tnum font-display text-[1.4rem] font-bold leading-none">{formatMoney(selectedLive.total, symbol)}</span>
+            </div>
+
+            <div className="mt-5 border-t border-ink/10 pt-4">
+              <p className="mb-2 text-[0.58rem] font-extrabold uppercase tracking-[0.14em] text-ink-muted">Update status</p>
+              <div className="flex flex-wrap gap-1.5">
                 {ORDER_STATUS_FLOW.map((s) => (
                   <button
                     key={s}
@@ -155,8 +181,12 @@ export function OrdersPage() {
                         : orderService.setStatus(selectedLive.id, s)
                     }
                     className={cn(
-                      'rounded-xl px-3 py-1.5 text-sm font-semibold capitalize transition-colors',
-                      selectedLive.status === s ? 'bg-ember-500 text-white' : 'bg-ink/5 text-ink-soft hover:bg-ink/10',
+                      'rounded-lg border px-3 py-1.5 text-[0.74rem] font-bold capitalize transition-colors',
+                      // The current status is where you are (ink); the rest are
+                      // the actions available from here.
+                      selectedLive.status === s
+                        ? 'border-ink bg-ink text-cream'
+                        : 'border-ink/10 bg-white text-ink-soft hover:border-ember-500 hover:bg-ember-100 hover:text-ember-600',
                     )}
                   >
                     {s}
@@ -173,9 +203,9 @@ export function OrdersPage() {
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between text-ink-soft">
+    <div className="flex items-baseline justify-between gap-4 py-0.5 text-[0.82rem] text-ink-muted">
       <span>{label}</span>
-      <span className="font-medium text-ink">{value}</span>
+      <span className="tnum shrink-0">{value}</span>
     </div>
   );
 }

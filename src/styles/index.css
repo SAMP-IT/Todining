@@ -41,12 +41,13 @@
      display type must use lining figures. */
   h1, h2, h3, h4 {
     @apply font-display font-semibold tracking-tight text-ink;
-    font-variant-numeric: lining-nums;
   }
 
-  /* Money and data: align on their figures, and force lining figures — note
-     `tabular-nums` alone does NOT override Cormorant's oldstyle default. */
-  .tnum { font-variant-numeric: tabular-nums lining-nums; }
+  /* Anything set in the display face gets lining figures. Declared in `base` so
+     the `.tnum` utility (components layer) still wins where both apply. */
+  h1, h2, h3, h4, .font-display {
+    font-variant-numeric: lining-nums;
+  }
 
   *:focus-visible {
     @apply outline-none ring-2 ring-ember-500/60 ring-offset-2 ring-offset-cream rounded;
@@ -56,6 +57,13 @@
 @layer components {
   .card-surface {
     @apply rounded-2xl border border-ink/10 bg-white shadow-soft;
+  }
+
+  /* Money and data: align on their figures, and force lining figures. Note
+     `tabular-nums` alone does NOT override Cormorant's oldstyle default, and
+     this sits in `components` so it beats the base display rule above. */
+  .tnum {
+    font-variant-numeric: tabular-nums lining-nums;
   }
 
   .hide-scrollbar::-webkit-scrollbar {

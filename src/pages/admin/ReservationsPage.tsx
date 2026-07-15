@@ -40,19 +40,26 @@ export function ReservationsPage() {
 
   return (
     <div>
-      <PageHeader title="Reservations" subtitle="Approve, reschedule or cancel — guests get a WhatsApp on confirm." />
+      <PageHeader title="Reservations" subtitle="Approve, reschedule or cancel. Guests get a WhatsApp on confirm." />
 
-      <div className="hide-scrollbar mb-4 flex gap-2 overflow-x-auto">
+      {/* Ink pills, same language as Orders: the filter is a state, not an
+          action, so it never takes ember. */}
+      <div className="hide-scrollbar mb-5 flex gap-1.5 overflow-x-auto pb-0.5">
         {FILTERS.map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
             className={cn(
-              'whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm font-semibold capitalize transition-colors',
-              filter === f ? 'bg-ink text-cream' : 'bg-white text-ink-soft hover:bg-cream-deep',
+              'whitespace-nowrap rounded-full border px-3.5 py-1.5 text-[0.74rem] font-bold capitalize transition-colors',
+              filter === f
+                ? 'border-ink bg-ink text-cream'
+                : 'border-ink/10 bg-white text-ink-soft hover:border-ink/25 hover:text-ink',
             )}
           >
-            {f} {f !== 'all' && <span className="opacity-60">({reservations.filter((r) => r.status === f).length})</span>}
+            {f}{' '}
+            {f !== 'all' && (
+              <span className="tnum opacity-60">({reservations.filter((r) => r.status === f).length})</span>
+            )}
           </button>
         ))}
       </div>
@@ -65,7 +72,7 @@ export function ReservationsPage() {
             <ReservationCard
               key={r.id}
               reservation={r}
-              onConfirm={(id) => { reservationService.setStatus(id, 'confirmed'); toast.success('Confirmed — WhatsApp sent to guest.'); }}
+              onConfirm={(id) => { reservationService.setStatus(id, 'confirmed'); toast.success('Confirmed · WhatsApp sent to guest.'); }}
               onCancel={(id) => { reservationService.setStatus(id, 'cancelled'); toast('Reservation cancelled.'); }}
               onComplete={(id) => { reservationService.setStatus(id, 'completed'); toast.success('Marked completed.'); }}
               onReschedule={openReschedule}
@@ -87,8 +94,8 @@ export function ReservationsPage() {
         }
       >
         <div className="grid grid-cols-2 gap-4">
-          <Input label="New date" type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
-          <Input label="New time" type="time" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
+          <Input className="tnum" label="New date" type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
+          <Input className="tnum" label="New time" type="time" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
         </div>
       </Modal>
     </div>

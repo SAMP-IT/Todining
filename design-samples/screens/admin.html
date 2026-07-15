@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ToDining · Admin (shell · dashboard · orders)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:oklch(0.976 0.008 78);--paper-2:oklch(0.958 0.013 74);--card:oklch(0.995 0.004 80);
+  --hairline:oklch(0.83 0.014 60);--rule:oklch(0.72 0.02 55);
+  --ink:oklch(0.235 0.022 42);--ink-soft:oklch(0.40 0.022 44);--ink-mute:oklch(0.565 0.018 52);
+  --ember:oklch(0.55 0.185 37);--ember-2:oklch(0.48 0.18 35);--ember-soft:oklch(0.935 0.038 46);
+  --forest:oklch(0.44 0.085 152);--forest-soft:oklch(0.93 0.04 150);
+  --gold:oklch(0.52 0.09 78);--gold-soft:oklch(0.94 0.05 84);
+  --blue:oklch(0.5 0.1 250);--blue-soft:oklch(0.93 0.03 250);
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Plus Jakarta Sans",system-ui,sans-serif;color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,h5{font-family:"Cormorant Garamond",serif;font-weight:600;letter-spacing:-.015em;font-variant-numeric:lining-nums}
+.tnum{font-variant-numeric:tabular-nums lining-nums}
+.grain{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E")}
+main{position:relative;z-index:1}
+.slab{max-width:1340px;margin:0 auto;padding:3rem 2rem .8rem}
+.slab .k{font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ember);font-weight:700}
+.slab h2{font-size:2rem;margin-top:.4rem}
+.slab p{color:var(--ink-mute);font-size:.86rem;margin-top:.3rem;max-width:80ch}
+.frame{max-width:1340px;margin:1rem auto 0;border:1px solid var(--hairline);border-radius:1rem;overflow:hidden;background:var(--paper);box-shadow:0 30px 60px -40px oklch(0.35 0.03 45 /.4)}
+
+/* ── SHELL ── */
+.shell{display:grid;grid-template-columns:15.5rem 1fr;min-height:720px}
+.side{border-right:1px solid var(--hairline);background:oklch(0.966 0.011 76);padding:1rem;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:.55rem;padding:.4rem .3rem}
+.seal{width:1.9rem;height:1.9rem;border:1.2px solid var(--ink);border-radius:99px;display:grid;place-items:center;font-family:"Cormorant Garamond",serif;font-weight:600;font-size:.88rem}
+.brand b{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1.25rem}
+.switch{margin-top:.9rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;border:1px solid var(--hairline);background:var(--card);border-radius:.55rem;padding:.5rem .6rem;font-size:.8rem;font-weight:700;cursor:pointer}
+.switch .dot{width:.4rem;height:.4rem;border-radius:99px;background:var(--forest)}
+.switch .l{display:flex;align-items:center;gap:.4rem}
+.navlab{font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink-mute);font-weight:700;margin:1.2rem .3rem .5rem}
+nav{display:flex;flex-direction:column;gap:.1rem}
+.nav{display:flex;align-items:center;gap:.65rem;border-radius:.5rem;padding:.5rem .6rem;font-size:.83rem;font-weight:600;color:var(--ink-soft);text-decoration:none;transition:all .2s var(--ease)}
+.nav:hover{background:oklch(0.235 0.022 42 /.05);color:var(--ink)}
+.nav.on{background:var(--ink);color:var(--paper)}
+.nav svg{flex:none;opacity:.85}
+.nav .up{margin-left:auto;width:.4rem;height:.4rem;border-radius:99px;background:var(--forest)}
+.user{margin-top:auto;display:flex;align-items:center;gap:.6rem;border:1px solid var(--hairline);background:var(--card);border-radius:.6rem;padding:.5rem}
+.user .av{width:2.1rem;height:2.1rem;border-radius:.45rem;background:var(--ember);color:var(--paper);display:grid;place-items:center;font-weight:800;font-size:.8rem;flex:none}
+.user .nm{font-size:.8rem;font-weight:700;line-height:1.1}
+.user .rl{font-size:.66rem;color:var(--ink-mute)}
+.user .out{margin-left:auto;color:var(--ink-mute);background:none;border:0;cursor:pointer;padding:.3rem;border-radius:.35rem}
+.user .out:hover{color:var(--ember);background:var(--ember-soft)}
+
+.content{padding:1.8rem 2rem;overflow:auto}
+.phead{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:1.4rem}
+.phead h1{font-size:2.2rem;line-height:1}
+.phead .s{font-size:.82rem;color:var(--ink-mute);margin-top:.3rem}
+.btn{border:0;border-radius:.55rem;padding:.6rem 1rem;font-family:inherit;font-weight:700;font-size:.8rem;cursor:pointer;transition:all .25s var(--ease)}
+.btn-ember{background:var(--ember);color:var(--paper)}.btn-ember:hover{background:var(--ember-2)}
+.btn-out{background:var(--card);color:var(--ink);border:1px solid var(--hairline)}.btn-out:hover{border-color:var(--ink-soft)}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin-bottom:1.4rem}
+.kpi{border:1px solid var(--hairline);border-radius:.75rem;background:var(--card);padding:.85rem .95rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.6rem}
+.kpi .l{font-size:.6rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute)}
+.kpi .v{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:2rem;line-height:1;margin-top:.3rem;font-variant-numeric:tabular-nums lining-nums}
+.kpi .ic{width:1.9rem;height:1.9rem;border-radius:.45rem;display:grid;place-items:center;flex:none}
+.ic-ember{background:var(--ember-soft);color:var(--ember-2)}
+.ic-forest{background:var(--forest-soft);color:var(--forest)}
+.ic-gold{background:var(--gold-soft);color:var(--gold)}
+.ic-ink{background:oklch(0.235 0.022 42 /.07);color:var(--ink-soft)}
+
+.grid3{display:grid;grid-template-columns:2fr 1fr;gap:1rem;align-items:start}
+.card{border:1px solid var(--hairline);border-radius:.85rem;background:var(--card);padding:1.1rem}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
+.card-h h3{font-size:1.3rem}
+.link{font-size:.76rem;font-weight:700;color:var(--ember);text-decoration:none;display:inline-flex;align-items:center;gap:.3rem}
+.link:hover{color:var(--ember-2)}
+
+.row{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.6rem 0;border-bottom:1px solid var(--hairline)}
+.row:last-child{border-bottom:0}
+.row .l{display:flex;align-items:center;gap:.7rem}
+.tchip{width:2.1rem;height:2.1rem;border-radius:.45rem;background:oklch(0.235 0.022 42 /.06);display:grid;place-items:center;font-size:.68rem;font-weight:800;color:var(--ink-soft);font-variant-numeric:lining-nums}
+.row .id{font-size:.82rem;font-weight:700}
+.row .sub{font-size:.68rem;color:var(--ink-mute)}
+.row .r{display:flex;align-items:center;gap:.7rem}
+.row .amt{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1rem;font-variant-numeric:tabular-nums lining-nums}
+.badge{font-size:.56rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:.2rem .45rem;border-radius:.3rem;display:inline-flex;align-items:center;gap:.25rem}
+.badge i{width:.3rem;height:.3rem;border-radius:99px;background:currentColor}
+.b-gold{background:var(--gold-soft);color:var(--gold)}
+.b-ember{background:var(--ember-soft);color:var(--ember-2)}
+.b-blue{background:var(--blue-soft);color:var(--blue)}
+.b-forest{background:var(--forest-soft);color:var(--forest)}
+.b-neutral{background:oklch(0.235 0.022 42 /.06);color:var(--ink-soft)}
+
+.qa{display:flex;flex-direction:column;gap:.45rem}
+.qa a{display:flex;align-items:center;justify-content:space-between;gap:.6rem;border:1px solid var(--hairline);border-radius:.55rem;padding:.6rem .7rem;font-size:.8rem;font-weight:600;color:var(--ink);text-decoration:none;transition:all .2s var(--ease)}
+.qa a:hover{border-color:var(--ember);background:var(--ember-soft)}
+.qa .ic{width:1.7rem;height:1.7rem;border-radius:.4rem;background:var(--ember-soft);color:var(--ember-2);display:grid;place-items:center;flex:none}
+.qa .l{display:flex;align-items:center;gap:.6rem}
+
+/* ORDERS: filters + table */
+.filters{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.f{font-size:.74rem;font-weight:700;color:var(--ink-soft);background:var(--card);border:1px solid var(--hairline);padding:.4rem .8rem;border-radius:99px;cursor:pointer;text-transform:capitalize}
+.f.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.f .c{opacity:.55;margin-left:.15rem}
+.daygrp{margin-bottom:1.4rem}
+.dayh{display:flex;align-items:baseline;justify-content:space-between;padding:0 .2rem .5rem}
+.dayh .d{font-size:.78rem;font-weight:700}
+.dayh .d span{font-weight:500;color:var(--ink-mute)}
+.dayh .t{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:1rem;font-variant-numeric:tabular-nums lining-nums}
+table{width:100%;border-collapse:collapse;font-size:.82rem;background:var(--card);border:1px solid var(--hairline);border-radius:.75rem;overflow:hidden}
+thead{background:var(--paper-2)}
+th{text-align:left;padding:.6rem .9rem;font-size:.58rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute)}
+td{padding:.65rem .9rem;border-top:1px solid var(--hairline)}
+tbody tr{cursor:pointer;transition:background .2s var(--ease)}
+tbody tr:hover{background:var(--paper-2)}
+td.id{font-weight:700}
+td.amt{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:.95rem;font-variant-numeric:tabular-nums lining-nums}
+td.mut{color:var(--ink-mute)}
+
+/* modal */
+.modal-wrap{position:relative;height:520px;border-radius:.85rem;overflow:hidden;border:1px solid var(--hairline)}
+.modal-bg{position:absolute;inset:0;background:oklch(0.235 0.022 42 /.4);backdrop-filter:blur(3px)}
+.modal{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(28rem,90%);background:var(--card);border-radius:.9rem;border:1px solid var(--hairline);box-shadow:0 30px 60px -20px oklch(0.2 0.02 40 /.4);overflow:hidden}
+.modal-h{padding:1rem 1.1rem;border-bottom:1px solid var(--hairline);display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
+.modal-h h3{font-size:1.35rem}
+.modal-h .s{font-size:.72rem;color:var(--ink-mute);margin-top:.15rem}
+.modal-h .x{border:0;background:none;color:var(--ink-mute);cursor:pointer;padding:.2rem;border-radius:.3rem}
+.modal-b{padding:1.1rem}
+.mrow{display:flex;justify-content:space-between;font-size:.82rem;padding:.3rem 0}
+.mtot{display:flex;justify-content:space-between;align-items:baseline;margin-top:.5rem;padding-top:.6rem;border-top:1.5px solid var(--ink)}
+.mtot .l{font-family:"Cormorant Garamond",serif;font-size:1rem;font-weight:600}
+.mtot .v{font-family:"Cormorant Garamond",serif;font-weight:700;font-size:1.4rem;font-variant-numeric:tabular-nums lining-nums}
+.modal-f{padding:.9rem 1.1rem;border-top:1px solid var(--hairline);display:flex;gap:.5rem;justify-content:flex-end;background:var(--paper)}
+
+/* phones */
+.phones{max-width:1340px;margin:1rem auto 0;padding:0 2rem;display:grid;grid-template-columns:repeat(2,minmax(0,340px));gap:2rem;justify-content:start}
+@media(max-width:800px){.phones{grid-template-columns:1fr;justify-content:center}}
+.phone{border-radius:2.2rem;padding:.45rem;background:linear-gradient(180deg,oklch(0.9 0.01 60),oklch(0.83 0.014 55));box-shadow:0 40px 70px -34px oklch(0.35 0.03 45 /.5)}
+.screen{position:relative;border-radius:1.85rem;overflow:hidden;background:var(--paper);height:660px}
+.scroll{height:100%;overflow:auto;scrollbar-width:none}
+.scroll::-webkit-scrollbar{width:0}
+.mtop{display:flex;align-items:center;justify-content:space-between;padding:.7rem .9rem;border-bottom:1px solid var(--hairline);background:oklch(0.976 0.008 78 /.95);position:sticky;top:0;z-index:5}
+.burger{border:1px solid var(--hairline);background:var(--card);border-radius:.45rem;padding:.35rem;display:grid;place-items:center;cursor:pointer}
+.cap{text-align:center;margin-top:.8rem;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-mute);font-weight:700}
+.cap b{color:var(--ink)}
+/* drawer mock */
+.drawer-wrap{position:absolute;inset:0;z-index:10}
+.drawer-bg{position:absolute;inset:0;background:oklch(0.235 0.022 42 /.45);backdrop-filter:blur(2px)}
+.drawer{position:absolute;left:0;top:0;bottom:0;width:15rem;background:var(--paper);padding:.9rem;display:flex;flex-direction:column;box-shadow:0 0 40px oklch(0.2 0.02 40 /.3)}
+/* phone-scoped layout overrides (media queries key off the viewport, not the frame) */
+.phone .kpis{grid-template-columns:repeat(2,1fr);gap:.5rem}
+.phone .grid3{grid-template-columns:1fr}
+.phone .content{padding:1rem}
+.phone .phead h1{font-size:1.7rem}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<main>
+
+<!-- ═══════ DASHBOARD ═══════ -->
+<div class="slab">
+  <div class="k">Admin · 01</div>
+  <h2>The shell &amp; dashboard</h2>
+  <p>Operators live here for hours, so it stays calm and dense: an editorial sidebar, hairline cards, and one accent. Two fixes vs. today: the active nav was a solid <b>ember</b> pill (ember is the action colour, it should not mark "you are here", so active is now ink), and the unseen-update dot used <b>emerald-500</b>, a colour that is not in the palette (now forest/sage).</p>
+</div>
+<div class="frame">
+  <div class="shell">
+    <aside class="side">
+      <div class="brand"><span class="seal">T</span><b>ToDining</b></div>
+      <div class="switch"><span class="l"><span class="dot"></span> Velans</span><span style="color:var(--ink-mute)">⌄</span></div>
+
+      <div class="navlab">Operations</div>
+      <nav>
+        <a class="nav on" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg> Dashboard</a>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8M8 11h8"/></svg> Orders <span class="up"></span></a>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Tables &amp; QR</a>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 2v7c0 1.1.9 2 2 2h1a2 2 0 0 0 2-2V2M6 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg> Menu</a>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18M3 12h18M3 19h18"/></svg> Categories</a>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Reservations <span class="up"></span></a>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/></svg> Inventory</a>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3h12M6 8h12M9 13h6M10 3v10a4 4 0 0 0 8 0"/></svg> Billing</a>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Notifications</a>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg> Staff</a>
+      </nav>
+
+      <div class="navlab">Owner</div>
+      <nav>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 16l4-6 4 3 5-8"/></svg> Analytics</a>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3 6 6 .9-4.5 4.2 1 6.4-5.5-3-5.5 3 1-6.4L3 8.9 9 8z"/></svg> Feedback</a>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h1m4 0h1M9 13h1m4 0h1M9 17h1m4 0h1"/></svg> Restaurants</a>
+      </nav>
+
+      <div class="user">
+        <span class="av">A</span>
+        <div><div class="nm">Arun</div><div class="rl">Manager</div></div>
+        <button class="out"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+      </div>
+    </aside>
+
+    <section class="content">
+      <div class="phead">
+        <div><h1>Dashboard</h1><div class="s">Overview for Velans.</div></div>
+        <button class="btn btn-out">Today ⌄</button>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><div><div class="l">Menu items</div><div class="v">24</div></div><span class="ic ic-ember"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 2v7c0 1.1.9 2 2 2h1a2 2 0 0 0 2-2V2M6 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></span></div>
+        <div class="kpi"><div><div class="l">Total orders</div><div class="v">138</div></div><span class="ic ic-forest"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0"/></svg></span></div>
+        <div class="kpi"><div><div class="l">Tables</div><div class="v">8</div></div><span class="ic ic-gold"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span></div>
+        <div class="kpi"><div><div class="l">Today's revenue</div><div class="v">₹18,420</div></div><span class="ic ic-ink"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3h12M6 8h12M9 13h6M10 3v10a4 4 0 0 0 8 0"/></svg></span></div>
+      </div>
+
+      <div class="grid3">
+        <div class="card">
+          <div class="card-h"><h3>Recent orders</h3><a class="link" href="#">View all →</a></div>
+          <div class="row"><span class="l"><span class="tchip">T1</span><span><div class="id">#F03RW</div><div class="sub">2 items</div></span></span><span class="r"><span class="amt">₹552</span><span class="badge b-gold"><i></i>Pending</span></span></div>
+          <div class="row"><span class="l"><span class="tchip">T3</span><span><div class="id">#K92LX</div><div class="sub">3 items</div></span></span><span class="r"><span class="amt">₹1,240</span><span class="badge b-ember"><i></i>Preparing</span></span></div>
+          <div class="row"><span class="l"><span class="tchip">T12</span><span><div class="id">#A24F8</div><div class="sub">1 item</div></span></span><span class="r"><span class="amt">₹320</span><span class="badge b-blue"><i></i>Ready</span></span></div>
+          <div class="row"><span class="l"><span class="tchip">T5</span><span><div class="id">#R18KD</div><div class="sub">4 items</div></span></span><span class="r"><span class="amt">₹980</span><span class="badge b-forest"><i></i>Served</span></span></div>
+          <div class="row"><span class="l"><span class="tchip">T8</span><span><div class="id">#M40TZ</div><div class="sub">2 items</div></span></span><span class="r"><span class="amt">₹640</span><span class="badge b-neutral"><i></i>Completed</span></span></div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3>Quick actions</h3></div>
+          <div class="qa">
+            <a href="#"><span class="l"><span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 2v7c0 1.1.9 2 2 2h1a2 2 0 0 0 2-2V2M6 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg></span> Manage menu</span><span style="color:var(--ink-mute)">→</span></a>
+            <a href="#"><span class="l"><span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18M3 12h18M3 19h18"/></svg></span> Manage categories</span><span style="color:var(--ink-mute)">→</span></a>
+            <a href="#"><span class="l"><span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span> Tables &amp; QR</span><span style="color:var(--ink-mute)">→</span></a>
+            <a href="#"><span class="l"><span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/></svg></span> View orders</span><span style="color:var(--ink-mute)">→</span></a>
+            <a href="#"><span class="l"><span class="ic"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></span> Reservations</span><span style="color:var(--ink-mute)">→</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ═══════ ORDERS ═══════ -->
+<div class="slab">
+  <div class="k">Admin · 02</div>
+  <h2>Orders: filters, day groups, table, modal</h2>
+  <p>The pattern the data-heavy screens reuse: ink filter pills, day groups with a completed-only revenue total, a hairline table with micro-caps headers, and the order detail modal.</p>
+</div>
+<div class="frame">
+  <div class="shell">
+    <aside class="side">
+      <div class="brand"><span class="seal">T</span><b>ToDining</b></div>
+      <div class="switch"><span class="l"><span class="dot"></span> Velans</span><span style="color:var(--ink-mute)">⌄</span></div>
+      <div class="navlab">Operations</div>
+      <nav>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg> Dashboard</a>
+        <a class="nav on" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 7h8M8 11h8"/></svg> Orders</a>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Tables &amp; QR</a>
+        <a class="nav" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 2v7c0 1.1.9 2 2 2h1a2 2 0 0 0 2-2V2M6 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg> Menu</a>
+      </nav>
+      <div class="user" style="margin-top:auto">
+        <span class="av">A</span><div><div class="nm">Arun</div><div class="rl">Manager</div></div>
+      </div>
+    </aside>
+
+    <section class="content">
+      <div class="phead">
+        <div><h1>Orders</h1><div class="s">Every order placed at Velans.</div></div>
+      </div>
+
+      <div class="filters">
+        <span class="f on">All</span>
+        <span class="f">Pending <span class="c">(2)</span></span>
+        <span class="f">Preparing <span class="c">(1)</span></span>
+        <span class="f">Ready <span class="c">(1)</span></span>
+        <span class="f">Served <span class="c">(3)</span></span>
+        <span class="f">Completed <span class="c">(9)</span></span>
+      </div>
+
+      <div class="daygrp">
+        <div class="dayh"><span class="d">Today <span>· 4 orders</span></span><span class="t">₹1,620</span></div>
+        <table>
+          <thead><tr><th>Order</th><th>Table</th><th>Items</th><th>Total</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="id">#F03RW</td><td>T1</td><td class="mut">3 items</td><td class="amt">₹552</td><td class="mut">6:34 AM</td><td><span class="badge b-gold"><i></i>Pending</span></td></tr>
+            <tr><td class="id">#K92LX</td><td>T3</td><td class="mut">3 items</td><td class="amt">₹1,240</td><td class="mut">9:12 PM</td><td><span class="badge b-ember"><i></i>Preparing</span></td></tr>
+            <tr><td class="id">#A24F8</td><td>T12</td><td class="mut">1 item</td><td class="amt">₹320</td><td class="mut">9:47 PM</td><td><span class="badge b-blue"><i></i>Ready</span></td></tr>
+            <tr><td class="id">#M40TZ</td><td>T8</td><td class="mut">2 items</td><td class="amt">₹640</td><td class="mut">8:02 PM</td><td><span class="badge b-neutral"><i></i>Completed</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="daygrp" style="margin-bottom:0">
+        <div class="dayh"><span class="d">Yesterday <span>· 2 orders</span></span><span class="t">₹980</span></div>
+        <table>
+          <thead><tr><th>Order</th><th>Table</th><th>Items</th><th>Total</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td class="id">#R18KD</td><td>T5</td><td class="mut">4 items</td><td class="amt">₹980</td><td class="mut">7:41 PM</td><td><span class="badge b-neutral"><i></i>Completed</span></td></tr>
+            <tr><td class="id">#B71QP</td><td>T6</td><td class="mut">1 item</td><td class="amt">₹560</td><td class="mut">7:05 PM</td><td><span class="badge b-forest"><i></i>Served</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ═══════ MODAL ═══════ -->
+<div class="slab">
+  <div class="k">Admin · 03</div>
+  <h2>Order detail modal</h2>
+  <p>Used across Orders, Billing, Tables, Staff, Menu and Inventory. Serif heading, hairline rules, the printed-check total, and actions in a tinted footer.</p>
+</div>
+<div class="frame" style="padding:0">
+  <div class="modal-wrap">
+    <div style="padding:1.4rem;filter:blur(1px);opacity:.5">
+      <table>
+        <thead><tr><th>Order</th><th>Table</th><th>Total</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="id">#F03RW</td><td>T1</td><td class="amt">₹552</td><td><span class="badge b-gold"><i></i>Pending</span></td></tr>
+          <tr><td class="id">#K92LX</td><td>T3</td><td class="amt">₹1,240</td><td><span class="badge b-ember"><i></i>Preparing</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-bg"></div>
+    <div class="modal">
+      <div class="modal-h">
+        <div><h3>Order #F03RW</h3><div class="s">Table 1 · 6:34 AM</div></div>
+        <button class="x"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div class="modal-b">
+        <div class="mrow"><span><b>1×</b> veg briyani</span><span class="tnum">₹80</span></div>
+        <div class="mrow"><span><b>2×</b> chicken briyani</span><span class="tnum">₹400</span></div>
+        <div class="mrow" style="color:var(--ink-mute)"><span>Tax (5%)</span><span class="tnum">₹24</span></div>
+        <div class="mrow" style="color:var(--ink-mute)"><span>Service (10%)</span><span class="tnum">₹48</span></div>
+        <div class="mtot"><span class="l">Total</span><span class="v">₹552</span></div>
+      </div>
+      <div class="modal-f">
+        <button class="btn btn-out">Close</button>
+        <button class="btn btn-ember">Advance to preparing</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ MOBILE ═══════ -->
+<div class="slab">
+  <div class="k">Admin · 04</div>
+  <h2>On a phone</h2>
+  <p>Sidebar becomes a top bar plus a drawer. KPIs go 2-up, cards stack, the table drops its secondary columns.</p>
+</div>
+<div class="phones">
+  <div>
+    <div class="phone"><div class="screen"><div class="scroll">
+      <div class="mtop">
+        <span class="burger"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></span>
+        <span class="brand"><span class="seal" style="width:1.5rem;height:1.5rem;font-size:.7rem">T</span><b style="font-size:1rem">ToDining</b></span>
+        <span style="width:1.9rem"></span>
+      </div>
+      <div class="content">
+        <div class="phead"><div><h1>Dashboard</h1><div class="s">Overview for Velans.</div></div></div>
+        <div class="kpis">
+          <div class="kpi"><div><div class="l">Menu items</div><div class="v">24</div></div></div>
+          <div class="kpi"><div><div class="l">Orders</div><div class="v">138</div></div></div>
+          <div class="kpi"><div><div class="l">Tables</div><div class="v">8</div></div></div>
+          <div class="kpi"><div><div class="l">Revenue</div><div class="v">₹18,420</div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Recent orders</h3><a class="link" href="#">All →</a></div>
+          <div class="row"><span class="l"><span class="tchip">T1</span><span><div class="id">#F03RW</div><div class="sub">2 items</div></span></span><span class="r"><span class="amt">₹552</span></span></div>
+          <div class="row"><span class="l"><span class="tchip">T3</span><span><div class="id">#K92LX</div><div class="sub">3 items</div></span></span><span class="r"><span class="amt">₹1,240</span></span></div>
+          <div class="row"><span class="l"><span class="tchip">T12</span><span><div class="id">#A24F8</div><div class="sub">1 item</div></span></span><span class="r"><span class="amt">₹320</span></span></div>
+        </div>
+      </div>
+    </div></div></div>
+    <div class="cap"><b>Dashboard</b> · phone</div>
+  </div>
+
+  <div>
+    <div class="phone"><div class="screen">
+      <div class="scroll" style="filter:blur(1px)">
+        <div class="mtop"><span class="burger"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></span><span class="brand"><span class="seal" style="width:1.5rem;height:1.5rem;font-size:.7rem">T</span><b style="font-size:1rem">ToDining</b></span><span style="width:1.9rem"></span></div>
+        <div class="content"><div class="phead"><div><h1>Dashboard</h1></div></div></div>
+      </div>
+      <div class="drawer-wrap">
+        <div class="drawer-bg"></div>
+        <div class="drawer">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span class="brand"><span class="seal" style="width:1.5rem;height:1.5rem;font-size:.7rem">T</span><b style="font-size:1rem">ToDining</b></span>
+            <button class="out" style="border:0;background:none;color:var(--ink-mute);cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          </div>
+          <div class="switch"><span class="l"><span class="dot"></span> Velans</span><span style="color:var(--ink-mute)">⌄</span></div>
+          <div class="navlab">Operations</div>
+          <nav>
+            <a class="nav on" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg> Dashboard</a>
+            <a class="nav" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/></svg> Orders <span class="up"></span></a>
+            <a class="nav" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg> Tables &amp; QR</a>
+            <a class="nav" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 2v7c0 1.1.9 2 2 2h1a2 2 0 0 0 2-2V2M6 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg> Menu</a>
+            <a class="nav" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h18M3 12h18M3 19h18"/></svg> Categories</a>
+            <a class="nav" href="#"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Reservations</a>
+          </nav>
+          <div class="user" style="margin-top:auto"><span class="av">A</span><div><div class="nm">Arun</div><div class="rl">Manager</div></div></div>
+        </div>
+      </div>
+    </div></div>
+    <div class="cap"><b>Drawer</b> · phone nav</div>
+  </div>
+</div>
+<div style="height:4rem"></div>
+</main>
+</body>
+</html>

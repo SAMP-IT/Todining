@@ -9,6 +9,7 @@ import { staffService } from '@/data/services';
 import { Badge, Button, EmptyState, Modal, PageHeader } from '@/components/ui';
 import { StaffForm } from '@/features/staff/StaffForm';
 import { ROLE_CONFIG } from '@/lib/roles';
+import { cn } from '@/lib/cn';
 
 const ROLE_TONE = { owner: 'ember', manager: 'gold', waiter: 'sage', kitchen: 'blue' } as const;
 
@@ -34,26 +35,65 @@ export function StaffPage() {
       {staff.length === 0 ? (
         <EmptyState icon={<Users className="h-8 w-8" />} title="No staff yet" description="Add team members and assign their roles." />
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {staff.map((s) => (
-            <div key={s.id} className="flex items-center gap-3 rounded-2xl border border-ink/5 bg-white p-4 shadow-soft">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-base font-bold text-white" style={{ background: s.avatarColor ?? '#d9521f' }}>
-                {s.name.charAt(0)}
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold">{s.name}{s.id === user?.id && <span className="ml-1 text-xs text-ink-muted">(you)</span>}</p>
-                <p className="truncate text-xs text-ink-muted">{s.email}</p>
-                <Badge tone={ROLE_TONE[s.role]} className="mt-1">{ROLE_CONFIG[s.role].label}</Badge>
+        <>
+          {/* A hairline masthead, not a chip: the team is a single set list. */}
+          <div className="mb-2.5 flex items-center justify-between gap-3 border-y border-ink/10 py-2">
+            <span className="text-[0.62rem] font-bold uppercase tracking-[0.2em] text-ink-soft">The team</span>
+            <span className="tnum text-[0.62rem] font-bold uppercase tracking-[0.12em] text-ink-muted">
+              {staff.length} member{staff.length === 1 ? '' : 's'}
+            </span>
+          </div>
+
+          {/* One ruled sheet, one member per line — the roster reads top to
+              bottom like a printed staff list rather than a grid of cards. */}
+          <div className="overflow-hidden rounded-xl border border-ink/10 bg-white">
+            {staff.map((s, i) => (
+              <div
+                key={s.id}
+                className={cn('flex items-center gap-3 px-3 py-3 sm:px-4', i > 0 && 'border-t border-ink/10')}
+              >
+                {/* Initial well — keeps each member's seeded avatarColor. */}
+                <span
+                  className="grid h-10 w-10 shrink-0 place-items-center rounded-lg font-display text-lg font-semibold leading-none text-cream"
+                  style={{ background: s.avatarColor ?? '#c0451c' }}
+                >
+                  {s.name.charAt(0).toUpperCase()}
+                </span>
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="truncate font-display text-lg font-semibold leading-tight">{s.name}</span>
+                    {s.id === user?.id && (
+                      <span className="shrink-0 text-[0.52rem] font-bold uppercase tracking-[0.16em] text-ink-muted">
+                        You
+                      </span>
+                    )}
+                  </div>
+                  <div className="truncate text-[0.72rem] text-ink-muted">{s.email}</div>
+                  {/* Role sits under the name on a phone, inline from sm up. */}
+                  <Badge tone={ROLE_TONE[s.role]} className="mt-1 px-2 py-0 text-[0.6rem] sm:hidden">
+                    {ROLE_CONFIG[s.role].label}
+                  </Badge>
+                </div>
+
+                <Badge tone={ROLE_TONE[s.role]} className="hidden shrink-0 sm:inline-flex">
+                  {ROLE_CONFIG[s.role].label}
+                </Badge>
+
+                <div className="flex shrink-0 gap-0.5">
+                  <button onClick={() => setEditing(s)} className="rounded-lg p-2 text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink" aria-label="Edit"><Pencil className="h-4 w-4" /></button>
+                  {/* You can't remove yourself. Hold the column so every row's
+                      actions still line up on the same two rails. */}
+                  {s.id !== user?.id ? (
+                    <button onClick={() => { staffService.remove(s.id); toast('Staff removed.'); }} className="rounded-lg p-2 text-ink-muted transition-colors hover:bg-red-50 hover:text-red-500" aria-label="Remove"><Trash2 className="h-4 w-4" /></button>
+                  ) : (
+                    <span className="w-8" aria-hidden />
+                  )}
+                </div>
               </div>
-              <div className="flex flex-col gap-1">
-                <button onClick={() => setEditing(s)} className="rounded-lg p-1.5 text-ink-muted hover:bg-ink/5" aria-label="Edit"><Pencil className="h-4 w-4" /></button>
-                {s.id !== user?.id && (
-                  <button onClick={() => { staffService.remove(s.id); toast('Staff removed.'); }} className="rounded-lg p-1.5 text-ink-muted hover:bg-red-50 hover:text-red-500" aria-label="Remove"><Trash2 className="h-4 w-4" /></button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       )}
 
       <Modal open={adding} onClose={() => setAdding(false)} title="Add staff member">

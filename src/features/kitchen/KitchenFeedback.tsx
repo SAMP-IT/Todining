@@ -1,4 +1,4 @@
-import { MessageSquareQuote, Star } from 'lucide-react';
+import { MessageSquareQuote } from 'lucide-react';
 import type { Feedback } from '@/types';
 import { useTenant } from '@/context/TenantContext';
 import { useLiveQuery } from '@/hooks/useLiveQuery';
@@ -25,11 +25,14 @@ export function KitchenFeedback() {
 
   return (
     <section className="mt-8">
-      <div className="mb-4 flex items-center gap-2">
-        <Star className="h-5 w-5 text-ember-500" />
-        <h2 className="text-xl font-semibold">Customer feedback</h2>
+      {/* Same masthead language as the Kitchen board's column heads. */}
+      <div className="mb-4 flex items-center justify-between gap-3 border-b border-ink/10 pb-2">
+        <h2 className="flex items-center gap-2 font-display text-xl font-semibold leading-tight">
+          <span className="h-1.5 w-1.5 rounded-full bg-gold-400" />
+          Customer feedback
+        </h2>
         {reviews.length > 0 && (
-          <span className="grid h-6 min-w-6 place-items-center rounded-full bg-ink/[0.06] px-2 text-xs font-bold text-ink-soft">
+          <span className="tnum grid h-6 min-w-[1.5rem] shrink-0 place-items-center rounded-full border border-ink/10 bg-white px-1.5 text-[0.68rem] font-extrabold text-ink-soft">
             {reviews.length}
           </span>
         )}
@@ -44,25 +47,33 @@ export function KitchenFeedback() {
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {reviews.map((f) => (
-            <div key={f.id} className="rounded-2xl border border-ink/5 bg-white p-4 shadow-soft">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <span className="font-semibold">Table {f.tableNumber ?? '—'}</span>
-                  {f.orderId && <span className="ml-2 text-xs text-ink-muted">Order {f.orderId}</span>}
+            <article key={f.id} className="rounded-xl border border-ink/10 bg-white p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="tnum truncate font-display text-lg font-semibold leading-tight">
+                    Table {f.tableNumber ?? '—'}
+                  </h3>
+                  {f.orderId && (
+                    <p className="tnum mt-0.5 truncate text-[0.62rem] font-bold uppercase tracking-[0.12em] text-ink-muted">
+                      Order #{f.orderId.slice(-5).toUpperCase()}
+                    </p>
+                  )}
                 </div>
-                <span className="shrink-0 text-xs text-ink-muted">{formatDateTime(f.createdAt)}</span>
+                <span className="tnum shrink-0 text-[0.68rem] text-ink-muted">{formatDateTime(f.createdAt)}</span>
               </div>
 
-              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs">
-                <Rating label="Food" value={f.foodRating} />
-                <Rating label="Service" value={f.serviceRating} />
-                <Rating label="Experience" value={f.experienceRating} />
-              </div>
+              <dl className="mt-3 border-t border-ink/10 pt-2.5">
+                <Score label="Food" value={f.foodRating} />
+                <Score label="Service" value={f.serviceRating} />
+                <Score label="Experience" value={f.experienceRating} />
+              </dl>
 
               {f.comment && (
-                <p className="mt-3 rounded-lg bg-cream-deep/50 px-3 py-2 text-sm text-ink-soft">“{f.comment}”</p>
+                <p className="mt-3 rounded-lg bg-cream-deep/60 px-3.5 py-2.5 text-sm leading-relaxed text-ink-soft">
+                  “{f.comment}”
+                </p>
               )}
-            </div>
+            </article>
           ))}
         </div>
       )}
@@ -70,11 +81,15 @@ export function KitchenFeedback() {
   );
 }
 
-function Rating({ label, value }: { label: string; value: number }) {
+/** One rating line: micro-label, gold stars, and the tabular numeral. */
+function Score({ label, value }: { label: string; value: number }) {
   return (
-    <span className="flex items-center gap-1.5">
-      <span className="text-ink-muted">{label}</span>
-      <RatingStars value={value} readOnly size={14} />
-    </span>
+    <div className="flex items-center justify-between gap-3 py-1">
+      <dt className="text-[0.6rem] font-bold uppercase tracking-[0.16em] text-ink-muted">{label}</dt>
+      <dd className="flex shrink-0 items-center gap-2">
+        <RatingStars value={value} readOnly size={13} />
+        <span className="tnum w-3 text-right font-display text-sm font-semibold text-ink-soft">{value}</span>
+      </dd>
+    </div>
   );
 }

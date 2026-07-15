@@ -6,6 +6,7 @@ import { useTenant } from '@/context/TenantContext';
 import { useLiveQuery } from '@/hooks/useLiveQuery';
 import { categoryService } from '@/data/services';
 import { Badge, Button, EmptyState, Input, Modal, PageHeader } from '@/components/ui';
+import { cn } from '@/lib/cn';
 
 export function CategoriesPage() {
   const { restaurantId } = useTenant();
@@ -59,24 +60,29 @@ export function CategoriesPage() {
       {categories.length === 0 ? (
         <EmptyState icon={<FolderTree className="h-8 w-8" />} title="No categories" description="Add your first category to organise the menu." />
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-ink/8 bg-white shadow-soft">
+        <div className="overflow-hidden rounded-xl border border-ink/10 bg-white">
           {categories.map(({ category, items }, i) => (
             <div
               key={category.id}
-              className={`flex items-center justify-between gap-3 px-4 py-3 ${i > 0 ? 'border-t border-ink/5' : ''}`}
+              className={cn('flex items-center gap-3 px-3 py-3.5 sm:px-4', i > 0 && 'border-t border-ink/10')}
             >
-              <div className="flex items-center gap-3">
-                <span className="grid h-9 w-9 place-items-center rounded-lg bg-ember-100 text-ember-600">
-                  <FolderTree className="h-4 w-4" />
-                </span>
-                <div>
-                  <div className="font-semibold">{category.name}</div>
-                  <Badge tone={items > 0 ? 'sage' : 'neutral'}>{items} item{items === 1 ? '' : 's'}</Badge>
-                </div>
+              {/* Ghosted index numeral: the printed-menu way of marking order,
+                  and it reads as the section number the diner sees. */}
+              <span className="tnum w-6 shrink-0 font-display text-lg font-semibold leading-none text-ink/25">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+
+              <div className="min-w-0 flex-1">
+                <div className="truncate font-display text-lg font-semibold leading-tight">{category.name}</div>
               </div>
-              <div className="flex gap-1">
-                <button onClick={() => openEdit(category)} className="rounded-lg p-2 text-ink-muted hover:bg-ink/5" aria-label="Edit"><Pencil className="h-4 w-4" /></button>
-                <button onClick={() => remove(category)} className="rounded-lg p-2 text-ink-muted hover:bg-red-50 hover:text-red-500" aria-label="Delete"><Trash2 className="h-4 w-4" /></button>
+
+              <Badge tone={items > 0 ? 'sage' : 'neutral'} className="tnum shrink-0">
+                {items} item{items === 1 ? '' : 's'}
+              </Badge>
+
+              <div className="flex shrink-0 gap-1">
+                <button onClick={() => openEdit(category)} className="rounded-lg p-2 text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink" aria-label="Edit"><Pencil className="h-4 w-4" /></button>
+                <button onClick={() => remove(category)} className="rounded-lg p-2 text-ink-muted transition-colors hover:bg-red-50 hover:text-red-500" aria-label="Delete"><Trash2 className="h-4 w-4" /></button>
               </div>
             </div>
           ))}
@@ -87,7 +93,7 @@ export function CategoriesPage() {
         open={adding}
         onClose={() => setAdding(false)}
         title="Add category"
-        footer={<><Button variant="ghost" onClick={() => setAdding(false)}>Cancel</Button><Button onClick={submitAdd} disabled={!name.trim()}>Add</Button></>}
+        footer={<><Button variant="outline" onClick={() => setAdding(false)}>Cancel</Button><Button onClick={submitAdd} disabled={!name.trim()}>Add</Button></>}
       >
         <Input label="Category name" placeholder="e.g. Desserts" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
       </Modal>
@@ -96,7 +102,7 @@ export function CategoriesPage() {
         open={!!editing}
         onClose={() => setEditing(null)}
         title="Edit category"
-        footer={<><Button variant="ghost" onClick={() => setEditing(null)}>Cancel</Button><Button onClick={submitEdit} disabled={!name.trim()}>Save</Button></>}
+        footer={<><Button variant="outline" onClick={() => setEditing(null)}>Cancel</Button><Button onClick={submitEdit} disabled={!name.trim()}>Save</Button></>}
       >
         <Input label="Category name" value={name} onChange={(e) => setName(e.target.value)} autoFocus />
       </Modal>

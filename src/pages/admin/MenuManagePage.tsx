@@ -8,6 +8,33 @@ import { menuService } from '@/data/services';
 import { Badge, Button, EmptyState, ImageWithFallback, Modal, PageHeader } from '@/components/ui';
 import { MenuItemForm, type MenuItemFormValues } from '@/features/menu/MenuItemForm';
 import { formatMoney } from '@/lib/format';
+import { cn } from '@/lib/cn';
+
+/** The veg marker, drawn to match the customer menu row (MenuItemCard). */
+function VegMark() {
+  return (
+    <span className="grid h-3 w-3 shrink-0 place-items-center rounded-[3px] border-[1.5px] border-sage-500">
+      <span className="h-1 w-1 rounded-full bg-sage-500" />
+    </span>
+  );
+}
+
+/**
+ * A category section header: an italic display title, a hairline rule carrying
+ * the eye across, and the count. Mirrors the printed sections of the customer
+ * menu so operators recognise what a diner will see.
+ */
+function SectionHead({ name, count }: { name: string; count: number }) {
+  return (
+    <div className="mb-2 flex items-baseline gap-3">
+      <h2 className="font-display text-xl font-semibold italic leading-none">{name}</h2>
+      <span className="h-px flex-1 bg-ink/10" />
+      <span className="tnum shrink-0 text-[0.6rem] font-bold uppercase tracking-[0.16em] text-ink-muted">
+        {count} {count === 1 ? 'dish' : 'dishes'}
+      </span>
+    </div>
+  );
+}
 
 export function MenuManagePage() {
   const { restaurant, restaurantId } = useTenant();
@@ -40,20 +67,37 @@ export function MenuManagePage() {
             if (!catItems.length) return null;
             return (
               <section key={cat.id}>
-                <h2 className="mb-3 font-display text-lg font-semibold">{cat.name}</h2>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <SectionHead name={cat.name} count={catItems.length} />
+
+                <div className="rounded-xl border border-ink/10 bg-white px-3 sm:px-4">
                   {catItems.map((item) => (
-                    <div key={item.id} className="flex gap-3 rounded-2xl border border-ink/5 bg-white p-3 shadow-soft">
-                      <div className="h-20 w-20 shrink-0 overflow-hidden rounded-xl">
+                    <div
+                      key={item.id}
+                      className={cn(
+                        'grid grid-cols-[3.5rem_1fr] items-center gap-3 border-b border-ink/10 py-3 last:border-b-0 sm:grid-cols-[4rem_1fr] sm:gap-4 sm:py-3.5',
+                        !item.isAvailable && 'opacity-75',
+                      )}
+                    >
+                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-cream-deep sm:h-16 sm:w-16">
                         <ImageWithFallback src={item.imageUrl} alt={item.name} className="h-full w-full object-cover" />
                       </div>
-                      <div className="flex min-w-0 flex-1 flex-col">
-                        <div className="flex items-start justify-between gap-2">
-                          <h3 className="truncate font-semibold">{item.name}</h3>
-                          <span className="shrink-0 font-display font-semibold">{formatMoney(item.price, symbol)}</span>
+
+                      {/* Stacks under 640px so the phone never scrolls sideways;
+                          on wider screens name and controls share a baseline. */}
+                      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5">
+                            <h3 className="truncate font-display text-[1.05rem] font-semibold leading-tight">{item.name}</h3>
+                            {item.tags?.includes('veg') && <VegMark />}
+                          </div>
+                          {item.description && (
+                            <p className="mt-0.5 line-clamp-1 text-xs leading-relaxed text-ink-muted">{item.description}</p>
+                          )}
                         </div>
-                        <p className="line-clamp-1 text-xs text-ink-muted">{item.description}</p>
-                        <div className="mt-auto flex items-center justify-between pt-2">
+
+                        <div className="flex shrink-0 items-center justify-between gap-3 sm:justify-end">
+                          <span className="tnum font-display text-lg font-semibold">{formatMoney(item.price, symbol)}</span>
+
                           <button
                             onClick={() => menuService.toggleAvailability(item.id)}
                             className="cursor-pointer"
@@ -61,9 +105,10 @@ export function MenuManagePage() {
                           >
                             {item.isAvailable ? <Badge tone="sage" dot>Available</Badge> : <Badge tone="red" dot>Sold out</Badge>}
                           </button>
+
                           <div className="flex gap-1">
-                            <button onClick={() => setEditing(item)} className="rounded-lg p-1.5 text-ink-muted hover:bg-ink/5" aria-label="Edit"><Pencil className="h-4 w-4" /></button>
-                            <button onClick={() => { menuService.remove(item.id); toast('Item removed.'); }} className="rounded-lg p-1.5 text-ink-muted hover:bg-red-50 hover:text-red-500" aria-label="Delete"><Trash2 className="h-4 w-4" /></button>
+                            <button onClick={() => setEditing(item)} className="rounded-lg p-1.5 text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink" aria-label="Edit"><Pencil className="h-4 w-4" /></button>
+                            <button onClick={() => { menuService.remove(item.id); toast('Item removed.'); }} className="rounded-lg p-1.5 text-ink-muted transition-colors hover:bg-red-50 hover:text-red-500" aria-label="Delete"><Trash2 className="h-4 w-4" /></button>
                           </div>
                         </div>
                       </div>

@@ -39,7 +39,16 @@ export function StaffForm({
           <option key={r} value={r}>{ROLE_CONFIG[r].label}</option>
         ))}
       </Select>
-      <div className="flex justify-end gap-2">
+      {/* What the role unlocks: the access level is the point of this form, so
+          spell it out rather than making the operator recall the route map. */}
+      <p className="text-[0.72rem] leading-relaxed text-ink-muted">
+        <span className="font-bold uppercase tracking-[0.14em] text-ink-soft">Access</span>
+        <span className="mx-1.5 text-ink/25">·</span>
+        Lands on <span className="font-semibold text-ink-soft">{ROLE_CONFIG[role].home}</span> and can open{' '}
+        <span className="font-semibold text-ink-soft">{ROLE_CONFIG[role].allows.join(', ')}</span>.
+      </p>
+
+      <div className="flex justify-end gap-2 border-t border-ink/10 pt-4">
         <Button type="button" variant="ghost" onClick={onCancel}>Cancel</Button>
         <Button type="submit">{initial ? 'Save changes' : 'Add staff'}</Button>
       </div>

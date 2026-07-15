@@ -4,7 +4,6 @@ import {
   BarChart3, Boxes, Building2, CalendarCheck, FolderTree, IndianRupee, LayoutDashboard, LayoutGrid,
   LogOut, Menu as MenuIcon, MessageCircle, ReceiptText, Star, UtensilsCrossed, Users, X,
 } from 'lucide-react';
-import { Wordmark } from './Brand';
 import { RestaurantSwitcher } from './RestaurantSwitcher';
 import { useAuth } from '@/context/AuthContext';
 import { useModuleUpdates } from '@/context/ModuleUpdatesContext';
@@ -15,6 +14,20 @@ const ICONS: Record<string, typeof BarChart3> = {
   BarChart3, ReceiptText, LayoutGrid, UtensilsCrossed, CalendarCheck, Boxes,
   IndianRupee, Star, MessageCircle, Users, Building2, LayoutDashboard, FolderTree,
 };
+
+/** The editorial brand lockup. The seal carries it where space is tight. */
+function Brandmark({ compact = false }: { compact?: boolean }) {
+  return (
+    <span className="flex items-center gap-2">
+      <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-ink font-display text-[0.8rem] font-semibold text-ink">
+        T
+      </span>
+      <span className={cn('font-display font-semibold tracking-tight', compact ? 'text-base' : 'text-xl')}>
+        ToDining
+      </span>
+    </span>
+  );
+}
 
 /** Resolve the current pathname to the sidebar module (route) it belongs to. */
 function currentModuleKey(pathname: string): string | null {
@@ -27,50 +40,73 @@ function currentModuleKey(pathname: string): string | null {
   return null;
 }
 
+function NavGroup({
+  label,
+  items,
+  onNavigate,
+}: {
+  label: string;
+  items: typeof ADMIN_NAV;
+  onNavigate?: () => void;
+}) {
+  const { hasUpdate } = useModuleUpdates();
+  if (items.length === 0) return null;
+
+  return (
+    <>
+      <p className="mb-1.5 mt-4 px-1.5 text-[0.58rem] font-bold uppercase tracking-[0.22em] text-ink-muted first:mt-0">
+        {label}
+      </p>
+      <nav className="flex flex-col gap-0.5">
+        {items.map((item) => {
+          const Icon = ICONS[item.icon];
+          return (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              onClick={onNavigate}
+              className={({ isActive }) =>
+                cn(
+                  'flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-[0.83rem] font-semibold transition-colors',
+                  // Ember is the action colour; "you are here" is ink.
+                  isActive ? 'bg-ink text-cream' : 'text-ink-soft hover:bg-ink/5 hover:text-ink',
+                )
+              }
+            >
+              {({ isActive }) => (
+                <>
+                  <Icon className="h-4 w-4 shrink-0 opacity-85" />
+                  <span className="flex-1">{item.label}</span>
+                  {/* Unseen-update indicator: a dot on the module whose data
+                      changed, hidden on the page you're currently viewing. */}
+                  {hasUpdate(item.to) && !isActive && (
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-sage-500" aria-label="New updates" />
+                  )}
+                </>
+              )}
+            </NavLink>
+          );
+        })}
+      </nav>
+    </>
+  );
+}
+
 function NavItems({ onNavigate }: { onNavigate?: () => void }) {
   const { user } = useAuth();
-  const { hasUpdate } = useModuleUpdates();
   // /admin now requires an authenticated manager/owner (RoleGuard, no `open`), so
   // `user` is present here. Fall back to the LEAST-privileged role — never owner —
   // so owner-only nav (Analytics, Restaurants, Feedback) can never leak to a
   // session without an owner role.
   const role = user?.role ?? 'manager';
-  const items = ADMIN_NAV.filter((i) => !i.ownerOnly || role === 'owner');
+  const visible = ADMIN_NAV.filter((i) => !i.ownerOnly || role === 'owner');
+
   return (
-    <nav className="flex flex-col gap-1">
-      {items.map((item) => {
-        const Icon = ICONS[item.icon];
-        return (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.end}
-            onClick={onNavigate}
-            className={({ isActive }) =>
-              cn(
-                'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors',
-                isActive ? 'bg-ember-500 text-white shadow-soft' : 'text-ink-soft hover:bg-ink/5',
-              )
-            }
-          >
-            {({ isActive }) => (
-              <>
-                <Icon className="h-[18px] w-[18px]" />
-                <span className="flex-1">{item.label}</span>
-                {/* Unseen-update indicator: a green dot on the module whose data
-                    changed, hidden on the page you're currently viewing. */}
-                {hasUpdate(item.to) && !isActive && (
-                  <span
-                    className="h-2 w-2 shrink-0 rounded-full bg-emerald-500"
-                    aria-label="New updates"
-                  />
-                )}
-              </>
-            )}
-          </NavLink>
-        );
-      })}
-    </nav>
+    <>
+      <NavGroup label="Operations" items={visible.filter((i) => !i.ownerOnly)} onNavigate={onNavigate} />
+      <NavGroup label="Owner" items={visible.filter((i) => i.ownerOnly)} onNavigate={onNavigate} />
+    </>
   );
 }
 
@@ -83,30 +119,30 @@ function UserChip() {
     return (
       <Link
         to="/login"
-        className="flex items-center justify-center gap-2 rounded-xl border border-ink/8 bg-white p-2.5 text-sm font-semibold text-ink-soft hover:bg-ink/5"
+        className="flex items-center justify-center gap-2 rounded-lg border border-ink/10 bg-white p-2.5 text-xs font-bold text-ink-soft transition-colors hover:border-ember-400 hover:text-ember-600"
       >
         Staff sign in
       </Link>
     );
   }
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-ink/8 bg-white p-2.5">
+    <div className="flex items-center gap-2.5 rounded-lg border border-ink/10 bg-white p-2">
       <span
-        className="grid h-9 w-9 place-items-center rounded-lg text-sm font-bold text-white"
-        style={{ background: user.avatarColor ?? '#d9521f' }}
+        className="grid h-8 w-8 shrink-0 place-items-center rounded-md text-xs font-extrabold text-cream"
+        style={{ background: user.avatarColor ?? '#c0451c' }}
       >
         {user.name.charAt(0)}
       </span>
       <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-semibold">{user.name}</div>
-        <div className="text-xs text-ink-muted">{ROLE_CONFIG[user.role].label}</div>
+        <div className="truncate text-[0.8rem] font-bold leading-tight">{user.name}</div>
+        <div className="text-[0.66rem] text-ink-muted">{ROLE_CONFIG[user.role].label}</div>
       </div>
       <button
         onClick={() => {
           logout();
           navigate('/login');
         }}
-        className="rounded-lg p-2 text-ink-muted hover:bg-ink/5 hover:text-red-500"
+        className="rounded-md p-1.5 text-ink-muted transition-colors hover:bg-ember-100 hover:text-ember-600"
         aria-label="Log out"
       >
         <LogOut className="h-4 w-4" />
@@ -130,48 +166,60 @@ export function DashboardLayout() {
   }, [current, currentHasUpdate, markViewed]);
 
   return (
-    <div className="min-h-[100dvh] lg:grid lg:grid-cols-[16rem_1fr]">
+    <div className="min-h-[100dvh] lg:grid lg:grid-cols-[15.5rem_1fr]">
       {/* Desktop sidebar */}
-      <aside className="hidden border-r border-ink/8 bg-cream/60 p-4 lg:flex lg:flex-col">
-        <Link to="/site" className="px-2 py-2">
-          <Wordmark />
+      <aside className="hidden border-r border-ink/10 bg-cream-deep/40 p-3.5 lg:flex lg:flex-col">
+        <Link to="/site" className="px-1.5 py-1">
+          <Brandmark />
         </Link>
-        <div className="mt-4 px-1">
+        <div className="mt-3">
           <RestaurantSwitcher />
         </div>
-        <div className="mt-6 flex-1 overflow-y-auto">
+        <div className="mt-1 flex-1 overflow-y-auto">
           <NavItems />
         </div>
-        <UserChip />
+        <div className="pt-3">
+          <UserChip />
+        </div>
       </aside>
 
       {/* Mobile top bar */}
-      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-ink/8 bg-cream/90 px-4 py-3 backdrop-blur lg:hidden">
-        <button onClick={() => setDrawerOpen(true)} className="rounded-lg p-2 hover:bg-ink/5" aria-label="Open menu">
-          <MenuIcon className="h-5 w-5" />
+      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-ink/10 bg-cream/92 px-4 py-2.5 backdrop-blur lg:hidden">
+        <button
+          onClick={() => setDrawerOpen(true)}
+          className="rounded-md border border-ink/10 bg-white p-1.5 text-ink-soft transition-colors hover:text-ink"
+          aria-label="Open menu"
+        >
+          <MenuIcon className="h-4 w-4" />
         </button>
-        <Wordmark />
-        <div className="w-9" />
+        <Brandmark compact />
+        <span className="w-8" />
       </div>
 
       {/* Mobile drawer */}
       {drawerOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-ink/40 backdrop-blur-sm" onClick={() => setDrawerOpen(false)} />
-          <div className="absolute left-0 top-0 flex h-full w-72 flex-col bg-cream p-4 shadow-lift animate-[scale-in_0.2s]">
+          <div className="absolute inset-0 bg-ink/45 backdrop-blur-sm" onClick={() => setDrawerOpen(false)} />
+          <div className="absolute left-0 top-0 flex h-full w-64 flex-col bg-cream p-3.5 shadow-lift animate-[scale-in_0.2s]">
             <div className="flex items-center justify-between">
-              <Wordmark />
-              <button onClick={() => setDrawerOpen(false)} className="rounded-lg p-2 hover:bg-ink/5" aria-label="Close menu">
-                <X className="h-5 w-5" />
+              <Brandmark compact />
+              <button
+                onClick={() => setDrawerOpen(false)}
+                className="rounded-md p-1.5 text-ink-muted transition-colors hover:bg-ink/5 hover:text-ink"
+                aria-label="Close menu"
+              >
+                <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="mt-4">
+            <div className="mt-3">
               <RestaurantSwitcher />
             </div>
-            <div className="mt-6 flex-1 overflow-y-auto">
+            <div className="mt-1 flex-1 overflow-y-auto">
               <NavItems onNavigate={() => setDrawerOpen(false)} />
             </div>
-            <UserChip />
+            <div className="pt-3">
+              <UserChip />
+            </div>
           </div>
         </div>
       )}

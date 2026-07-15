@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { MessageCircle, Send } from 'lucide-react';
+import { Check, MessageCircle, Send } from 'lucide-react';
 import type { NotificationType } from '@/types';
 import { useTenant } from '@/context/TenantContext';
 import { useLiveQuery } from '@/hooks/useLiveQuery';
@@ -14,6 +14,17 @@ const TYPE_LABEL: Record<NotificationType, string> = {
   order_status: 'Order update',
   promotional: 'Promotional',
 };
+
+/** Each template gets its own badge tone so the log scans by colour, not by reading. */
+const TYPE_TONE: Record<NotificationType, 'ember' | 'sage' | 'gold' | 'blue'> = {
+  reservation_confirmed: 'sage',
+  reservation_reminder: 'gold',
+  order_status: 'blue',
+  promotional: 'ember',
+};
+
+/** Micro-label, shared by the composer and the log. */
+const EYEBROW = 'text-[0.55rem] font-bold uppercase tracking-[0.2em] text-ink-muted';
 
 export function NotificationsPage() {
   const { restaurant, restaurantId } = useTenant();
@@ -46,9 +57,13 @@ export function NotificationsPage() {
       <PageHeader title="Notifications" subtitle="WhatsApp messages for reservations, order updates and offers." />
 
       <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
-        {/* Composer */}
-        <div className="card-surface h-fit p-5">
-          <h2 className="mb-4 font-semibold">Send a WhatsApp message</h2>
+        {/* ── Composer ────────────────────────────────────────────────────── */}
+        <div className="h-fit rounded-xl border border-ink/10 bg-white p-5">
+          <div className="mb-4 border-b border-ink/10 pb-3">
+            <h2 className="font-display text-xl font-semibold leading-tight">Compose a message</h2>
+            <p className="mt-0.5 text-xs text-ink-muted">Pick a template, name the recipient, then preview it in the log.</p>
+          </div>
+
           <div className="space-y-3">
             <Select label="Message type" value={type} onChange={(e) => applyTemplate(e.target.value as NotificationType)}>
               <option value="promotional">Promotional offer</option>
@@ -60,28 +75,55 @@ export function NotificationsPage() {
             <Button fullWidth onClick={send} disabled={!message.trim()}>
               <Send className="h-4 w-4" /> Send message
             </Button>
-            <p className="text-center text-xs text-ink-muted">
-              Simulated — wire Meta WhatsApp Cloud API / Twilio in <code>notificationService</code> to go live.
-            </p>
           </div>
+
+          {/* The honest footnote: nothing leaves the building yet. */}
+          <p className="mt-4 border-t border-ink/10 pt-3 text-center text-[0.68rem] leading-relaxed text-ink-muted">
+            Simulated · wire the Meta WhatsApp Cloud API or Twilio into{' '}
+            <code className="rounded bg-ink/5 px-1 py-0.5 font-sans text-[0.64rem] font-semibold text-ink-soft">notificationService</code>{' '}
+            to go live.
+          </p>
         </div>
 
-        {/* Message log — WhatsApp style */}
+        {/* ── Message log ─────────────────────────────────────────────────── */}
         <div>
-          <h2 className="mb-3 font-semibold">Sent messages</h2>
+          <div className="mb-3 flex items-baseline justify-between gap-3 border-b border-ink/10 pb-2">
+            <h2 className="font-display text-xl font-semibold leading-tight">Sent messages</h2>
+            {notifications.length > 0 && (
+              <span className={`tnum ${EYEBROW}`}>
+                {notifications.length} sent
+              </span>
+            )}
+          </div>
+
           {notifications.length === 0 ? (
             <EmptyState icon={<MessageCircle className="h-8 w-8" />} title="No messages yet" description="Sent and automated messages appear here." />
           ) : (
             <div className="space-y-3">
               {notifications.map((n) => (
-                <div key={n.id} className="ml-auto max-w-md rounded-2xl rounded-tr-sm bg-[#e7f6e7] p-3 shadow-soft">
-                  <div className="mb-1 flex items-center justify-between gap-2">
-                    <span className="text-xs font-bold text-sage-600">To: {n.recipient}</span>
-                    <Badge tone="sage">{TYPE_LABEL[n.type]}</Badge>
+                <article key={n.id} className="rounded-xl border border-ink/10 bg-white p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className={EYEBROW}>To</p>
+                      <p className="mt-0.5 truncate font-display text-lg font-semibold leading-tight">{n.recipient}</p>
+                    </div>
+                    <Badge tone={TYPE_TONE[n.type]} className="shrink-0">{TYPE_LABEL[n.type]}</Badge>
                   </div>
-                  <p className="whitespace-pre-line text-sm text-ink">{n.message}</p>
-                  <p className="mt-1 text-right text-[10px] text-ink-muted">{formatDateTime(n.createdAt)} · ✓✓ sent</p>
-                </div>
+
+                  {/* The message body, set as a quoted block: tinted paper, no
+                      side stripe (banned by DESIGN.md). */}
+                  <p className="mt-3 whitespace-pre-line rounded-lg bg-cream-deep/60 px-3.5 py-2.5 text-sm leading-relaxed text-ink-soft">
+                    {n.message}
+                  </p>
+
+                  <div className="mt-2.5 flex items-center justify-between gap-3 text-[0.68rem] text-ink-muted">
+                    <span className="tnum">{formatDateTime(n.createdAt)}</span>
+                    <span className="flex shrink-0 items-center gap-1 font-semibold text-sage-600">
+                      <Check className="h-3 w-3" strokeWidth={3} />
+                      {n.status === 'sent' ? 'Sent' : 'Queued'}
+                    </span>
+                  </div>
+                </article>
               ))}
             </div>
           )}

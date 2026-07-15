@@ -96,8 +96,8 @@ export function PageHeader({
   return (
     <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
       <div>
-        <h1 className="text-2xl font-semibold sm:text-3xl">{title}</h1>
-        {subtitle && <p className="mt-1 text-sm text-ink-muted">{subtitle}</p>}
+        <h1 className="font-display text-3xl font-semibold leading-none tracking-tight sm:text-[2.2rem]">{title}</h1>
+        {subtitle && <p className="mt-1.5 text-sm text-ink-muted">{subtitle}</p>}
       </div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
     </div>
@@ -124,13 +124,13 @@ export function KpiCard({
     ink: 'bg-ink/6 text-ink-soft',
   }[tone];
   return (
-    <div className="card-surface p-5">
-      <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-ink-muted">{label}</span>
-        {icon && <span className={cn('grid h-9 w-9 place-items-center rounded-xl', toneBg)}>{icon}</span>}
+    <div className="flex items-start justify-between gap-2 rounded-xl border border-ink/10 bg-white p-3.5">
+      <div className="min-w-0">
+        <div className="text-[0.6rem] font-bold uppercase tracking-[0.16em] text-ink-muted">{label}</div>
+        <div className="tnum mt-1.5 font-display text-3xl font-bold leading-none tracking-tight">{value}</div>
+        {sublabel && <div className="mt-1.5 text-[0.68rem] text-ink-muted">{sublabel}</div>}
       </div>
-      <div className="mt-3 font-display text-3xl font-semibold tracking-tight">{value}</div>
-      {sublabel && <div className="mt-1 text-xs text-ink-muted">{sublabel}</div>}
+      {icon && <span className={cn('grid h-8 w-8 shrink-0 place-items-center rounded-md', toneBg)}>{icon}</span>}
     </div>
   );
 }

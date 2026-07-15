@@ -32,12 +32,15 @@ export function InventoryForm({
       }}
     >
       <Input label="Item name" placeholder="e.g. Chicken" value={name} onChange={(e) => setName(e.target.value)} required />
-      <div className="grid grid-cols-3 gap-3">
+
+      {/* Two-up on a phone (the uppercase micro-labels need the room), three-up from sm. */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         <Input label="Unit" placeholder="kg" value={unit} onChange={(e) => setUnit(e.target.value)} />
-        <Input label="In stock" type="number" min={0} step="any" value={stockQty} onChange={(e) => setStockQty(e.target.valueAsNumber || 0)} />
-        <Input label="Low at" type="number" min={0} step="any" value={lowThreshold} onChange={(e) => setLowThreshold(e.target.valueAsNumber || 0)} />
+        <Input className="tnum" label="In stock" type="number" min={0} step="any" value={stockQty} onChange={(e) => setStockQty(e.target.valueAsNumber || 0)} />
+        <Input className="tnum" label="Low at" type="number" min={0} step="any" value={lowThreshold} onChange={(e) => setLowThreshold(e.target.valueAsNumber || 0)} hint="Flags the item gold." />
       </div>
-      <div className="flex justify-end gap-2">
+
+      <div className="flex justify-end gap-2 border-t border-ink/10 pt-4">
         <Button type="button" variant="ghost" onClick={onCancel}>Cancel</Button>
         <Button type="submit">{initial ? 'Save changes' : 'Add item'}</Button>
       </div>
