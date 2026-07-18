@@ -10,32 +10,45 @@
 
 ---
 
-## ⚠️ Production readiness: security status (read this first)
+## 🔀 Backend pivot: Supabase → plain PostgreSQL + our own API (read this first)
 
-**As of 2026-07-15 the app is DEPLOYED and public** (see **Deployment** below), running on a
-**self-hosted Supabase** whose schema (`supabase/setup-selfhost.sql`) ships **demo-grade permissive
-RLS — anon can read AND write every table.** So tenant isolation is **not enforced yet**: fine for a
-demo, but it's a live cross-tenant exposure. The **auth + RLS hardening (Batch 3)** in
-`docs/AUTH-RLS-MIGRATION.md` closes it.
+**As of 2026-07-17 we are ABANDONING Supabase.** The self-hosted Supabase stack (Kong gateway on
+Dokploy's Swarm overlay) hit unfixable networking failures (`gateway endpoint not found`,
+`name resolution failed`). The replacement is **plain PostgreSQL + a thin Node/Express API** in
+**`server/`** — it deploys exactly like the WEB app (Dockerfile → Dokploy Application), sidestepping
+all the Supabase/overlay pain.
 
-Status of the council-review criticals (`docs/COUNCIL-REVIEW.md`, an adversarial multi-agent audit):
+- `server/schema.sql` — 17 tables, TEXT PKs, **no RLS / no realtime** (those were Supabase concepts).
+- `server/index.js` — the API: `GET /api/bootstrap` (hydrate all tables) + `POST /api/sync`
+  (`{table, upserts, deletes}`). Built + **verified end-to-end** on a throwaway Postgres.
+- `server/Dockerfile` — deploys as its own Dokploy **Application** at `https://api.todining.com`.
+
+**State:** the WEB app is **LIVE at `https://todining.com`** (real domain + Let's Encrypt), but still
+runs on its **localStorage fallback** — the frontend data-layer rewire (Supabase client → `fetch()`
+the `server/` API) is **the next task**. The old `supabase/*` + the Dokploy `supabase` service are
+**legacy / being deleted**.
+
+## ⚠️ Production readiness: security status
+
+Council-review criticals (`docs/COUNCIL-REVIEW.md`, an adversarial multi-agent audit):
 
 - ✅ **FIXED — `/admin` open bypass.** The `open` flag is gone; `/admin` now requires an
-  authenticated manager/owner (`src/app/router.tsx`), and `DashboardLayout` defaults to
-  least-privilege, never owner. RoleGuard now redirects unauthorized staff to their own home.
-- ✅ **FIXED — console credential/PII logging.** Removed the hash-logging block in
-  `adminAuthService`, the `[DEBUG-MENU]` tenant-data log in `MenuPage`, and configured esbuild to
-  **drop all `console.*`/`debugger` from production builds** (`vite.config.ts`).
+  authenticated manager/owner (`src/app/router.tsx`); `DashboardLayout` defaults to least-privilege.
+- ✅ **FIXED — console credential/PII logging.** Removed the hash-logging block in `adminAuthService`,
+  the `[DEBUG-MENU]` log in `MenuPage`, and set esbuild to **drop all `console.*`/`debugger` from
+  production builds** (`vite.config.ts`).
 - ✅ **FIXED — no real lint gate.** `npm run lint` now actually type-checks (see Commands).
-- ⚠️ **PENDING — no real auth / RLS not enforced (the big one).** No Supabase Auth yet; every DB
-  call runs as `anon`; the schema's demo RLS is permissive. Full cross-tenant read/write. → **Batch 3.**
-- ⚠️ **PENDING — hardcoded admin creds + world-readable hash.** `adminAuthService.LOCAL_FALLBACK`
-  (`SAMP-IP(manoj)`/`mavoc-2026`) and the `admin_users` anon-readable djb2 hash still ship. → Batch 3.
-- ⚠️ **PENDING — djb2 "hashing"** (`src/lib/password.ts`) + committed creds (`migrations/0005`).
-- ⚠️ **PENDING — permissive INSERT** (demo RLS / `with check (true)`) lets anon inject any row.
+- ⚠️ **PENDING — no real auth (the big one).** Auth is client-trust only (forgeable localStorage).
+  With the new architecture, real auth = a **server-side pass in `server/`** (scope every query by the
+  caller's `restaurant_id` — the replacement for Supabase RLS). The API is currently **OPEN**.
+- ⚠️ **PENDING — `/api/sync` is unauthenticated** — accepts any table/row from anyone (matches the
+  app's current demo posture; lock down in the auth pass).
+- ⚠️ **PENDING — hardcoded admin creds + weak hashing.** `adminAuthService.LOCAL_FALLBACK`
+  (`SAMP-IP(manoj)`/`mavoc-2026`) still ships; djb2 "hashing" (`src/lib/password.ts`) + committed creds
+  in `supabase/migrations/0005`.
 
-Also: the repo (`SAMP-IT/Todining`) is currently **public** — `docs/COUNCIL-REVIEW.md` (the full
-vuln list) and the demo credential hashes are visible. Consider making it private before Batch 3.
+Also: the repo (`SAMP-IT/Todining`) is currently **public** — `docs/COUNCIL-REVIEW.md` (the vuln list)
+and the demo credential hashes are visible. Consider making it private before real production.
 
 ---
 
@@ -46,7 +59,8 @@ vuln list) and the demo credential hashes are visible. Consider making it privat
 - **State:** `zustand` v5 is a **dependency but unused**; state is React Context (Auth, AdminAuth,
   Tenant, Cart, ModuleUpdates) + the in-memory store.
 - **Forms/validation:** `react-hook-form` + `zod` (`@hookform/resolvers`).
-- **Backend:** `@supabase/supabase-js` v2 — **anon key only** in the client (public by design).
+- **Backend:** **our own Node/Express API over PostgreSQL** (`server/`). The frontend still imports
+  `@supabase/supabase-js` until the data-layer rewire lands (see Backend pivot above).
 - **UI/deps:** Tailwind CSS 3, `lucide-react`, `recharts` (analytics), `jspdf` + `jspdf-autotable`
   (bill PDF), `qrcode`, `date-fns`, `clsx` + `tailwind-merge` (`cn()`), `sonner` (toasts).
 - **No test framework, no ESLint.** `npm run lint` is a **real type-check gate** (`tsc -b --noEmit`)
@@ -69,47 +83,47 @@ The Docker build (`Dockerfile`) also runs `npm run build`, so a type/build error
 ## Environment
 
 `VITE_*` vars are read at **build time** (Vite inlines them). Unset → the app runs on the
-localStorage fallback (each browser isolated, no shared data). Currently pointed at the self-hosted
-Supabase in the Dokploy **WEB** app's build args:
+localStorage fallback (each browser isolated, no shared data).
 
+Target env once the API rewire lands (set as Docker build args on the Dokploy **WEB** app):
 ```
-VITE_SUPABASE_URL=https://todining-supabase-ef0c6e-51-79-254-198.traefik.me
-VITE_SUPABASE_ANON_KEY=<anon JWT — public; matches the self-hosted stack's JWT_SECRET>
-# VITE_USE_SUPABASE_AUTH — reserved build flag for the Batch 3 auth cutover (not wired yet)
+VITE_API_URL=https://api.todining.com    # the new Node API in server/
 ```
-
-`isSupabaseEnabled = Boolean(url && anonKey)` (`src/data/supabase/client.ts`) selects the backend;
-the client now uses `persistSession: true` (prep for Batch 3 auth). **Never** put the `service_role`
-key in any `VITE_*` var — it would ship in the public bundle.
+Legacy (being removed): `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` selected the Supabase backend
+via `isSupabaseEnabled` (`src/data/supabase/client.ts`). Never ship a DB password in any `VITE_*` var
+— it lands in the public bundle.
 
 ---
 
 ## Deployment & Infrastructure (live)
 
-Hosted on the user's **self-managed Dokploy server** (`51.79.254.198`), not a managed PaaS. Moved
-**off Supabase Cloud (~$25/mo) to fully self-hosted** on 2026-07-15. Full runbook: `docs/DEPLOYMENT.md`.
+Hosted on the user's **self-managed Dokploy server** (`51.79.254.198`), not a managed PaaS. Full
+runbook: `docs/DEPLOYMENT.md` (its Supabase sections are now legacy). Domains are on **GoDaddy**
+(A records → the server IP; `todining.com`, `www`, `api` all resolve). TLS is Let's Encrypt via
+Dokploy/Traefik.
 
-- **Frontend (WEB app):** `http://todining-web.51.79.254.198.nip.io` — Dokploy *Application* built
-  from this repo's `Dockerfile` (node:22 build → nginx:1.27 serve; SPA fallback + caching in
+- **Frontend (WEB app):** **`https://todining.com`** (+ `www`) — Dokploy *Application* built from this
+  repo's root `Dockerfile` (node:22 build → nginx:1.27 serve; SPA fallback + caching in
   `deploy/nginx.conf`). Source: GitHub `SAMP-IT/Todining` `main` via the **Git provider** (public
   repo). `VITE_*` passed as Docker **build args**.
-- **Backend (self-hosted Supabase):** `https://todining-supabase-ef0c6e-51-79-254-198.traefik.me`
-  — Dokploy *Compose* service from the Supabase template, **trimmed**: removed `vector`, `analytics`
-  (logflare), `functions` (edge runtime), and decoupled `db`/`kong`/`studio` from them. **Reason:**
-  the stock template has `db depends_on vector (healthy)`, so a flaky `vector` deadlocks first boot.
-  10 services run: `db, kong (gateway :8000), auth, rest, realtime, storage, imgproxy, meta, studio,
-  supavisor`. Secrets are Dokploy-generated; `traefik.me` gives free wildcard TLS to the IP. Studio
-  login is `DASHBOARD_USERNAME`/`DASHBOARD_PASSWORD` from the service's Environment tab.
-- **Schema:** run `supabase/setup-selfhost.sql` once in Studio → SQL Editor (see **Data model**).
+- **Backend (PostgreSQL + own API — replacing Supabase):**
+  - **Postgres** → a Dokploy native **Database** (one click, auto-backups). Run `server/schema.sql`.
+  - **API** → `server/` deployed as a Dokploy **Application** from `server/Dockerfile` (like the WEB
+    app) → `https://api.todining.com`. Endpoints: `GET /api/bootstrap`, `POST /api/sync`. Cross-device
+    realtime (live boards) = a WebSocket in the same `server/` (fast follow).
+  - **Why the switch:** the self-hosted Supabase Compose stack (Kong + Swarm overlay) had unfixable
+    networking. A plain app+DB uses Dokploy's normal networking — the path the WEB app + the user's
+    other projects already use. The old `supabase` Dokploy service is being **deleted**.
 - **CI/CD:** one workflow, `.github/workflows/ci.yml`:
   - `ci` job — `npm run lint` + `npm run build` on every push/PR to `main`.
   - `deploy` job — `needs: ci` (so a red build can **never** ship) and only on a push to `main`;
-    POSTs to the Dokploy WEB app's deploy webhook, read from the repo secret **`DOKPLOY_DEPLOY_URL`**
-    (Settings → Secrets and variables → Actions). Dokploy then clones `main` and rebuilds.
-  - Deliberately *not* wired as a raw GitHub→Dokploy webhook: that redeploys on every push even when
-    CI is red, and gives no deploy visibility in the Actions tab. Don't add one — you'd double-deploy.
-  - The Supabase compose service has its own separate webhook; never point repo pushes at it.
-- **Git:** push with the **Manoj-V-348** GitHub account (`gh auth switch --user Manoj-V-348`).
+    POSTs the Dokploy WEB app's deploy webhook, read from repo secret **`DOKPLOY_DEPLOY_URL`**
+    (Settings → Secrets and variables → Actions), with a GitHub-shaped `{"ref":"$GITHUB_REF"}` body
+    (Dokploy validates the branch from the payload). Dokploy then clones `main` and rebuilds.
+  - Deliberately *not* a raw GitHub→Dokploy webhook: that redeploys on every push even when CI is red.
+  - Each Dokploy service has its own deploy webhook; CI triggers only the **WEB** app's.
+- **Git:** push with the **Manoj-V-348** GitHub account (`gh auth switch --user Manoj-V-348`). It has
+  push (not admin), so it **cannot** create repo secrets/webhooks or re-run Actions — the user does those.
 
 ---
 
@@ -120,34 +134,38 @@ Every screen imports **only** from `src/data/services/*` (a typed service abstra
 read/write a **synchronous in-memory store** (`src/data/mock/store.ts`) that:
 - is **hydrated on boot** by `bootstrapStore()` (gated by `DataGate` in `src/app/App.tsx`),
 - persists to **localStorage**,
-- **write-throughs to Supabase** when configured (`src/data/supabase/*`, `mappers.ts`),
-- broadcasts changes over an in-app **realtime event bus** (`src/data/realtime/bus.ts`), which
-  Supabase `postgres_changes` also feeds. UI subscribes via `useLiveQuery` / `useRealtime`.
+- **write-throughs to the backend** — currently `src/data/supabase/*` (being replaced by `fetch()` to
+  the `server/` API: hydrate via `/api/bootstrap`, persist diffs via `/api/sync`); `mappers.ts`
+  (row ↔ domain, snake_case) is kept.
+- broadcasts changes over an in-app **realtime event bus** (`src/data/realtime/bus.ts`); cross-device
+  realtime will come from the API WebSocket. UI subscribes via `useLiveQuery` / `useRealtime`.
 
-Because the UI only knows the service interface, swapping mock↔Supabase requires **no UI changes**.
+Because the UI only knows the service interface, **swapping the backend requires no UI changes**.
 
 ### Directory map
 ```
-Dockerfile, .dockerignore   Production image (Vite build → nginx). deploy/nginx.conf = SPA config.
+Dockerfile, .dockerignore   Production image for the FRONTEND (Vite build → nginx). deploy/nginx.conf.
 .github/workflows/ci.yml    CI/CD: lint + build, then a deploy gated on a green build.
+server/                     NEW backend: schema.sql (plain Postgres, 17 tables), index.js (Node/Express
+                            API: /api/bootstrap + /api/sync), Dockerfile. Its own Dokploy Application.
 src/
   app/            App shell (App.tsx = providers + DataGate), router.tsx
   components/ui/  Design-system primitives: Button, Card, Input, Modal, Badge, StatusBadge, ...
   components/layout/  DashboardLayout, StaffLayout, RoleGuard, AdminPanelGuard, RestaurantSwitcher, Brand
   context/        AuthContext (staff), AdminAuthContext (/admin-panel), TenantContext, CartContext, ModuleUpdatesContext
   data/services/  menuService, orderService, billingService, staffService, adminAuthService, ...
-  data/mock/      seed.ts (demo data), store.ts (in-memory cache + localStorage + Supabase write-through)
+  data/mock/      seed.ts (demo data), store.ts (in-memory cache + localStorage + backend write-through)
   data/realtime/  bus.ts (subscribe/emit event bus)
-  data/supabase/  client.ts (anon client), mappers.ts (row ↔ domain — SOURCE OF TRUTH for columns)
+  data/supabase/  client.ts, mappers.ts (row ↔ domain — SOURCE OF TRUTH for columns; mappers stay,
+                  client.ts is being replaced by API fetches)
   features/       menu, cart, orders, kitchen, waiter, reservations, billing, feedback, inventory, tables, service-requests, staff, customer, upsell
   hooks/          useLiveQuery, useRealtime
   lib/            cn, format, id (string ids), password (DEMO djb2), roles
   pages/          thin route components: LandingPage, LoginPage, AdminPanel*, admin/*, customer/*, staff/*
   styles/         index.css (Tailwind layers + design tokens)
-supabase/         setup-selfhost.sql (the schema actually run), schema.sql (UUID variant — NOT used),
-                  policies.sql (auth-scoped RLS for Batch 3), setup.sql, migrations/0001–0008, README.md
-docs/             PLAN.md, COUNCIL-REVIEW.md (audit), AUTH-RLS-MIGRATION.md, DEPLOYMENT.md,
-                  SECURITY-REMEDIATION.md, SUPABASE.md, superpowers/specs/*
+supabase/         LEGACY (being removed): setup-selfhost.sql, schema.sql, policies.sql, migrations/*, README.md
+docs/             PLAN.md, COUNCIL-REVIEW.md (audit), DEPLOYMENT.md, AUTH-RLS-MIGRATION.md (Supabase-
+                  specific, OBSOLETE), SECURITY-REMEDIATION.md, SUPABASE.md (legacy), superpowers/specs/*
 remotion/         independent Remotion project (explainer videos); NOT part of the app build
 ```
 
@@ -161,8 +179,8 @@ remotion/         independent Remotion project (explainer videos); NOT part of t
 Routes (`src/app/router.tsx`):
 - `/` and `/login` → **LoginPage** (default entry).
 - `/site`, `/landing` → public **LandingPage**.
-- `/admin-panel` → **AdminPanelEntry**, wrapped by `AdminPanelGuard` (username/password vs Supabase
-  `admin_users`). Card-based workspace launcher.
+- `/admin-panel` → **AdminPanelEntry**, wrapped by `AdminPanelGuard` (username/password vs `admin_users`).
+  Card-based workspace launcher.
 - `/admin/*` → **DashboardLayout**, `RoleGuard roles={['manager','owner']}` (now auth-required — the
   `open` bypass was removed). Children: Dashboard, analytics, categories, orders, tables, menu,
   reservations, inventory, billing, feedback, notifications, staff, restaurants.
@@ -172,11 +190,12 @@ Routes (`src/app/router.tsx`):
 - `*` → NotFoundPage.
 
 Roles: `owner | manager | waiter | kitchen` (`src/lib/roles.ts`). `ROLE_CONFIG` sets each role's
-`home` + allowed prefixes; `RoleGuard` enforces **client-side only** (real enforcement = RLS, Batch 3).
+`home` + allowed prefixes; `RoleGuard` enforces **client-side only** (real enforcement will live in
+the `server/` API).
 
 ---
 
-## Security model & the pending Batch 3 (auth + RLS)
+## Security model & the pending auth pass (now server-side, not Supabase RLS)
 
 **Two client-trust auth surfaces today:**
 - **Staff** (`AuthContext` + `staffService`): login by email/username; owners need a djb2 password,
@@ -184,15 +203,14 @@ Roles: `owner | manager | waiter | kitchen` (`src/lib/roles.ts`). `ROLE_CONFIG` 
 - **Admin Panel** (`AdminAuthContext` + `adminAuthService`): username/password vs `admin_users`
   (or the hardcoded `LOCAL_FALLBACK`); session = `{username, expiresAt}` in localStorage.
 
-**Batch 3 (ordered — auth must land before RLS or it's a total lockout; runbook: `docs/AUTH-RLS-MIGRATION.md`):**
-1. Provision **Supabase Auth** users for staff (service_role); set `staff.auth_uid`.
-2. Wire `supabase.auth.signInWithPassword`; resolve the staff row from `auth.uid()`; re-hydrate the
-   store after a session exists; scope realtime to the active `restaurant_id`.
-3. Move admin-panel auth server-side; **revoke** the `anon` SELECT on `admin_users`.
-4. Enable RLS and swap the demo permissive policies for `supabase/policies.sql` (auth-scoped) +
-   tightened public INSERTs. Replace djb2, rotate committed creds.
-Already done in earlier batches: `/admin` open bypass removed, console credential/PII logging
-stripped, real lint gate, session persistence enabled.
+**The auth pass (reframed for the Postgres + own-API architecture — `docs/AUTH-RLS-MIGRATION.md` is now
+obsolete; it was Supabase-specific):**
+1. Add real auth **in `server/`**: sign-in endpoint (bcrypt/argon2), issue a signed session token/JWT.
+2. Frontend sends the token with `/api/bootstrap` + `/api/sync`; the API scopes every query to the
+   caller's `restaurant_id` **server-side** (the replacement for RLS).
+3. Gate `/api/sync` writes by role; remove `adminAuthService.LOCAL_FALLBACK`; replace djb2; rotate creds.
+Already done in earlier batches: `/admin` open bypass removed, console credential/PII logging stripped,
+real lint gate.
 
 ---
 
@@ -201,7 +219,7 @@ stripped, real lint gate, session persistence enabled.
 QR ordering · digital menu · cart + rule-based upsell · orders/lifecycle · kitchen board · waiter
 board · waiter-call service requests · tables + QR management · reservations · billing (tax/service
 charge, jsPDF export, history, per-year `invoice_number`) · feedback (food/service/experience) ·
-inventory (stock + low-stock alerts; note: recipe auto-deduct is NOT persisted to Supabase — see
+inventory (stock + low-stock alerts; note: recipe auto-deduct is NOT persisted to the DB — see
 `docs/COUNCIL-REVIEW.md` H6) · WhatsApp notifications (preview/log only) · analytics (recharts) ·
 multi-restaurant + branches (`parent_id`) · staff & categories management.
 
@@ -211,11 +229,10 @@ Integrations are **stubbed behind interfaces**: "AI upselling" = rule-based `ups
 ## Data model
 
 **The app uses TEXT primary keys** — it generates string ids (`rest_…`, `ord_…`, `stf_…`, via
-`src/lib/id.ts`). So the schema actually run is **`supabase/setup-selfhost.sql`** (or `setup.sql`),
-**NOT** the UUID `schema.sql` (that variant would reject every insert). `setup-selfhost.sql` is the
-consolidated current schema (folds in migrations 0001–0008): 16 tenant tables + `admin_users`,
-**demo-grade permissive RLS** ("Mode A": anon read+write), and the realtime publication. The **source
-of truth for columns is `src/data/supabase/mappers.ts`**.
+`src/lib/id.ts`). The schema to run on the new Postgres is **`server/schema.sql`** (17 tables incl.
+`admin_users`, TEXT PKs, no RLS/realtime — those were Supabase concepts). The legacy
+`supabase/setup-selfhost.sql` has the same tables but with Supabase RLS/publication cruft. The
+**source of truth for columns is `src/data/supabase/mappers.ts`** (snake_case rows).
 
 Tenant tables (all carry `restaurant_id`): `restaurants` (root; `parent_id` → branches), `staff`,
 `menu_categories`, `menu_items`, `tables`, `qr_codes`, `inventory_items`, `upsell_rules`, `customers`,
@@ -259,12 +276,12 @@ done; match the existing screens rather than inventing a new look.
 ## Conventions & gotchas
 
 - Feature-first; **pages are thin**, logic lives in `features/*` and `data/services/*`.
-- Keep the **service interface stable** — the mock store and Supabase path must stay swap-compatible.
+- Keep the **service interface stable** — the mock store and the backend path must stay swap-compatible.
 - Existing code is **densely commented** with rationale; match that voice when editing.
 - Realtime: components re-query via `useLiveQuery(fn, { types: [...] })` on bus events; mutations must
-  `realtimeBus.emit(...)`. The store subscribes to **all** `postgres_changes` and refetches with
-  `SELECT *` — scope per `restaurant_id` in Batch 3 (fixes cross-tenant fan-out + multi-device alerts).
-- When editing the Supabase-facing shape, `mappers.ts` and `setup-selfhost.sql` must stay in sync.
+  `realtimeBus.emit(...)`. Cross-device realtime will come from the `server/` API WebSocket (the old
+  Supabase `postgres_changes` subscription is being removed).
+- When editing the DB-facing shape, `mappers.ts` and `server/schema.sql` must stay in sync.
 - **`tailwind.config.js` / `index.html` font changes do NOT hot-reload** — the Vite dev server keeps
   serving stale CSS (e.g. a removed font silently falls back to Georgia). After such edits, **restart
   `npm run dev`** (and `rm -rf node_modules/.vite`). The production build is always correct.
@@ -288,9 +305,10 @@ done; match the existing screens rather than inventing a new look.
 - **`DESIGN.md`** — Warm Editorial visual spec (color/type/motion/components). Read before UI work.
 - **`PRODUCT.md`** — register, users, brand voice, anti-references. Read before UI work.
 - `design-samples/` — approved HTML prototypes (`2-warm-editorial.html`, `screens/*`) + `renders/`.
+- `server/` — the **new PostgreSQL + Node API** backend (schema, API, Dockerfile).
 - `docs/COUNCIL-REVIEW.md` — adversarial audit: 83 confirmed findings, ranked. The fix backlog.
-- `docs/AUTH-RLS-MIGRATION.md` — **Batch 3** runbook (auth + RLS). **Do before real production.**
-- `docs/DEPLOYMENT.md` — Dokploy + self-hosted Supabase + CI/CD runbook.
+- `docs/DEPLOYMENT.md` — Dokploy + CI/CD runbook (Supabase sections now legacy).
+- `docs/AUTH-RLS-MIGRATION.md` — OBSOLETE (Supabase auth+RLS; superseded by server-side auth in `server/`).
 - `docs/PLAN.md` — roadmap / feature→phase coverage.
-- `docs/SECURITY-REMEDIATION.md`, `docs/SUPABASE.md`, `supabase/README.md` — backend background.
+- `docs/SECURITY-REMEDIATION.md`, `docs/SUPABASE.md`, `supabase/README.md` — legacy Supabase background.
 - `docs/superpowers/specs/*` — multi-hotel workspace + branch design specs.
