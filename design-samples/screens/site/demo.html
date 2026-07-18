@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ToDining · Book a demo · See it on your tables</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<style>
+/* demo-only bits */
+.reassure{margin-top:1rem;font-size:.74rem;color:var(--ink-mute);font-weight:600;line-height:1.5}
+.left-intro h2{font-size:clamp(1.9rem,3.4vw,2.8rem);line-height:1.03;margin-top:.9rem}
+.left-intro h2 em{font-style:italic;color:var(--ember)}
+.left-intro .lede{margin-top:1rem;color:var(--ink-soft);font-size:.98rem;line-height:1.6;max-width:44ch}
+.next{margin-top:2rem}
+.next .nh{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ember);font-weight:700;padding-bottom:.6rem;border-bottom:1.5px solid var(--ink);margin-bottom:.4rem}
+.success{text-align:center;padding:1.6rem .5rem}
+.success .seal-ok{width:3rem;height:3rem;margin:0 auto 1rem;border:1.3px solid var(--forest);border-radius:99px;display:grid;place-items:center;color:var(--forest)}
+.success h3{font-size:1.9rem}
+.success h3 em{font-style:italic;color:var(--ember)}
+.success p{margin-top:.8rem;font-size:.9rem;color:var(--ink-soft);line-height:1.6;max-width:38ch;margin-inline:auto}
+.closing-line{text-align:center;padding:clamp(2.4rem,5vw,3.6rem) 0}
+.closing-line p{font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:400;font-size:clamp(1.4rem,3vw,2.1rem);line-height:1.25;color:var(--ink-soft);max-width:26ch;margin:0 auto}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<nav class="nav"><div class="wrap row">
+  <a class="brand" href="home.html"><span class="seal">T</span><b>ToDining</b></a>
+  <div class="nav-links"><a href="features.html">Features</a><a href="pricing.html">Pricing</a><a class="on" href="demo.html">Book a demo</a></div>
+  <div class="nav-cta"><a class="signin" href="#">Sign in</a><a class="btn btn-ember btn-sm" href="#form">Book a demo</a></div>
+</div></nav>
+
+<main>
+<!-- HERO -->
+<header class="phero"><div class="wrap">
+  <span class="kick">A short walkthrough, on your floor</span>
+  <h1>See it on your <em>tables</em></h1>
+  <p class="lede">Fifteen minutes, your menu, your room. We'll show you the guest's flow and the boards your team would run, and answer whatever you bring.</p>
+</div></header>
+
+<!-- DEMO GRID -->
+<section class="sec"><div class="wrap">
+  <div class="demo-grid">
+
+    <!-- LEFT: intro + what happens next -->
+    <div class="left-intro">
+      <span class="kick">How it goes</span>
+      <h2>A look, not a <em>pitch.</em></h2>
+      <p class="lede">Tell us a little about your room and what you'd like to see. We'll set a time and walk your team through ToDining on your own menu and tables.</p>
+
+      <div class="next">
+        <div class="nh">What happens next</div>
+        <div class="step-row"><span class="n">1</span><div><h4>We read your note</h4><p>We look at your room, your menu, and how you run service today.</p></div></div>
+        <div class="step-row"><span class="n">2</span><div><h4>We book a time</h4><p>A short walkthrough at a time that suits your floor, not ours.</p></div></div>
+        <div class="step-row" style="border-bottom:0"><span class="n">3</span><div><h4>You see it live</h4><p>Your menu, your tables, the guest flow and the boards, no slides.</p></div></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: the form -->
+    <div id="form">
+      <form class="form" id="demoForm" novalidate>
+        <div class="field two">
+          <div class="field" style="margin-bottom:0">
+            <label for="name">Your name</label>
+            <input class="inp" id="name" name="name" type="text" placeholder="Manoj V" required>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label for="restaurant">Restaurant name</label>
+            <input class="inp" id="restaurant" name="restaurant" type="text" placeholder="Velans" required>
+          </div>
+        </div>
+        <div class="field two">
+          <div class="field" style="margin-bottom:0">
+            <label for="email">Email</label>
+            <input class="inp" id="email" name="email" type="email" placeholder="you@restaurant.com" required>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label for="phone">Phone (optional)</label>
+            <input class="inp" id="phone" name="phone" type="tel" placeholder="+91 ">
+          </div>
+        </div>
+        <div class="field">
+          <label for="locations">Number of locations</label>
+          <select class="inp" id="locations" name="locations">
+            <option value="1">1</option>
+            <option value="2-5">2 to 5</option>
+            <option value="6+">6+</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="message">What would you like to see?</label>
+          <textarea class="inp" id="message" name="message" placeholder="The guest ordering flow, the kitchen board, billing..."></textarea>
+        </div>
+        <button class="btn btn-ember" type="submit" style="width:100%;justify-content:center">Request a demo</button>
+        <p class="reassure">No obligation, no pressure, no card. Just a look at whether ToDining fits your room.</p>
+      </form>
+
+      <!-- success state (hidden until submit) -->
+      <div class="form success" id="demoSuccess" style="display:none">
+        <div class="seal-ok"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+        <h3>Thank you · consider it <em>noted</em></h3>
+        <p>We've got your request. Keep an eye on your inbox; we'll be in touch to set a time that works for your floor. Welcome to ToDining.</p>
+      </div>
+    </div>
+
+  </div>
+</div></section>
+
+<!-- CLOSING LINE -->
+<section class="closing-line"><div class="wrap">
+  <p>A good service starts with a warm welcome. So does this one.</p>
+</div></section>
+
+<!-- FOOTER -->
+<footer class="site-foot"><div class="wrap">
+  <div class="top">
+    <div class="about"><div class="brand"><span class="seal">T</span><b>ToDining</b></div><p>The whole dining room, from one table. Hospitality, not software.</p></div>
+    <div class="col"><h5>Product</h5><a href="features.html">Features</a><a href="features-guest.html">Guest ordering</a><a href="features-kitchen.html">Kitchen &amp; service</a><a href="features-office.html">Back office</a></div>
+    <div class="col"><h5>Company</h5><a href="pricing.html">Pricing</a><a href="demo.html">Book a demo</a><a href="#">Sign in</a></div>
+    <div class="col"><h5>The visit</h5><a href="#">Scan</a><a href="#">Order</a><a href="#">Dine</a></div>
+  </div>
+  <div class="base"><span>ToDining · hospitality, not software.</span><span>© 2026</span></div>
+</div></footer>
+</main>
+
+<script>
+  // No backend: on submit, show an in-place success card. Nothing is sent anywhere.
+  (function () {
+    var form = document.getElementById('demoForm');
+    var success = document.getElementById('demoSuccess');
+    if (!form) return;
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      form.style.display = 'none';
+      success.style.display = 'block';
+      success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  })();
+</script>
+</body>
+</html>

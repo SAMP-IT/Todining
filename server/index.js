@@ -14,6 +14,9 @@ import express from 'express';
 import cors from 'cors';
 import pg from 'pg';
 import { randomUUID } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 
 const { Pool } = pg;
 // Postgres DATE (oid 1082) → keep the raw 'YYYY-MM-DD' string. Otherwise node-pg
@@ -156,5 +159,19 @@ app.get('/api/demo-requests', async (req, res) => {
   }
 });
 
+// Ensure the schema exists on boot (idempotent — every statement is
+// `create ... if not exists`), so a freshly-created Postgres self-initializes
+// with no manual SQL step. schema.sql ships next to this file in the image.
+async function migrate() {
+  const sql = readFileSync(join(dirname(fileURLToPath(import.meta.url)), 'schema.sql'), 'utf8');
+  await pool.query(sql);
+  console.log('[todining-api] schema ensured');
+}
+
 const port = Number(process.env.PORT || 8080);
-app.listen(port, () => console.log(`[todining-api] listening on :${port}`));
+migrate()
+  .then(() => app.listen(port, () => console.log(`[todining-api] listening on :${port}`)))
+  .catch((e) => {
+    console.error('[todining-api] startup migration failed:', e.message);
+    process.exit(1);
+  });

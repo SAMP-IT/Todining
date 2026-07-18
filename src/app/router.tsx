@@ -12,17 +12,28 @@ import { AdminPanelGuard } from '@/components/layout/AdminPanelGuard';
 // the customer ordering path never ships recharts/jsPDF/admin code. Landing +
 // Login stay eager for instant first paint.
 export const router = createBrowserRouter([
-  // ── Default entry point ─────────────────────────────────────────────────────
-  // Opening the app always lands on the staff Login Page. Owners sign in with
-  // credentials (hotel-isolated); Manager/Waiter/Kitchen open their board
-  // directly. This is the production default.
+  // ── Default entry point: the public marketing website ───────────────────────
+  // Opening the app lands on the multi-page product site (Home, Features + the
+  // three product pages, Pricing, Book a demo). MarketingLayout renders the shared
+  // nav/footer/grain once; each page renders only its own <main> through the
+  // Outlet. Pages are lazy so the marketing bundle never ships app/admin code.
   //
-  // The public customer website (Landing Page) is PRESERVED but no longer the
-  // default — it is reachable at /site (and /landing). It will become the public
-  // customer entry point in a future update. Structuring the routes this way
-  // keeps room for dedicated Owner / Manager / Waiter / Kitchen login flows and a
-  // separate public site without further reshaping.
-  { path: '/', element: <LoginPage /> },
+  // The app itself is untouched and lives at /login (staff sign-in), the QR flow,
+  // /admin, /kitchen, /waiter, /admin-panel. The original single-page LandingPage
+  // is preserved at /site (and /landing).
+  {
+    path: '/',
+    lazy: () => import('@/pages/site/MarketingLayout').then((m) => ({ Component: m.MarketingLayout })),
+    children: [
+      { index: true, lazy: () => import('@/pages/site/HomePage').then((m) => ({ Component: m.HomePage })) },
+      { path: 'features', lazy: () => import('@/pages/site/FeaturesPage').then((m) => ({ Component: m.FeaturesPage })) },
+      { path: 'features/guest', lazy: () => import('@/pages/site/GuestPage').then((m) => ({ Component: m.GuestPage })) },
+      { path: 'features/kitchen', lazy: () => import('@/pages/site/KitchenFeaturePage').then((m) => ({ Component: m.KitchenFeaturePage })) },
+      { path: 'features/office', lazy: () => import('@/pages/site/OfficePage').then((m) => ({ Component: m.OfficePage })) },
+      { path: 'pricing', lazy: () => import('@/pages/site/PricingPage').then((m) => ({ Component: m.PricingPage })) },
+      { path: 'demo', lazy: () => import('@/pages/site/DemoPage').then((m) => ({ Component: m.DemoPage })) },
+    ],
+  },
   { path: '/login', element: <LoginPage /> },
   { path: '/site', element: <LandingPage /> },
   { path: '/landing', element: <LandingPage /> },
